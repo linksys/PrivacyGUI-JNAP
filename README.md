@@ -18,80 +18,17 @@ To use this library in your project, add it as a dependency in your `pubspec.yam
 
 ```yaml
 dependencies:
-  jnap: ^1.0.0 # Replace with the actual version
+  jnap: 
+    git:
+      url: https://github.com/linksys/PrivacyGUI-JNAP.git
+      ref: main  # or a specific version tag like v1.0.0
 ```
 
 Then, run `flutter pub get` to install the package.
 
-## Development
-
-This project is built with Dart and can be compiled for various platforms, including the web.
-
-### Prerequisites
-
-- [Dart SDK](https://dart.dev/get-dart)
-- [Flutter SDK](https://flutter.dev/docs/get-started/install)
-
-### Building the Project
-
-To build the project, run the following command:
-
-```bash
-flutter build web
-```
-
-This will generate the necessary web files in the `build/web` directory.
-
-### Running Tests
-
-To run the project's tests, use the following command:
-
-```bash
-flutter test
-```
-
-This will execute all tests located in the `test` directory.
-
-## Project Structure
-
-- `bin/`: Contains executable scripts.
-- `lib/`: The main source code of the library.
-- `dist/`: The compiled web output for deployment.
-- `test/`: Contains all the tests for the project.
-- `pubspec.yaml`: The project's dependencies and metadata.
-- `CHANGELOG.md`: A log of all changes made to the project.
-
 ## Changelog
 
 For a detailed list of changes, please see the [CHANGELOG.md](CHANGELOG.md) file.
-
-## License
-
-This project is licensed under the terms of the Belkin license.
-
-[![Dart Version](https://img.shields.io/badge/dart-3.0.0%2B-blue.svg)](https://dart.dev/)
-[![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
-
-A Dart implementation of the JNAP (JavaScript Object Notation for Accessing and Programming) protocol for Linksys devices. This plugin provides a type-safe, asynchronous API for interacting with JNAP-enabled network devices.
-
-## Features
-
-- **Comprehensive JNAP Implementation**: Full support for JNAP protocol specifications
-- **Modular Architecture**: Organized by functional modules for easy maintenance
-- **Type Safety**: Strongly typed models and responses
-- **Asynchronous API**: Built with `async`/`await` for clean asynchronous code
-- **Extensible**: Easy to add new JNAP actions and services
-- **Cross-Platform**: Works on all Dart and Flutter platforms
-
-## Installation
-
-Add the following to your `pubspec.yaml`:
-
-```yaml
-dependencies:
-  jnap: 
-    path: ./path/to/jnap/plugin
-```
 
 ## Usage
 
@@ -225,11 +162,3 @@ Run tests with:
 ```bash
 flutter test
 ```
-
-## Contributing
-
-Contributions are welcome! Please read our [contributing guidelines](CONTRIBUTING.md) before submitting pull requests.
-
-## License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
