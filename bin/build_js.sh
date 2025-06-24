@@ -1,0 +1,1 @@
+dart compile js -O2 -o dist/jnap.js bin/jnap_web.dart

@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>JNAP Initialization</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- Bootstrap Icons -->
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
+    />
+    <style>
+      /* General Body & Container */
+      body {
+        background-color: #f5f7fa;
+        padding: 20px;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+          Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+      }
+
+      .container {
+        background-color: #f5f5f5;
+        border-radius: 8px;
+        padding: 20px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+
+      .form-container {
+        width: 100%;
+        max-width: 1000px;
+        margin: 0 auto;
+        padding: 30px;
+        background-color: #fff;
+        border-radius: 8px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      }
+
+      /* Form Elements */
+      .form-group {
+        margin-bottom: 20px;
+      }
+
+      .form-group label,
+      label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 500;
+        color: #333;
+      }
+
+      input[type="text"],
+      input[type="password"],
+      #actionSelector,
+      #jsonInput {
+        width: 100%;
+        padding: 10px 12px;
+        border: 1px solid #d1d5db;
+        border-radius: 6px;
+        font-size: 14px;
+        box-sizing: border-box;
+        transition: border-color 0.2s, box-shadow 0.2s;
+      }
+
+      input[type="text"]:focus,
+      input[type="password"]:focus,
+      #actionSelector:focus,
+      #jsonInput:focus {
+        outline: none;
+        border-color: #4f46e5;
+        box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+      }
+
+      #jsonInput {
+        min-height: 150px;
+        font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo,
+          monospace;
+        line-height: 1.5;
+        resize: vertical;
+        white-space: pre;
+        overflow-x: auto;
+        word-break: break-all;
+      }
+
+      .password-wrapper {
+        position: relative;
+      }
+
+      #password {
+        padding-right: 60px; /* Space for the Show/Hide button */
+      }
+
+      .toggle-password {
+        position: absolute;
+        right: 15px;
+        top: 50%;
+        transform: translateY(-50%);
+        cursor: pointer;
+        user-select: none;
+        font-size: 1.2rem; /* Better size for an icon */
+        color: #6b7280;
+      }
+
+      /* Buttons */
+      button {
+        background-color: #4f46e5;
+        color: white;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 14px;
+        font-weight: 500;
+        transition: background-color 0.2s, transform 0.1s;
+      }
+
+      button:hover {
+        background-color: #4338ca;
+      }
+
+      button:active {
+        transform: translateY(1px);
+      }
+
+      #backToInit {
+        background-color: #6b7280;
+      }
+
+      #backToInit:hover {
+        background-color: #4b5563;
+      }
+
+      #submitAction {
+        background-color: #4f46e5;
+      }
+
+      #submitAction:hover {
+        background-color: #4338ca;
+      }
+
+      .form-row {
+        display: flex;
+        gap: 12px;
+        align-items: center;
+        margin: 25px 0;
+        padding-top: 10px;
+        border-top: 1px solid #e5e7eb;
+      }
+
+      /* Status & Response */
+      #status,
+      .error,
+      .success {
+        margin-top: 20px;
+        padding: 10px;
+        border-radius: 4px;
+        display: none;
+      }
+
+      .success {
+        background-color: #dff0d8;
+        color: #3c763d;
+        border: 1px solid #d6e9c6;
+      }
+
+      .error {
+        background-color: #f2dede;
+        color: #a94442;
+        border: 1px solid #ebccd1;
+      }
+
+      /* Responsive Design */
+      @media (max-width: 768px) {
+        body {
+          padding: 15px;
+        }
+
+        .form-container {
+          padding: 20px;
+        }
+
+        .form-row {
+          flex-direction: column;
+          align-items: stretch;
+          gap: 10px;
+        }
+
+        h1 {
+          font-size: 1.8rem;
+        }
+      }
+
+      @media (max-width: 480px) {
+        body {
+          padding: 10px;
+        }
+
+        .form-container {
+          padding: 15px;
+        }
+
+        h1 {
+          font-size: 1.5rem;
+        }
+
+        button {
+          padding: 12px 15px;
+        }
+
+        #jsonInput {
+          min-height: 120px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div id="initForm" class="form-container">
+      <div class="container">
+        <h1>JNAP Initialization</h1>
+
+        <div class="form-group">
+          <label for="baseUrl">Base URL:</label>
+          <input type="text" id="baseUrl" />
+          <script>
+            document.addEventListener("DOMContentLoaded", function () {
+              document.getElementById("baseUrl").value =
+                window.location.protocol + "//" + window.location.host;
+            });
+          </script>
+        </div>
+
+        <div class="form-group">
+          <label for="username">Username:</label>
+          <input type="text" id="username" value="admin" />
+        </div>
+
+        <div class="form-group">
+          <label for="password">Password:</label>
+          <div class="password-wrapper">
+            <input type="password" id="password" value="admin" />
+            <script>
+              document.addEventListener("DOMContentLoaded", function () {
+                // check password from localstorage
+                const encrypassword =
+                  window.localStorage["flutter.encryptLocalPassword"] ?? "";
+                let password = "";
+                if (
+                  encrypassword.length >= 2 &&
+                  encrypassword.startsWith('"') &&
+                  encrypassword.endsWith('"')
+                ) {
+                  // slice(1, -1) removes the first character and the last character
+                  password = encrypassword.slice(1, -1);
+                } else {
+                  password = encrypassword;
+                }
+                password = password ? window.jnap.decrypt(password) : "admin";
+
+                if (password) {
+                  document.getElementById("password").value = password;
+                }
+              });
+            </script>
+            <i id="togglePassword" class="bi bi-eye-slash toggle-password"></i>
+          </div>
+        </div>
+
+        <button id="initBtn">Initialize JNAP</button>
+
+        <div id="status"></div>
+      </div>
+    </div>
+
+    <div id="actionsForm" class="form-container" style="display: none">
+      <div class="container">
+        <h1>JNAP Actions</h1>
+        <div class="form-group">
+          <label for="actionSelector">Search Action:</label>
+          <select id="actionSelector" class="form-control" style="width: 100%">
+            <option value="">-- Type to search actions --</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="jsonInput">JSON Input (optional):</label>
+          <textarea
+            id="jsonInput"
+            class="form-control"
+            placeholder="{}"
+            style="min-height: 100px"
+          ></textarea>
+        </div>
+        <div class="form-row">
+          <button id="submitAction">
+            <span class="button-text">Execute Action</span>
+            <span class="button-loader" style="display: none"
+              >Processing...</span
+            >
+          </button>
+          <button id="backToInit">Back to Initialization</button>
+        </div>
+        <div
+          id="actionStatus"
+          class="alert"
+          style="display: none; margin-top: 15px"
+        ></div>
+        <div class="form-group">
+          <h3>Response:</h3>
+          <pre
+            id="responseOutput"
+            style="
+              background: #f8f9fa;
+              padding: 15px;
+              border-radius: 4px;
+              max-height: 400px;
+              overflow: auto;
+              border: 1px solid #ddd;
+            "
+          ></pre>
+        </div>
+      </div>
+    </div>
+
+    <!-- Include Select2 CSS -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.min.css"
+      rel="stylesheet"
+    />
+
+    <!-- Include the compiled JavaScript library -->
+    <script src="jnap.js"></script>
+
+    <!-- Include Select2 JS -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        // DOM Elements
+        const initForm = document.getElementById("initForm");
+        const initBtn = document.getElementById("initBtn");
+        const statusDiv = document.getElementById("status");
+        const actionsForm = document.getElementById("actionsForm");
+        const actionSelector = document.getElementById("actionSelector");
+        const jsonInput = document.getElementById("jsonInput");
+        const submitActionBtn = document.getElementById("submitAction");
+        const backToInitBtn = document.getElementById("backToInit");
+        const actionStatus = document.getElementById("actionStatus");
+        const responseOutput = document.getElementById("responseOutput");
+
+        // Password visibility toggle
+        const passwordInput = document.getElementById("password");
+        const togglePassword = document.getElementById("togglePassword");
+
+        if (passwordInput && togglePassword) {
+          togglePassword.addEventListener("click", function () {
+            const isPassword = passwordInput.type === "password";
+            passwordInput.type = isPassword ? "text" : "password";
+            // Toggle Bootstrap icon classes
+            togglePassword.classList.toggle("bi-eye-slash");
+            togglePassword.classList.toggle("bi-eye");
+          });
+        }
+
+        // Debug: Log all elements
+        console.log("initForm:", initForm);
+        console.log("initBtn:", initBtn);
+        console.log("actionsForm:", actionsForm);
+
+        // Available actions
+        let availableActions = [];
+
+        // Initialize Select2 on the action selector
+        $(document).ready(function () {
+          $("#actionSelector").select2({
+            theme: "bootstrap-5",
+            width: "100%",
+            placeholder: "Type to filter actions or leave empty to see all...",
+            allowClear: true,
+            dropdownAutoWidth: true,
+            minimumInputLength: 0, // Show all options when empty
+            language: {
+              noResults: function () {
+                return "No actions found";
+              },
+              inputTooShort: function () {
+                return "Type to filter actions";
+              },
+              searching: function () {
+                return "Searching...";
+              },
+            },
+          });
+
+          // Handle action selection
+          $("#actionSelector").on("select2:select", function (e) {
+            const selectedAction = e.params.data.id;
+            console.log("Selected action:", selectedAction);
+
+            // You can add default JSON templates for specific actions here
+            if (selectedAction.includes("GetDeviceInfo")) {
+              document.getElementById("jsonInput").value = "{}";
+            }
+          });
+        });
+
+        // Initialize button click handler
+        initBtn.addEventListener("click", handleInit);
+
+        // Back to initialization form
+        backToInitBtn.addEventListener("click", function () {
+          console.log("Going back to initialization form...");
+          const initForm = document.getElementById("initForm");
+          const actionsForm = document.getElementById("actionsForm");
+
+          if (actionsForm) {
+            actionsForm.style.display = "none";
+            console.log("Actions form hidden");
+          }
+
+          if (initForm) {
+            initForm.style.display = "block";
+            console.log("Init form shown");
+          }
+        });
+
+        // Action selection handler
+        actionSelector.addEventListener("change", function (e) {
+          // You can add default JSON templates for specific actions here if needed
+          if (e.target.value) {
+            // Example: Set default JSON for GetDeviceInfo
+            if (e.target.value.includes("GetDeviceInfo")) {
+              jsonInput.value = "{}";
+            }
+          }
+        });
+
+        // Submit action handler
+        submitActionBtn.addEventListener("click", handleActionSubmit);
+
+        async function handleInit() {
+          const baseUrl =
+            window.location.protocol + "//" + window.location.host;
+          const path = "/JNAP/";
+          const username = document.getElementById("username").value.trim();
+          const password = document.getElementById("password").value;
+
+          // Basic validation
+          if (!baseUrl || !path || !username || !password) {
+            showStatus("Please fill in all fields", "error");
+            return;
+          }
+
+          try {
+            // Create Basic Auth token
+            const auth = btoa(`${username}:${password}`);
+
+            // Initialize JNAP
+            window.jnap.init({
+              baseUrl: baseUrl,
+              path: path,
+              extraHeaders: {},
+              auth: auth,
+              authType: "basic",
+            });
+
+            // Test the connection by getting device info
+            const response = await window.jnap.send(
+              window.jnap.actions["Core-GetDeviceInfo"],
+              {}
+            );
+
+            // Update better actions with available services
+            if (response.output && response.output.services) {
+              window.jnap.betterActions(response.output.services);
+              showStatus("JNAP initialized successfully!", "success");
+              console.log("JNAP Services:", response.output.services);
+              console.log("Available Actions:", window.jnap.actions);
+              // Populate actions dropdown
+              console.log("Populating actions dropdown...");
+              populateActions();
+
+              // Toggle form visibility
+              const initForm = document.getElementById("initForm");
+              const actionsForm = document.getElementById("actionsForm");
+
+              if (initForm) {
+                initForm.style.display = "none";
+              }
+
+              if (actionsForm) {
+                actionsForm.style.display = "block";
+              }
+            } else {
+              throw new Error("Invalid response from device");
+            }
+          } catch (error) {
+            console.error("Initialization error:", error);
+            showStatus(`Error: ${error.message}`, "error");
+          }
+        }
+
+        async function populateActions() {
+          const actionSelector = document.getElementById("actionSelector");
+          const groupedActions = {};
+          const allActions = [];
+          const availableActions = [];
+
+          if (window.jnap && window.jnap.actions && window.jnap.services) {
+            // Clear previous options
+            actionSelector.innerHTML =
+              '<option value="" disabled selected>Select an action</option>';
+
+            // Collect all actions and their service versions
+            for (const [key, value] of Object.entries(window.jnap.actions)) {
+              // extract the digit from the value for action version, it may be empty
+              // for example http://linksys.com/jnap/core/GetDevices3
+              // for example http://linksys.com/jnap/core/GetDeviceInfo
+              // use regex to extract the digit .*(\d)$
+              // the actionVersion is using to display on the action selector
+              const actionVersion = value.match(/.*(\d)$/)?.[1] || "";
+              const [service, action] = key.split("-", 2);
+              const version = window.jnap.services[service] || "N/A";
+              // push to all actions if version is not N/A
+              if (version !== "N/A") {
+                allActions.push({
+                  service,
+                  action,
+                  key,
+                  value,
+                  version,
+                  actionVersion,
+                });
+              }
+            }
+
+            // Sort all actions by service and action name
+            allActions.sort((a, b) => {
+              if (a.service !== b.service) {
+                return a.service.localeCompare(b.service);
+              }
+              return a.action.localeCompare(b.action);
+            });
+
+            // Group by service
+            allActions.forEach((item) => {
+              if (!groupedActions[item.service]) {
+                groupedActions[item.service] = {
+                  items: [],
+                  version: item.version,
+                };
+              }
+              groupedActions[item.service].items.push(item);
+            });
+
+            // Populate dropdown with optgroups
+            for (const [service, groupData] of Object.entries(groupedActions)) {
+              const optgroup = document.createElement("optgroup");
+              optgroup.label = `${service} (${groupData.version})`;
+
+              for (const item of groupData.items) {
+                const option = document.createElement("option");
+                option.value = item.key;
+                option.textContent = item.actionVersion ? `${item.action} (version: ${item.actionVersion})` : item.action;
+                option.setAttribute("data-service", item.service);
+                optgroup.appendChild(option);
+                availableActions.push(item.key);
+              }
+
+              // Only add the optgroup if it has options
+              if (optgroup.children.length > 0) {
+                actionSelector.appendChild(optgroup);
+              }
+            }
+          }
+        }
+
+        async function handleActionSubmit() {
+          const selectedAction = actionSelector.value;
+          let inputData = {};
+
+          // Validate selection
+          if (!selectedAction) {
+            showActionStatus("Please select an action", "error");
+            return;
+          }
+
+          // Parse JSON input
+          try {
+            const inputText = jsonInput.value.trim() || "{}";
+            inputData = JSON.parse(inputText);
+          } catch (e) {
+            showActionStatus("Invalid JSON input", "error");
+            return;
+          }
+
+          // Show loading state
+          submitActionBtn.disabled = true;
+          submitActionBtn.textContent = "Executing...";
+          showActionStatus("Executing action...", "info");
+
+          try {
+            // Execute the action
+            const response = await window.jnap.send(
+              window.jnap.actions[selectedAction],
+              inputData
+            );
+
+            // Display response
+            responseOutput.textContent = JSON.stringify(response, null, 2);
+            showActionStatus("Action executed successfully!", "success");
+          } catch (error) {
+            console.error("Action error:", error);
+            responseOutput.textContent = error.message;
+            showActionStatus(`Error: ${error.message}`, "error");
+          } finally {
+            submitActionBtn.disabled = false;
+            submitActionBtn.textContent = "Execute Action";
+          }
+        }
+
+        function showActionStatus(message, type) {
+          actionStatus.textContent = message;
+          actionStatus.className = type;
+          actionStatus.style.display = "block";
+        }
+
+        function showStatus(message, type) {
+          statusDiv.textContent = message;
+          statusDiv.className = type;
+          statusDiv.style.display = "block";
+        }
+      });
+    </script>
+  </body>
+</html>
