@@ -142,7 +142,7 @@ void setupJnAPI() {
   // For functions that return void or simple Dart types (like String, int, bool)
   // and take JSAny arguments, you can often directly use .toJS on the function reference.
   jnapApi['init'] = _init.toJS;
-  jnapApi['version'] = '1.0.1'.toJS;
+  jnapApi['version'] = '1.0.2'.toJS;
   jnapApi['updateAuth'] = _updateAuth.toJS;
   jnapApi['updateUrl'] = _updateUrl.toJS;
 
