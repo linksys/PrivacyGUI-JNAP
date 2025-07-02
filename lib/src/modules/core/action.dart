@@ -45,6 +45,7 @@ sealed class CoreAction extends JNAPAction {
         Reboot2.instance,
         FactoryReset.instance,
         FactoryReset2.instance,
+        CorePnPSetAdminPassword.instance,
       ];
 }
 
@@ -88,6 +89,18 @@ class CoreSetAdminPassword extends CoreAction {
             VersionVarients(1, 1),
             VersionVarients(2, 2),
             VersionVarients(3, 7),
+          ],
+        );
+}
+
+///   http://linksys.com/jnap/core/SetAdminPassword2
+class CorePnPSetAdminPassword extends CoreAction {
+  static final CorePnPSetAdminPassword instance = CorePnPSetAdminPassword._();
+  CorePnPSetAdminPassword._()
+      : super(
+          name: 'SetAdminPassword',
+          varients: [
+            VersionVarients(2, 2),
           ],
         );
 }

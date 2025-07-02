@@ -5,4 +5,7 @@ import 'package:jnap/src/modules/jnap_service.dart';
 final nodesTopologyOptimizationService = JNAPService(
   name: 'TopologyOptimization',
   path: 'nodes/topologyoptimization/',
+  supportedServices: [
+    JNAPServiceSupported(name: 'TopologyOptimization', supportedVersion: 2),
+  ],
 );

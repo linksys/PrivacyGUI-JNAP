@@ -18,8 +18,12 @@ class JNAPService {
   JNAPService({
     required this.name,
     required this.path,
-    this.supportedServices = const [],
-  });
+    List<JNAPServiceSupported>? supportedServices,
+  }) : supportedServices = [
+          ...?supportedServices,
+          if (supportedServices?.any((s) => s.name == name) != true)
+            JNAPServiceSupported(name: name, supportedVersion: 1),
+        ];
 
   void updateVersion(int version) {
     _latestVersion = version;

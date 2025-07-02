@@ -19,9 +19,8 @@ final coreService = JNAPService(
   path: 'core/',
   supportedServices: [
     JNAPServiceSupported(
-        name: 'isSupportAdminPasswordAuthStatus', supportedVersion: 7),
-    JNAPServiceSupported(name: 'isSupportChildReboot', supportedVersion: 8),
-    JNAPServiceSupported(
-        name: 'isSupportChildFactoryReset', supportedVersion: 9),
+        name: 'AdminPasswordAuthStatus', supportedVersion: 7),
+    JNAPServiceSupported(name: 'ChildReboot', supportedVersion: 8),
+    JNAPServiceSupported(name: 'ChildFactoryReset', supportedVersion: 9),
   ],
 )..updateVersion(1); // Core version should be at least 1

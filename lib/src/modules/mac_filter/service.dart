@@ -6,6 +6,6 @@ final macFilterService = JNAPService(
   name: 'MACFilter',
   path: 'macfilter/',
   supportedServices: [
-    JNAPServiceSupported(name: 'isSupportGetSTABSSID', supportedVersion: 2),
+    JNAPServiceSupported(name: 'GetSTABSSID', supportedVersion: 2),
   ],
 );

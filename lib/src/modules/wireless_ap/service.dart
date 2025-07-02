@@ -8,4 +8,7 @@ import 'package:jnap/src/modules/jnap_service.dart';
 final wirelessAPService = JNAPService(
   name: 'WirelessAP',
   path: 'wirelessap/',
+  supportedServices: [
+    JNAPServiceSupported(name: 'ClientDeauth', supportedVersion: 5),
+  ],
 );

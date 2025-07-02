@@ -14,4 +14,8 @@ import 'package:jnap/src/modules/jnap_service.dart';
 final setupService = JNAPService(
   name: 'Setup',
   path: 'nodes/setup/',
+  supportedServices: [
+    JNAPServiceSupported(name: 'LedBlinking', supportedVersion: 9),
+    JNAPServiceSupported(name: 'PnP', supportedVersion: 11),
+  ],
 );

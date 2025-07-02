@@ -7,4 +7,7 @@ import 'package:jnap/src/modules/jnap_service.dart';
 final routerLEDsService = JNAPService(
   name: 'RouterLEDs',
   path: 'routerleds/',
+  supportedServices: [
+    JNAPServiceSupported(name: 'LedMode', supportedVersion: 4),
+  ],
 );

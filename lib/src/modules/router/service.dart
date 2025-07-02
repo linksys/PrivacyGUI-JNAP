@@ -16,4 +16,7 @@ import 'package:jnap/src/modules/jnap_service.dart';
 final routerService = JNAPService(
   name: 'Router',
   path: 'router/',
+  supportedServices: [
+    JNAPServiceSupported(name: 'WANExternal', supportedVersion: 13),
+  ],
 );

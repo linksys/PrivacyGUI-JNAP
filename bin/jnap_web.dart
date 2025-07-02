@@ -38,6 +38,15 @@ void _updateAuth(JSObject options) {
   );
 }
 
+// Top-level function for updateUrl
+void _updateUrl(JSObject options) {
+  final dartOptions = options.dartify() as Map;
+  Jnap.updateUrl(
+    baseUrl: dartOptions['baseUrl'] as String,
+    path: dartOptions['path'] as String?,
+  );
+}
+
 // Top-level function for send
 Future<JSObject> _send(String action, JSObject request) async {
   final requestData = (request.dartify() as Map).cast<String, dynamic>();
@@ -95,10 +104,19 @@ void _betterActions(JSArray services) {
       .map((service) => (service.name, service.latestVersion))
       .toList();
   final servicesObj = JSObject();
+  final serviceSupportedObj = JSObject();
   for (final service in jnapServices) {
     servicesObj[service.$1] = service.$2.toJS;
   }
+
+  for (final service in serviceList.services) {
+    for (final supportedService in service.supportedServices) {
+      serviceSupportedObj[supportedService.name] =
+          service.isSupportService(supportedService.name).toJS;
+    }
+  }
   jnapApi['services'] = servicesObj;
+  jnapApi['serviceSupported'] = serviceSupportedObj;
 }
 
 // Top-level function for get propor Actions with versions
@@ -124,7 +142,9 @@ void setupJnAPI() {
   // For functions that return void or simple Dart types (like String, int, bool)
   // and take JSAny arguments, you can often directly use .toJS on the function reference.
   jnapApi['init'] = _init.toJS;
+  jnapApi['version'] = '1.0.1'.toJS;
   jnapApi['updateAuth'] = _updateAuth.toJS;
+  jnapApi['updateUrl'] = _updateUrl.toJS;
 
   // For functions with specific Dart type arguments (like String, JSObject)
   // and/or return specific JSAny types (like JSObject), you need a wrapper function.

@@ -42,6 +42,25 @@ class Jnap {
     Config.authType = authType;
   }
 
+  static void updateUrl({String? baseUrl, String? path}) {
+    // verify baseUrl + path is valid url
+    final testBaseUrl = baseUrl ?? Config.baseUrl;
+    final testPath = path ?? Config.path;
+    if (testBaseUrl.isNotEmpty && testPath.isNotEmpty) {
+      try {
+        UrlUtils.isValidUrl(testBaseUrl + testPath);
+      } catch (e) {
+        throw Exception('Invalid baseUrl + path');
+      }
+    }
+    if (baseUrl != null) {
+      Config.baseUrl = baseUrl;
+    }
+    if (path != null) {
+      Config.path = path;
+    }
+  }
+
   static void updateAuth({String? auth, AuthType? authType}) {
     if (auth != null) {
       _checkBasicAuthEncoded(auth: auth, authType: authType ?? Config.authType);
@@ -72,7 +91,8 @@ class Jnap {
     final url = Config.baseUrl + Config.path;
     final Map<String, String> header = {
       kJNAPAction: action.command,
-      if (Config.authType == AuthType.basic) kJNAPAuthorization: 'Basic ${Config.auth}',
+      if (Config.authType == AuthType.basic)
+        kJNAPAuthorization: 'Basic ${Config.auth}',
       if (Config.authType == AuthType.token)
         HttpHeaders.authorizationHeader:
             'LinksysUserAuth session_token="${Config.auth}"',
@@ -99,7 +119,8 @@ class Jnap {
     final url = Config.baseUrl + Config.path;
     final Map<String, String> header = {
       kJNAPAction: Transaction.instance.command,
-      if (Config.authType == AuthType.basic) kJNAPAuthorization: Config.auth,
+      if (Config.authType == AuthType.basic)
+        kJNAPAuthorization: 'Basic ${Config.auth}',
       if (Config.authType == AuthType.token)
         HttpHeaders.authorizationHeader:
             'LinksysUserAuth session_token="${Config.auth}"',
@@ -111,8 +132,8 @@ class Jnap {
     client.retries = retries;
     final payload = transactionBuilder.commands
         .map((entry) => {
-              'action': transactionBuilder.overrides[entry.key] ??
-                  entry.key.command,
+              'action':
+                  transactionBuilder.overrides[entry.key] ?? entry.key.command,
               'request': entry.value
             })
         .toList();

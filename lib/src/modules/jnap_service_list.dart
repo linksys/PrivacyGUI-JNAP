@@ -48,6 +48,12 @@ class JNAPServiceList {
     wirelessAPService,
     wirelessSchedulerService,
   ];
+
+  // Check supportedServices in [JNAPService]
+  static bool isSupport(String key) {
+    return _serviceList.any((service) => service.isSupportService(key));
+  }
+
   final List<JNAPService> services;
 
   JNAPServiceList([List<JNAPService>? serviceList])

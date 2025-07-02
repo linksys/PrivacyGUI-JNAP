@@ -2,10 +2,98 @@ import 'package:collection/collection.dart';
 import 'package:jnap/src/modules/jnap_service_list.dart';
 import 'package:jnap/src/modules/jnap_service.dart';
 import 'package:test/test.dart';
+import 'package:jnap/src/modules/modules.dart';
 
 import '../../data/service_list.dart';
 
-main() {
+void main() {
+  group('Test JNAPService.isSupportService', () {
+    setUp(() {
+      // Reset and set up test services
+      JNAPServiceList.reset();
+    });
+
+    tearDown(() {});
+
+    test('test with non existing service definition', () {
+      final serviceList = JNAPServiceList();
+      serviceList.betterActions(testServiceList);
+      expect(
+          serviceList.services.any((s) => s.isSupportService('TestService1')),
+          isFalse);
+      expect(
+          serviceList.services.any((s) => s.isSupportService('TestService2')),
+          isFalse);
+    });
+
+    test('test with existing service definition after betterActions', () {
+      final serviceList = JNAPServiceList();
+      // expect service is not supported before betterActions since all latest version is 0
+      expect(
+          serviceList.services
+              .any((s) => s.isSupportService('MultiLinkOperation')),
+          isFalse);
+      expect(
+          serviceList.services
+              .any((s) => s.isSupportService('DynamicFrequencySelection')),
+          isFalse);
+      serviceList.betterActions(testServiceList);
+      // expect service is supported after betterActions since all latest version is updated
+      expect(
+          serviceList.services
+              .any((s) => s.isSupportService('MultiLinkOperation')),
+          isTrue);
+      expect(
+          serviceList.services
+              .any((s) => s.isSupportService('DynamicFrequencySelection')),
+          isTrue);
+      expect(
+          serviceList.services.any((s) => s.isSupportService('GuestNetwork')),
+          isTrue);
+    });
+    test('test with existing services still not supported after betterActions',
+        () {
+      final serviceList = JNAPServiceList();
+      serviceList.betterActions(testServiceList);
+      // except some services still not supported since testServiceList does not contain them
+      expect(
+          serviceList.services.any((s) => s.isSupportService('VPN')), isFalse);
+      expect(serviceList.services.any((s) => s.isSupportService('Storage')),
+          isFalse);
+    });
+
+    /// supported: AdminPasswordAuthStatus, version: 7 on Service: Core
+    /// supported: ChildReboot, version: 8 on Service: Core
+    /// supported: ChildFactoryReset, version: 9 on Service: Core
+    /// supported: GetSTABSSID, version: 2 on Service: MACFilter
+    /// supported: TopologyOptimization, version: 2 on Service: TopologyOptimization
+    /// supported: WANExternal, version: 13 on Service: Router
+    /// supported: LedMode, version: 4 on Service: RouterLEDs
+    /// supported: LedBlinking, version: 9 on Service: Setup
+    /// supported: PnP, version: 11 on Service: Setup
+    /// supported: ClientDeauth, version: 5 on Service: WirelessAP
+    
+    test('test with existing services supported keys and supported version greater than 1 after betterActions', () {
+      final serviceList = JNAPServiceList();
+      // collect all supported services by using fold with service name
+      final list = serviceList.services.fold(<(String, JNAPServiceSupported)>[],
+          (previousValue, element) {
+        return previousValue
+          ..addAll(element.supportedServices.map((s) => (element.name, s)));
+      });
+      // In testServiceList, all supported services have supported version greater than 1
+      serviceList.betterActions(testServiceList);
+      // verify all supported services are in the list
+      list.where((e) => e.$2.supportedVersion > 1).forEach((supported) {
+        // verify the service is supported if false then fail
+        final isSupported = serviceList.services.any((s) => s.isSupportService(supported.$2.name));
+        if (!isSupported) {
+          fail('Service ${supported.$2.name} is not supported on ${supported.$1}');
+        }
+      });
+    });
+  });
+
   group('Test betterActions', () {
     setUp(() {});
     test('test AirtimeFairness service', () {

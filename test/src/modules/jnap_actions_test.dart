@@ -220,7 +220,6 @@ void main() {
           'http://linksys.com/jnap/test/serviceB10',
         ]);
 
-
         // Verify versions were updated correctly
         expect(actionA1.latestVersion, '12');
         expect(actionA1.command, 'http://linksys.com/jnap/test/Action12');
@@ -313,6 +312,25 @@ void main() {
         expect(CheckAdminPassword.instance.latestVersion, '3');
         expect(CheckAdminPassword.instance.command,
             'http://linksys.com/jnap/core/CheckAdminPassword3');
+      });
+    });
+
+    group('Test Special Actions', () {
+      test(
+          'CorePnPSetAdminPassword should always return version 2 start from Core2',
+          () {
+        final serviceList = JNAPServiceList();
+
+        // before update, the GetDevices default version is empty string
+        expect(CorePnPSetAdminPassword.instance.latestVersion, '');
+
+        // update service list
+        serviceList.betterActions(testServiceList);
+
+        // after update, the version should be updated
+        expect(CorePnPSetAdminPassword.instance.latestVersion, '2');
+        expect(CorePnPSetAdminPassword.instance.command,
+            'http://linksys.com/jnap/core/SetAdminPassword2');
       });
     });
   });

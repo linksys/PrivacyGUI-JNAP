@@ -6,7 +6,4 @@ import 'package:jnap/src/modules/jnap_service.dart';
 final airtimeFairnessService = JNAPService(
   name: 'AirtimeFairness',
   path: 'wirelessap/',
-  supportedServices: [
-    JNAPServiceSupported(name: 'isSupportAirtimeFairness', supportedVersion: 1),
-  ],
 );
