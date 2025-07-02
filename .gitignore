@@ -116,3 +116,4 @@ build/
 # Linux
 **/linux/flutter/generated_plugin_registrant.cc
 **/linux/flutter/generated_plugins.cmake
+dist/nginx.conf

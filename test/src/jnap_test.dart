@@ -22,10 +22,10 @@ void main() {
   group('local JNAP', () {
     test('test JNAP send', () async {
       Jnap.init(
-        baseUrl: 'https://10.201.1.1',
+        baseUrl: 'https://192.168.1.1',
         path: '/JNAP/',
         extraHeaders: {},
-        auth: 'YWRtaW46YWRtaW4=',
+        auth: 'YWRtaW46N3FXMTlzdDVtQA==',
         authType: AuthType.basic,
       );
       await Jnap.instance.send(action: GetDeviceInfo.instance);
@@ -33,13 +33,13 @@ void main() {
 
     test('test JNAP transaction', () async {
       Jnap.init(
-        baseUrl: 'https://10.201.1.1',
+        baseUrl: 'https://192.168.1.1',
         path: '/JNAP/',
         extraHeaders: {},
-        auth: 'YWRtaW46YWRtaW4=',
+        auth: 'YWRtaW46N3FXMTlzdDVtQA==',
         authType: AuthType.basic,
       );
-      await Jnap.instance.transaction(
+      final result = await Jnap.instance.transaction(
         transactionBuilder: JNAPTransactionBuilder(
           commands: [
             MapEntry(GetDeviceInfo.instance, {}),
@@ -47,6 +47,12 @@ void main() {
           ],
         ),
       );
+      expect(result, isA<JNAPTransactionSuccessWrap>());
+      expect(result.data.length, 2);
+      expect(result.data[0].key, GetDeviceInfo.instance);
+      expect(result.data[0].value, isA<JNAPSuccess>());
+      expect(result.data[1].key, GetWANStatus.instance);
+      expect(result.data[1].value, isA<JNAPSuccess>());
     });
   });
 

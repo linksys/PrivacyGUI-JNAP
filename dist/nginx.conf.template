@@ -1,0 +1,31 @@
+events {}
+
+http {
+    server {
+        listen 8080;
+        server_name localhost;
+
+        root ${NGINX_ROOT};
+
+        index index.html;
+
+        location / {
+            try_files $uri $uri/ =404;
+        }
+
+        location /JNAP/ {
+            proxy_pass http://192.168.1.1/JNAP/;
+
+            add_header 'Access-Control-Allow-Origin' '*' always;
+            add_header 'Access-Control-Allow-Methods' 'GET, POST, OPTIONS';
+            add_header 'Access-Control-Allow-Headers' 'DNT,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Range,X-JNAP-Action,X-JNAP-Authorization';
+
+            if ($request_method = 'OPTIONS') {
+                add_header 'Access-Control-Max-Age' 1728000;
+                add_header 'Content-Type' 'text/plain; charset=utf-8';
+                add_header 'Content-Length' 0;
+                return 204;
+            }
+        }
+    }
+}

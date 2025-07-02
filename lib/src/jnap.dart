@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:collection/collection.dart';
 import 'package:http/http.dart';
 import 'package:jnap/http.dart';
 import 'package:jnap/jnap.dart';
@@ -105,11 +106,11 @@ class Jnap {
     return client
         .post(Uri.parse(url), body: jsonEncode(data), headers: header)
         .then((response) {
-      return _handleResponse(response);
+      return _handleResponse(response) as JNAPSuccess;
     });
   }
 
-  Future<JNAPSuccess> transaction({
+  Future<JNAPTransactionSuccessWrap> transaction({
     required JNAPTransactionBuilder transactionBuilder,
     Map<String, String> headers = const {},
     int timeoutMs = 10000,
@@ -140,15 +141,25 @@ class Jnap {
     return client
         .post(Uri.parse(url), body: json.encode(payload), headers: header)
         .then((response) {
-      return _handleResponse(response);
+      final result = _handleResponse(response);
+      if (result is JNAPTransactionSuccess) {
+        return JNAPTransactionSuccessWrap(
+            result: result.result,
+            data: result.responses
+                .mapIndexed(
+                    (i, e) => MapEntry(transactionBuilder.commands[i].key, e))
+                .toList(),
+            sideEffects: result.sideEffects ?? []);
+      }
+      return JNAPTransactionSuccessWrap(result: result.result, sideEffects: []);
     });
   }
 
-  JNAPSuccess _handleResponse(Response response) {
+  JNAPResult _handleResponse(Response response) {
     if (response.statusCode >= 400) {
       throw ErrorResponse.fromJson(
           response.statusCode, jsonDecode(response.body));
     }
-    return JNAPSuccess.fromMap(jsonDecode(response.body));
+    return JNAPResult.fromMap(jsonDecode(response.body));
   }
 }
