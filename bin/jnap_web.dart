@@ -130,6 +130,14 @@ String _decrypt(String encryptedString) {
   return decryptAES(encryptedString, key, iv);
 }
 
+Future<bool> _pollForRouterReconnected(String serialNumber) {
+  return SideEffectHandler(cachedSerialNumber: serialNumber).pollForRouterReconnected();
+}
+
+Future<bool> _pollForRouterFullyBootedUp(String serialNumber) {
+  return SideEffectHandler(cachedSerialNumber: serialNumber).pollForRouterFullyBootedUp();
+}
+
 void setupJnAPI() {
   // Create a new JS Object to act as our API namespace
   // js_util.newObject<JSObject>() is replaced by JSObject() constructor
@@ -157,6 +165,8 @@ void setupJnAPI() {
   jnapApi['betterActions'] = _betterActions.toJS;
   jnapApi['getActionsWithVersions'] = _getActionsWithVersions.toJS;
   jnapApi['decrypt'] = _decrypt.toJS;
+  jnapApi['pollForRouterReconnected'] = _pollForRouterReconnected.toJS;
+  jnapApi['pollForRouterFullyBootedUp'] = _pollForRouterFullyBootedUp.toJS;
 
   // Expose the 'jnap' object on the global scope (window)
   // js_util.globalThis is replaced by globalContext property from dart:js_interop

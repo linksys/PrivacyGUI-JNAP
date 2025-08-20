@@ -14,7 +14,12 @@ String decryptAES(String encryptedBase64, String keyString, String ivString) {
 
   // Decrypt the data
   final encryptedData = encrypt.Encrypted.fromBase64(encryptedBase64);
-  final decrypted = encrypter.decrypt(encryptedData, iv: iv);
+  var decrypted = encrypter.decrypt(encryptedData, iv: iv);
+  
+  // Handle the case where the original string was empty (we encrypted a single space)
+  if (decrypted == ' ') {
+    decrypted = '';
+  }
 
   return decrypted;
 }
@@ -30,8 +35,11 @@ String encryptAES(String plainText, String keyString, String ivString) {
   // Create the encrypter
   final encrypter = encrypt.Encrypter(encrypt.AES(key, mode: encrypt.AESMode.cbc));
 
+  // Handle empty string case by adding a space before encryption
+  final textToEncrypt = plainText.isEmpty ? ' ' : plainText;
+  
   // Encrypt the data
-  final encrypted = encrypter.encrypt(plainText, iv: iv);
+  final encrypted = encrypter.encrypt(textToEncrypt, iv: iv);
 
   return encrypted.base64;
 }

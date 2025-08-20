@@ -1,5 +1,15 @@
 # Changelog
 
+## [1.0.3] - 2025-08-20
+
+### Changed
+- Reworked the internal retry mechanism to be stream-based for polling operations using a new `executeStream` method. This allows for observing each attempt of a scheduled/polling JNAP call.
+- Refactored the `Jnap.scheulded` method to use the new stream-based retry logic, making it more robust and idiomatic. The `onCompleted` callback has been removed in favor of using standard `onDone`/`onError` listeners on the returned stream.
+
+### Fixed
+- Fixed a bug in `Jnap.scheulded` where it would not correctly return a stream of results.
+- Fixed an issue where `Jnap.scheulded` did not pass request parameters (`data`, `headers`, `overrides`) to the underlying network call.
+
 ## [1.0.2] - 2025-07-02
 
 ### Fixed

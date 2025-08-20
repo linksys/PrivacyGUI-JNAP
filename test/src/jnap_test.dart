@@ -20,6 +20,14 @@ void main() {
   HttpOverrides.global = MyHttpOverrides();
 
   group('local JNAP', () {
+    test('test JNAP send without init auth', () async {
+      Jnap.init(
+        baseUrl: 'https://192.168.1.1',
+        path: '/JNAP/',
+        extraHeaders: {},
+      );
+      await Jnap.instance.send(action: GetDeviceInfo.instance);
+    });
     test('test JNAP send', () async {
       Jnap.init(
         baseUrl: 'https://192.168.1.1',
@@ -53,6 +61,39 @@ void main() {
       expect(result.data[0].value, isA<JNAPSuccess>());
       expect(result.data[1].key, GetWANStatus.instance);
       expect(result.data[1].value, isA<JNAPSuccess>());
+    });
+
+    test('test JNAP scheulded polls multiple times', () async {
+      Jnap.init(
+        baseUrl: 'https://192.168.1.1',
+        path: '/JNAP/',
+        extraHeaders: {},
+        auth: 'YWRtaW46N3FXMTlzdDVtQA==',
+        authType: AuthType.basic,
+      );
+
+      int executionCount = 0;
+      const desiredExecutions = 3;
+
+      final stream = Jnap.instance.scheulded(
+        action: GetDeviceInfo.instance,
+        maxRetry: 5,
+        firstDelayInMilliSec: 100, // Use short delays for the test
+        retryDelayInMilliSec: 100,
+        condition: (result) {
+          executionCount++;
+          // Return true to keep polling, until we've executed the desired number of times.
+          return executionCount < desiredExecutions;
+        },
+      );
+
+      // We expect the stream to emit a successful result `desiredExecutions` times.
+      // The final emission will have shouldRetry=false, so the stream will close.
+      final results = await stream.toList();
+
+      expect(results.length, desiredExecutions);
+      expect(results.every((r) => r is JNAPSuccess), isTrue);
+      expect(executionCount, desiredExecutions);
     });
   });
 

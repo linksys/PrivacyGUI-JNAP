@@ -2,20 +2,52 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:collection/collection.dart';
+import 'package:equatable/equatable.dart';
 import 'package:http/http.dart';
 import 'package:jnap/http.dart';
 import 'package:jnap/jnap.dart';
+import 'package:jnap/logger.dart';
+import 'package:jnap/src/utilties/retry_strategy/retry.dart';
 import 'package:jnap/utils.dart';
+
+/// JNAPConfigOverrides is used to override the JNAP configuration
+
+class JNAPConfigOverrides extends Equatable {
+  final String? baseUrl;
+  final String? path;
+  final Map<String, String>? extraHeaders;
+  final String? auth;
+  final AuthType? authType;
+  final int? timeoutMs;
+  final int? retries;
+
+  JNAPConfigOverrides({
+    this.baseUrl,
+    this.path,
+    this.extraHeaders,
+    this.auth,
+    this.authType,
+    this.timeoutMs,
+    this.retries,
+  });
+
+  @override
+  List<Object?> get props => [
+        baseUrl,
+        path,
+        extraHeaders,
+        auth,
+        authType,
+        timeoutMs,
+        retries,
+      ];
+}
 
 class Jnap {
   // singleton
   static final Jnap _instance = Jnap._internal();
   Jnap._internal();
   static Jnap get instance {
-    // check if init is called, auth should have been set
-    if (Config.auth.isEmpty) {
-      throw Exception('Jnap is not initialized');
-    }
     return _instance;
   }
 
@@ -24,10 +56,13 @@ class Jnap {
     required String baseUrl,
     required String path,
     required Map<String, String> extraHeaders,
-    required String auth,
+    String? auth,
     AuthType authType = AuthType.basic,
   }) {
-    _checkBasicAuthEncoded(auth: auth, authType: authType);
+    if (auth != null) {
+      _checkBasicAuthEncoded(auth: auth, authType: authType);
+      Config.auth = auth;
+    }
     // verify baseUrl + path is valid url
     if (baseUrl.isNotEmpty && path.isNotEmpty) {
       try {
@@ -35,11 +70,11 @@ class Jnap {
       } catch (e) {
         throw Exception('Invalid baseUrl + path');
       }
+      Config.baseUrl = baseUrl;
+      Config.path = path;
     }
-    Config.baseUrl = baseUrl;
-    Config.path = path;
+
     Config.extraHeaders = extraHeaders;
-    Config.auth = auth;
     Config.authType = authType;
   }
 
@@ -81,26 +116,67 @@ class Jnap {
     }
   }
 
+  Stream<JNAPResult> scheulded({
+    required JNAPAction action,
+    Map<String, dynamic> data = const {},
+    Map<String, String> headers = const {},
+    JNAPConfigOverrides? overrides,
+    int retryDelayInMilliSec = 5000,
+    int maxRetry = 10,
+    int firstDelayInMilliSec = 3000,
+    bool Function(JNAPResult)? condition,
+    int? requestTimeoutOverride,
+    bool auth = false,
+  }) {
+    final strategy = FixedRetryStrategy(
+      maxRetries: maxRetry,
+      initialDelay: Duration(milliseconds: firstDelayInMilliSec),
+      maxDelay: Duration(milliseconds: retryDelayInMilliSec),
+    );
+
+    return strategy.executeStream<JNAPResult>(
+      () => send(
+        action: action,
+        data: data,
+        headers: headers,
+        overrides: overrides,
+      ),
+      shouldRetry: (result) => condition?.call(result) ?? true,
+      onRetry: (retryAttempt) {
+        logger.d('[Jnap.scheulded] retry <${retryAttempt + 1}> times');
+      },
+      onProgress: (retryAttempt, result, error) {
+        logger.d('[Jnap.scheulded] Progess <${retryAttempt + 1}/$maxRetry> times');
+      },
+    );
+  }
+
   Future<JNAPSuccess> send({
     required JNAPAction action,
     Map<String, dynamic> data = const {},
     Map<String, String> headers = const {},
-    int timeoutMs = 10000,
-    int retries = 1,
+    JNAPConfigOverrides? overrides,
   }) {
+    final baseUrl = overrides?.baseUrl ?? Config.baseUrl;
+    final path = overrides?.path ?? Config.path;
+    final extraHeaders = overrides?.extraHeaders ?? Config.extraHeaders;
+    final auth = overrides?.auth ?? Config.auth;
+    final authType = overrides?.authType ?? Config.authType;
+    final timeoutMs = overrides?.timeoutMs ?? 10000;
+    final retries = overrides?.retries ?? 1;
+
     final HttpClient client = HttpClient();
-    final url = Config.baseUrl + Config.path;
+    final url = baseUrl + path;
     final Map<String, String> header = {
       kJNAPAction: action.command,
-      if (Config.authType == AuthType.basic)
-        kJNAPAuthorization: 'Basic ${Config.auth}',
-      if (Config.authType == AuthType.token)
+      if (authType == AuthType.basic) kJNAPAuthorization: 'Basic $auth',
+      if (authType == AuthType.token)
         HttpHeaders.authorizationHeader:
-            'LinksysUserAuth session_token="${Config.auth}"',
+            'LinksysUserAuth session_token="$auth"',
       HttpHeaders.contentTypeHeader: ContentType.json.value,
     }
       ..addAll(headers)
-      ..addAll(Config.extraHeaders);
+      ..addAll(extraHeaders);
     client.timeoutMs = timeoutMs;
     client.retries = retries;
     return client
@@ -113,22 +189,28 @@ class Jnap {
   Future<JNAPTransactionSuccessWrap> transaction({
     required JNAPTransactionBuilder transactionBuilder,
     Map<String, String> headers = const {},
-    int timeoutMs = 10000,
-    int retries = 1,
+    JNAPConfigOverrides? overrides,
   }) {
+    final baseUrl = overrides?.baseUrl ?? Config.baseUrl;
+    final path = overrides?.path ?? Config.path;
+    final extraHeaders = overrides?.extraHeaders ?? Config.extraHeaders;
+    final auth = overrides?.auth ?? Config.auth;
+    final authType = overrides?.authType ?? Config.authType;
+    final timeoutMs = overrides?.timeoutMs ?? 10000;
+    final retries = overrides?.retries ?? 1;
+
     final HttpClient client = HttpClient();
-    final url = Config.baseUrl + Config.path;
+    final url = baseUrl + path;
     final Map<String, String> header = {
       kJNAPAction: Transaction.instance.command,
-      if (Config.authType == AuthType.basic)
-        kJNAPAuthorization: 'Basic ${Config.auth}',
-      if (Config.authType == AuthType.token)
+      if (authType == AuthType.basic) kJNAPAuthorization: 'Basic $auth',
+      if (authType == AuthType.token)
         HttpHeaders.authorizationHeader:
-            'LinksysUserAuth session_token="${Config.auth}"',
+            'LinksysUserAuth session_token="$auth"',
       HttpHeaders.contentTypeHeader: ContentType.json.value,
     }
       ..addAll(headers)
-      ..addAll(Config.extraHeaders);
+      ..addAll(extraHeaders);
     client.timeoutMs = timeoutMs;
     client.retries = retries;
     final payload = transactionBuilder.commands
