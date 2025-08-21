@@ -1,3 +1,30 @@
+## [1.0.4] - 2025-08-21
+
+### Added
+- New scripts for test coverage generation (`generate_coverage.sh`) and comprehensive test reporting (`run_tests_and_report.sh`).
+- Extensive unit tests for various modules and utilities, including:
+    - `Config` class
+    - `Jnap` initialization and URL/auth updates
+    - `ErrorResponse` and `ErrorMfaRequired` models
+    - `JNAPTransactionBuilder`
+    - `AirtimeFairnessAction`, `AutoOnboardingAction`, `BluetoothAction`, `DFSSAction`, `WebJNAPAction`
+    - `Base64Utils`, `UrlUtils`
+    - `HttpClient` (with retry logic), `CustomMultipartRequest`, `MobileClient`
+    - `LoggerHooks`, `AppLogger`
+- Added `mockito` as a dev dependency.
+- Added `@visibleForTesting` annotations to logger hooks for improved testability.
+
+### Changed
+- Improved error handling in `Jnap` for invalid base URL and path combinations.
+- Modified `JNAPTransactionBuilder` to ensure `_commands` is a mutable copy.
+- Broadened the type of HTTP client that can be used in `HttpClient` from `IOClient` to `BaseClient`.
+- Updated `jnap_test.dart` to include new unit tests and mark existing group definitions with `tags: 'manual'`.
+- Updated `core_test.dart` to include versioning tests for JNAP actions.
+- Updated `encrypt_test.dart` with more robust AES encryption/decryption tests.
+
+### Removed
+- Deprecated legacy JNAP action and service files (`better_action.dart`, `jnap_action.dart`, `jnap_action_value.dart`, `jnap_service_supported.dart`).
+
 # Changelog
 
 ## [1.0.3] - 2025-08-20

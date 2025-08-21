@@ -9,7 +9,7 @@ class JNAPTransactionBuilder {
     List<MapEntry<JNAPAction, Map<String, dynamic>>> commands = const [],
     this.overrides = const {},
     this.auth = false,
-  }) : _commands = commands;
+  }) : _commands = List.from(commands);
 
   List<MapEntry<JNAPAction, Map<String, dynamic>>> get commands =>
       _commands;

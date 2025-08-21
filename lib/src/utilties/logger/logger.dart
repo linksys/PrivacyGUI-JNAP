@@ -2,6 +2,7 @@
 
 import 'package:jnap/logger.dart';
 import 'package:logger/logger.dart';
+import 'package:meta/meta.dart';
 
 typedef LoggerHook = void Function(OutputEvent event);
 class LoggerHooks {
@@ -14,6 +15,14 @@ class LoggerHooks {
   static void removeHook(LoggerHook hook) {
     _hooks.remove(hook);
   }
+
+  @visibleForTesting
+  static void clearHooks() {
+    _hooks.clear();
+  }
+
+  @visibleForTesting
+  static List<LoggerHook> get hooks => _hooks;
 }
 /// A singleton logger class that provides a single instance of Logger throughout the app.
 class AppLogger {
@@ -59,14 +68,3 @@ class _CustomOutput extends LogOutput {
 
 // Global logger instance for easy access
 final logger = AppLogger.instance.logger;
-
-
-
-
-
-
-
-
-
-
-

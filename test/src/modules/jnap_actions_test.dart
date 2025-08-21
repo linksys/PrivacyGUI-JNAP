@@ -316,6 +316,9 @@ void main() {
     });
 
     group('Test Special Actions', () {
+      setUp(() {
+        JNAPServiceList.reset();
+      });
       test(
           'CorePnPSetAdminPassword should always return version 2 start from Core2',
           () {

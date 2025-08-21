@@ -19,7 +19,7 @@ class MyHttpOverrides extends HttpOverrides {
 void main() {
   HttpOverrides.global = MyHttpOverrides();
 
-  group('local JNAP', () {
+  group('local JNAP', tags: 'manual', () {
     test('test JNAP send without init auth', () async {
       Jnap.init(
         baseUrl: 'https://192.168.1.1',
@@ -97,7 +97,7 @@ void main() {
     });
   });
 
-  group('remote JNAP', () {
+  group('remote JNAP', tags: 'manual', () {
     test('test JNAP send', () async {
       const sessionId = 'FB2246D2-2429-4278-85C9-C5B1CD2E1D73';
       Jnap.init(
@@ -135,6 +135,80 @@ void main() {
           ],
         ),
       );
+    });
+  });
+
+  group('Jnap unit tests', () {
+    setUp(() {
+      // Reset config before each test
+      Jnap.init(baseUrl: '', path: '', extraHeaders: {});
+    });
+
+    group('init', () {
+      test('should set config values correctly', () {
+        Jnap.init(
+          baseUrl: 'http://example.com',
+          path: '/api',
+          extraHeaders: {'X-Test': 'true'},
+          auth: 'YWRtaW46cGFzc3dvcmQ=', // admin:password
+          authType: AuthType.basic,
+        );
+
+        expect(Config.baseUrl, 'http://example.com');
+        expect(Config.path, '/api');
+        expect(Config.extraHeaders, {'X-Test': 'true'});
+        expect(Config.auth, 'YWRtaW46cGFzc3dvcmQ=');
+        expect(Config.authType, AuthType.basic);
+      });
+
+      test('should throw exception for invalid url', () {
+        expect(
+            () => Jnap.init(
+                  baseUrl: 'invalid-url',
+                  path: '/api',
+                  extraHeaders: {},
+                ),
+            throwsException);
+      });
+
+      test('should throw exception for non-base64 basic auth', () {
+        expect(
+            () => Jnap.init(
+                  baseUrl: 'http://example.com',
+                  path: '/api',
+                  extraHeaders: {},
+                  auth: 'not-base64',
+                  authType: AuthType.basic,
+                ),
+            throwsException);
+      });
+    });
+
+    group('updateUrl', () {
+      test('should update url correctly', () {
+        Jnap.updateUrl(baseUrl: 'http://new-example.com', path: '/new-api');
+        expect(Config.baseUrl, 'http://new-example.com');
+        expect(Config.path, '/new-api');
+      });
+
+      test('should throw exception for invalid url', () {
+        Jnap.init(baseUrl: 'http://example.com', path: '/api', extraHeaders: {});
+        expect(() => Jnap.updateUrl(baseUrl: 'invalid-url'), throwsException);
+      });
+    });
+
+    group('updateAuth', () {
+      test('should update auth correctly', () {
+        Jnap.updateAuth(auth: 'bmV3LWF1dGg=', authType: AuthType.token); // new-auth
+        expect(Config.auth, 'bmV3LWF1dGg=');
+        expect(Config.authType, AuthType.token);
+      });
+
+      test('should throw exception for non-base64 basic auth', () {
+        expect(
+            () => Jnap.updateAuth(auth: 'not-base64', authType: AuthType.basic),
+            throwsException);
+      });
     });
   });
 }

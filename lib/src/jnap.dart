@@ -66,7 +66,10 @@ class Jnap {
     // verify baseUrl + path is valid url
     if (baseUrl.isNotEmpty && path.isNotEmpty) {
       try {
-        UrlUtils.isValidUrl(baseUrl + path);
+        final valid = UrlUtils.isValidUrl(baseUrl + path);
+        if (!valid) {
+          throw Exception('Invalid baseUrl + path');
+        }
       } catch (e) {
         throw Exception('Invalid baseUrl + path');
       }
@@ -84,7 +87,10 @@ class Jnap {
     final testPath = path ?? Config.path;
     if (testBaseUrl.isNotEmpty && testPath.isNotEmpty) {
       try {
-        UrlUtils.isValidUrl(testBaseUrl + testPath);
+        final isValid = UrlUtils.isValidUrl(testBaseUrl + testPath);
+        if (!isValid) {
+          throw Exception('Invalid baseUrl + path');
+        }
       } catch (e) {
         throw Exception('Invalid baseUrl + path');
       }
@@ -146,7 +152,8 @@ class Jnap {
         logger.d('[Jnap.scheulded] retry <${retryAttempt + 1}> times');
       },
       onProgress: (retryAttempt, result, error) {
-        logger.d('[Jnap.scheulded] Progess <${retryAttempt + 1}/$maxRetry> times');
+        logger.d(
+            '[Jnap.scheulded] Progess <${retryAttempt + 1}/$maxRetry> times');
       },
     );
   }

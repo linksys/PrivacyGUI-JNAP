@@ -6,7 +6,6 @@ import 'package:async/async.dart';
 
 import 'package:http/http.dart' as http;
 import 'package:http/http.dart';
-import 'package:http/io_client.dart';
 import 'package:jnap/http.dart';
 import 'package:jnap/logger.dart';
 import 'client/get_client.dart'
@@ -18,7 +17,7 @@ import 'client/get_client.dart'
 class HttpClient extends http.BaseClient {
 
   HttpClient({
-    IOClient? client,
+    BaseClient? client,
     FutureOr<bool> Function(http.BaseResponse) when = _defaultWhen,
     FutureOr<bool> Function(Object, StackTrace) whenError = _defaultWhenError,
     Duration Function(int retryCount) delay = _defaultDelay,
