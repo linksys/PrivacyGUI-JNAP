@@ -1,6 +1,9 @@
 import 'dart:io';
 
 import 'package:jnap/jnap.dart';
+import 'package:jnap/src/cache/config.dart';
+import 'package:jnap/src/cache/data_cache_manager.dart';
+import 'package:jnap/src/utilties/retry_strategy/retry.dart';
 import 'package:test/test.dart';
 
 class MyHttpOverrides extends HttpOverrides {
@@ -36,6 +39,25 @@ void main() {
         auth: 'YWRtaW46N3FXMTlzdDVtQA==',
         authType: AuthType.basic,
       );
+      await Jnap.instance.send(action: GetDeviceInfo.instance);
+    });
+
+    test('test JNAP send with cache', () async {
+      CacheConfig.expiration = 2000 * 10;
+      Jnap.init(
+        baseUrl: 'https://192.168.1.1',
+        path: '/JNAP/',
+        extraHeaders: {},
+        auth: 'YWRtaW46N3FXMTlzdDVtQA==',
+        authType: AuthType.basic,
+      );
+      // 1st send
+      await Jnap.instance.send(action: GetDeviceInfo.instance);
+      // 2nd send, should use cache
+      await Jnap.instance.send(action: GetDeviceInfo.instance);
+      // 3rd wait for cache expired
+      await Future.delayed(const Duration(seconds: 10));
+      // 4th send, should not use cache
       await Jnap.instance.send(action: GetDeviceInfo.instance);
     });
 
@@ -94,6 +116,78 @@ void main() {
       expect(results.length, desiredExecutions);
       expect(results.every((r) => r is JNAPSuccess), isTrue);
       expect(executionCount, desiredExecutions);
+    });
+
+    test('test JNAP scheulded onComplete is called when condition is met', () async {
+      Jnap.init(
+        baseUrl: 'https://192.168.1.1',
+        path: '/JNAP/',
+        extraHeaders: {},
+        auth: 'YWRtaW46N3FXMTlzdDVtQA==',
+        authType: AuthType.basic,
+      );
+
+      int executionCount = 0;
+      const desiredExecutions = 2;
+      bool onCompleteCalled = false;
+      JNAPResult? onCompleteResult;
+
+      final stream = Jnap.instance.scheulded(
+        action: GetDeviceInfo.instance,
+        maxRetry: 5,
+        firstDelayInMilliSec: 100,
+        retryDelayInMilliSec: 100,
+        condition: (result) {
+          executionCount++;
+          return executionCount < desiredExecutions;
+        },
+        onComplete: (result, error) {
+          onCompleteCalled = true;
+          onCompleteResult = result;
+        },
+      );
+
+      final results = await stream.toList();
+
+      expect(results.length, desiredExecutions);
+      expect(onCompleteCalled, isTrue);
+      expect(onCompleteResult, isA<JNAPSuccess>());
+      expect(onCompleteResult, results.last);
+    });
+
+    test('test JNAP scheulded onComplete is called on error', () async {
+      Jnap.init(
+        baseUrl: 'https://192.168.1.1',
+        path: '/JNAP/',
+        extraHeaders: {},
+        auth: 'd3Jvbmc6d3Jvbmc=', // wrong:wrong
+        authType: AuthType.basic,
+      );
+
+      bool onCompleteCalled = false;
+      Object? onCompleteError;
+
+      final stream = Jnap.instance.scheulded(
+        action: GetDevices.instance,
+        maxRetry: 1,
+        firstDelayInMilliSec: 100,
+        retryDelayInMilliSec: 100,
+        onComplete: (result, error) {
+          onCompleteCalled = true;
+          onCompleteError = error;
+        },
+      );
+
+      await stream.toList().catchError((e) {
+        // Catch error to prevent test failure
+        return <JNAPResult>[];
+      });
+
+      expect(onCompleteCalled, isTrue);
+      expect(onCompleteError, isNotNull);
+      expect(onCompleteError, isA<MaxRetriesExceededException>());
+      final lastResult = (onCompleteError as MaxRetriesExceededException).lastResult;
+      expect(lastResult, isA<JNAPError>());
     });
   });
 
@@ -192,14 +286,16 @@ void main() {
       });
 
       test('should throw exception for invalid url', () {
-        Jnap.init(baseUrl: 'http://example.com', path: '/api', extraHeaders: {});
+        Jnap.init(
+            baseUrl: 'http://example.com', path: '/api', extraHeaders: {});
         expect(() => Jnap.updateUrl(baseUrl: 'invalid-url'), throwsException);
       });
     });
 
     group('updateAuth', () {
       test('should update auth correctly', () {
-        Jnap.updateAuth(auth: 'bmV3LWF1dGg=', authType: AuthType.token); // new-auth
+        Jnap.updateAuth(
+            auth: 'bmV3LWF1dGg=', authType: AuthType.token); // new-auth
         expect(Config.auth, 'bmV3LWF1dGg=');
         expect(Config.authType, AuthType.token);
       });

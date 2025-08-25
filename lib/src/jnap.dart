@@ -1,17 +1,20 @@
+import 'dart:async';
+import 'dart:collection';
 import 'dart:convert';
 import 'dart:io';
 
 import 'package:collection/collection.dart';
 import 'package:equatable/equatable.dart';
 import 'package:http/http.dart';
-import 'package:jnap/http.dart';
 import 'package:jnap/jnap.dart';
 import 'package:jnap/logger.dart';
+import 'package:jnap/src/cache/data_cache_manager.dart';
+import 'package:jnap/src/utilties/http/http_client.dart';
 import 'package:jnap/src/utilties/retry_strategy/retry.dart';
 import 'package:jnap/utils.dart';
+import 'package:meta/meta.dart'; // Added import for @visibleForTesting
 
 /// JNAPConfigOverrides is used to override the JNAP configuration
-
 class JNAPConfigOverrides extends Equatable {
   final String? baseUrl;
   final String? path;
@@ -20,6 +23,8 @@ class JNAPConfigOverrides extends Equatable {
   final AuthType? authType;
   final int? timeoutMs;
   final int? retries;
+  final bool forceRemote;
+  final bool cached;
 
   JNAPConfigOverrides({
     this.baseUrl,
@@ -29,6 +34,8 @@ class JNAPConfigOverrides extends Equatable {
     this.authType,
     this.timeoutMs,
     this.retries,
+    this.forceRemote = false,
+    this.cached = true,
   });
 
   @override
@@ -40,6 +47,8 @@ class JNAPConfigOverrides extends Equatable {
         authType,
         timeoutMs,
         retries,
+        forceRemote,
+        cached,
       ];
 }
 
@@ -133,6 +142,7 @@ class Jnap {
     bool Function(JNAPResult)? condition,
     int? requestTimeoutOverride,
     bool auth = false,
+    void Function(JNAPResult? result, Object? error)? onComplete,
   }) {
     final strategy = FixedRetryStrategy(
       maxRetries: maxRetry,
@@ -155,6 +165,10 @@ class Jnap {
         logger.d(
             '[Jnap.scheulded] Progess <${retryAttempt + 1}/$maxRetry> times');
       },
+      onComplete: (result, error) {
+        logger.d('[Jnap.scheulded] onComplete');
+        onComplete?.call(result, error);
+      },
     );
   }
 
@@ -163,33 +177,21 @@ class Jnap {
     Map<String, dynamic> data = const {},
     Map<String, String> headers = const {},
     JNAPConfigOverrides? overrides,
+    HttpClient? httpClient,
   }) {
-    final baseUrl = overrides?.baseUrl ?? Config.baseUrl;
-    final path = overrides?.path ?? Config.path;
-    final extraHeaders = overrides?.extraHeaders ?? Config.extraHeaders;
-    final auth = overrides?.auth ?? Config.auth;
-    final authType = overrides?.authType ?? Config.authType;
-    final timeoutMs = overrides?.timeoutMs ?? 10000;
-    final retries = overrides?.retries ?? 1;
-
-    final HttpClient client = HttpClient();
-    final url = baseUrl + path;
-    final Map<String, String> header = {
-      kJNAPAction: action.command,
-      if (authType == AuthType.basic) kJNAPAuthorization: 'Basic $auth',
-      if (authType == AuthType.token)
-        HttpHeaders.authorizationHeader:
-            'LinksysUserAuth session_token="$auth"',
-      HttpHeaders.contentTypeHeader: ContentType.json.value,
-    }
-      ..addAll(headers)
-      ..addAll(extraHeaders);
-    client.timeoutMs = timeoutMs;
-    client.retries = retries;
-    return client
-        .post(Uri.parse(url), body: jsonEncode(data), headers: header)
-        .then((response) {
-      return _handleResponse(response) as JNAPSuccess;
+    final command = JNAPCommand(
+      action: action.command,
+      data: jsonEncode(data),
+      headers: headers,
+      overrides: overrides,
+      httpClient: httpClient,
+    );
+    // TODO: handle side effect
+    return CommandQueue().enqueue(command).then((result) {
+      if (result is JNAPSuccess) {
+        return result;
+      }
+      throw result;
     });
   }
 
@@ -197,29 +199,8 @@ class Jnap {
     required JNAPTransactionBuilder transactionBuilder,
     Map<String, String> headers = const {},
     JNAPConfigOverrides? overrides,
+    HttpClient? httpClient,
   }) {
-    final baseUrl = overrides?.baseUrl ?? Config.baseUrl;
-    final path = overrides?.path ?? Config.path;
-    final extraHeaders = overrides?.extraHeaders ?? Config.extraHeaders;
-    final auth = overrides?.auth ?? Config.auth;
-    final authType = overrides?.authType ?? Config.authType;
-    final timeoutMs = overrides?.timeoutMs ?? 10000;
-    final retries = overrides?.retries ?? 1;
-
-    final HttpClient client = HttpClient();
-    final url = baseUrl + path;
-    final Map<String, String> header = {
-      kJNAPAction: Transaction.instance.command,
-      if (authType == AuthType.basic) kJNAPAuthorization: 'Basic $auth',
-      if (authType == AuthType.token)
-        HttpHeaders.authorizationHeader:
-            'LinksysUserAuth session_token="$auth"',
-      HttpHeaders.contentTypeHeader: ContentType.json.value,
-    }
-      ..addAll(headers)
-      ..addAll(extraHeaders);
-    client.timeoutMs = timeoutMs;
-    client.retries = retries;
     final payload = transactionBuilder.commands
         .map((entry) => {
               'action':
@@ -227,10 +208,16 @@ class Jnap {
               'request': entry.value
             })
         .toList();
-    return client
-        .post(Uri.parse(url), body: json.encode(payload), headers: header)
-        .then((response) {
-      final result = _handleResponse(response);
+
+    final command = JNAPCommand(
+      action: Transaction.instance.command,
+      headers: headers,
+      data: jsonEncode(payload),
+      overrides: overrides,
+      httpClient: httpClient,
+    );
+    // TODO: handle side effect
+    return CommandQueue().enqueue(command).then((result) {
       if (result is JNAPTransactionSuccess) {
         return JNAPTransactionSuccessWrap(
             result: result.result,
@@ -243,6 +230,137 @@ class Jnap {
       return JNAPTransactionSuccessWrap(result: result.result, sideEffects: []);
     });
   }
+}
+
+class JNAPCommand {
+  final Completer<JNAPResult> _completer = Completer();
+
+  final String action;
+  final String? data;
+  final Map<String, String> headers;
+  final JNAPConfigOverrides? overrides;
+  final HttpClient _httpClient;
+  final DataCacheManager _cacheManager;
+
+  JNAPCommand({
+    required this.action,
+    this.data,
+    this.headers = const {},
+    this.overrides,
+    HttpClient? httpClient,
+    DataCacheManager? cacheManager,
+  })  : _httpClient = httpClient ?? HttpClient(),
+        _cacheManager = cacheManager ?? DataCacheManager();
+
+  Future<JNAPResult> execute() async {
+    final cachedResult = _checkCache();
+    if (cachedResult != null) {
+      logger.d('[JNAPCommand] Response from cache for action: $action');
+      return cachedResult;
+    }
+
+    final baseUrl = overrides?.baseUrl ?? Config.baseUrl;
+    final path = overrides?.path ?? Config.path;
+    final extraHeaders = overrides?.extraHeaders ?? Config.extraHeaders;
+    final auth = overrides?.auth ?? Config.auth;
+    final authType = overrides?.authType ?? Config.authType;
+    final timeoutMs = overrides?.timeoutMs ?? 10000;
+    final retries = overrides?.retries ?? 1;
+
+    final url = baseUrl + path;
+    final Map<String, String> header = {
+      kJNAPAction: action,
+      if (auth.isNotEmpty)
+        HttpHeaders.authorizationHeader:
+            authType == AuthType.basic ? 'Basic $auth' : 'Bearer $auth',
+      HttpHeaders.contentTypeHeader: ContentType.json.value,
+    }
+      ..addAll(headers)
+      ..addAll(extraHeaders);
+    _httpClient.timeoutMs = timeoutMs;
+    _httpClient.retries = retries;
+    return _httpClient
+        .post(Uri.parse(url), body: data, headers: header)
+        .then((response) async {
+      final result = _handleResponse(response);
+      logger.d(
+          '[JNAPCommand] Response from remote for action: $action, cached: ${overrides?.cached ?? true}');
+      // Update to cache
+      if (overrides?.cached ?? true) {
+        logger.d(
+            '[JNAPCommand] save JNAP<${action}> data to <${_cacheManager.lastSerialNumber}>');
+        await _cacheManager.handleJNAPCached(result.toMap(), action);
+      }
+      return result;
+    });
+  }
+
+  bool isComplete() => _completer.isCompleted;
+
+  complete(JNAPResult result) => _completer.complete(result);
+
+  completeError(Object? error, StackTrace stackTrace) =>
+      _completer.completeError(error ?? UnsupportedError, stackTrace);
+
+  Future<JNAPResult> wait() => _completer.future;
+
+  bool isTransaction() => action == Transaction.instance.command;
+
+  JNAPResult? _checkCache() {
+    var actions = [action];
+    if (isTransaction()) {
+      final jsonData = json.decode(data!) as List<Map<String, dynamic>>;
+      actions = jsonData.map((e) => e['action'] as String? ?? '').toList()
+        ..removeWhere((e) => e.isEmpty);
+    }
+
+    if (_checkCacheValidation(actions)) {
+      if (isTransaction()) {
+        final results = [];
+        for (var action in actions) {
+          results.add(_cacheManager.data[action]["data"]);
+        }
+        final dataMap = {
+          keyJnapResult: jnapResultOk,
+          keyJnapResponses: results
+        };
+        logger.d(
+            '[CacheManager] responsed with local cache transaction data: ${_cacheManager.lastSerialNumber}dataMap');
+        final result = JNAPResult.fromMap(dataMap);
+        if (result is JNAPTransactionSuccess) {
+          return result;
+        } else {
+          throw (result as JNAPError);
+        }
+      } else {
+        logger.d('[CacheManager] responsed with local cache data: $action');
+        final result = JNAPResult.fromMap(_cacheManager.data[action]["data"]);
+        if (result is JNAPSuccess) {
+          return result;
+        }
+        throw result;
+      }
+    }
+    return null;
+  }
+
+  /// Check if the cache is valid
+  ///
+  /// return true if the cache is valid, false otherwise
+  bool _checkCacheValidation(List<String> actions) {
+    final result = !(overrides?.forceRemote ?? false) &&
+        !_checkNonExistActionAndExpiration(actions);
+    return result;
+  }
+
+  /// Check if the cache is valid
+  ///
+  /// return true if the cache is invalid, false otherwise
+  bool _checkNonExistActionAndExpiration(List<String> actions) {
+    final result =
+        actions.any((element) => !_cacheManager.checkCacheDataValid(element));
+    return result;
+  }
 
   JNAPResult _handleResponse(Response response) {
     if (response.statusCode >= 400) {
@@ -250,5 +368,82 @@ class Jnap {
           response.statusCode, jsonDecode(response.body));
     }
     return JNAPResult.fromMap(jsonDecode(response.body));
+  }
+}
+
+class CommandQueue {
+  static const int maxEmptyRetry = 60;
+  static CommandQueue? _singleton;
+  final Queue<JNAPCommand> _queue = Queue();
+  @visibleForTesting
+  Queue<JNAPCommand> get queue => _queue;
+  bool isPaused = false;
+  final dataCacheManger = DataCacheManager();
+
+  @visibleForTesting
+  static void reset() {
+    _singleton = null;
+  }
+
+  set pause(bool pause) {
+    logger.d('Command Queue:: pause: $isPaused');
+    isPaused = pause;
+  }
+
+  Timer? timer;
+
+  int emptyRetry = 0;
+
+  factory CommandQueue() {
+    _singleton ??= CommandQueue._();
+    return _singleton!;
+  }
+
+  CommandQueue._();
+
+  _consumeCommand(Timer timer) {
+    if (isPaused) {
+      return;
+    }
+    // Consume the command
+    if (_queue.isEmpty) {
+      emptyRetry++;
+      _stopConsume();
+      return;
+    }
+
+    final command = _queue.removeFirst();
+    logger.d(
+        'Command Queue <${_queue.length}>:: handle command: ${command.runtimeType}, ${command.action}');
+    command.execute().then((value) => command.complete(value)).onError(
+        (error, stackTrace) => command.completeError(error, stackTrace));
+    emptyRetry = 0;
+  }
+
+  Future<JNAPResult> enqueue(JNAPCommand command) {
+    if (!(timer?.isActive ?? false)) {
+      _startConsume();
+    }
+    _queue.add(command);
+    logger.d(
+        'Command Queue:: enqueue command ${command.runtimeType}, ${command.action}');
+    return command.wait();
+  }
+
+  _startConsume() {
+    if (timer?.isActive ?? false) {
+      return;
+    }
+    emptyRetry = 0;
+    timer = Timer.periodic(const Duration(milliseconds: 50), _consumeCommand);
+    logger.d('Command Queue:: start to consume commands!');
+  }
+
+  _stopConsume() {
+    if ((timer?.isActive ?? false) && emptyRetry >= maxEmptyRetry) {
+      logger.d('Command Queue:: exceed to empty retry, stop!');
+      timer?.cancel();
+      timer = null;
+    }
   }
 }

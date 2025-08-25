@@ -1,6 +1,6 @@
 name: jnap
 description: A library for handling JNAP actions and services.
-version: 1.0.4
+version: 1.0.5
 publish_to: none
 
 environment:

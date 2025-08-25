@@ -303,5 +303,197 @@ void main() {
         ]),
       );
     });
+
+    test(
+        'MaxRetriesExceededException from executeStream should contain last result when failure is from shouldRetry',
+        () async {
+      final strategy = FixedRetryStrategy(maxRetries: 1);
+      Object? exception;
+
+      await strategy.executeStream(
+        () async => 'a result',
+        shouldRetry: (result) => true, // always retry
+      ).drain().catchError((e) {
+        exception = e;
+      });
+
+      expect(exception, isA<MaxRetriesExceededException>());
+      expect((exception as MaxRetriesExceededException).lastResult, 'a result');
+    });
+
+    test(
+        'MaxRetriesExceededException from executeStream should contain last error when failure is from operation',
+        () async {
+      final strategy = FixedRetryStrategy(maxRetries: 1);
+      Object? exception;
+      final failure = Exception('Permanent failure');
+
+      await strategy.executeStream(
+        () async => throw failure,
+      ).drain().catchError((e) {
+        exception = e;
+      });
+
+      expect(exception, isA<MaxRetriesExceededException>());
+      expect((exception as MaxRetriesExceededException).lastResult, failure);
+    });
+  });
+  
+  group('onProgress callback', () {
+    test('should be called for each attempt in execute', () async {
+      final strategy = FixedRetryStrategy(maxRetries: 2);
+      final progress = <(int, dynamic, dynamic)>[];
+
+      try {
+        await strategy.execute(
+          () async {
+            if (progress.length < 2) {
+              throw Exception('Failure');
+            }
+            return 'Success';
+          },
+          onProgress: (attempt, result, error) {
+            progress.add((attempt, result, error));
+          },
+        );
+      } catch (_) {}
+
+      expect(progress.length, 3);
+      expect(progress[0].$1, 0); // attempt
+      expect(progress[0].$3, isA<Exception>()); // error
+      expect(progress[1].$1, 1); // attempt
+      expect(progress[1].$3, isA<Exception>()); // error
+      expect(progress[2].$1, 2); // attempt
+      expect(progress[2].$2, 'Success'); // result
+    });
+
+    test('should be called for each attempt in executeStream', () async {
+      final strategy = FixedRetryStrategy(maxRetries: 2);
+      final progress = <(int, dynamic, dynamic)>[];
+
+      await strategy
+          .executeStream(
+            () async {
+              if (progress.length < 2) {
+                throw Exception('Failure');
+              }
+              return 'Success';
+            },
+            onProgress: (attempt, result, error) {
+              progress.add((attempt, result, error));
+            },
+          )
+          .drain()
+          .catchError((_) {});
+
+      expect(progress.length, 3);
+      expect(progress[0].$1, 0); // attempt
+      expect(progress[0].$3, isA<Exception>()); // error
+      expect(progress[1].$1, 1); // attempt
+      expect(progress[1].$3, isA<Exception>()); // error
+      expect(progress[2].$1, 2); // attempt
+      expect(progress[2].$2, 'Success'); // result
+    });
+  });
+
+  group('onComplete callback', () {
+    test('should be called on successful completion of executeStream', () async {
+      final strategy = FixedRetryStrategy(maxRetries: 1);
+      dynamic onCompleteResult;
+      dynamic onCompleteError;
+
+      await strategy.executeStream(
+        () async => 'Success',
+        onComplete: (result, error) {
+          onCompleteResult = result;
+          onCompleteError = error;
+        },
+      ).drain();
+
+      expect(onCompleteResult, 'Success');
+      expect(onCompleteError, isNull);
+    });
+
+    test('should be called on error completion of executeStream', () async {
+      final strategy = FixedRetryStrategy(maxRetries: 1);
+      dynamic onCompleteResult;
+      dynamic onCompleteError;
+
+      await strategy.executeStream(
+        () async => throw Exception('Failure'),
+        onComplete: (result, error) {
+          onCompleteResult = result;
+          onCompleteError = error;
+        },
+      ).drain().catchError((_) {});
+
+      expect(onCompleteResult, isNull);
+      expect(onCompleteError, isA<MaxRetriesExceededException>());
+    });
+
+    test('should be called last after all other callbacks', () async {
+      final strategy = FixedRetryStrategy(maxRetries: 2);
+      final events = <String>[];
+
+      await strategy.executeStream(
+        () async {
+          if (events.where((e) => e.startsWith('onProgress')).length < 2) {
+            throw Exception('Failure');
+          }
+          return 'Success';
+        },
+        onProgress: (attempt, result, error) {
+          events.add('onProgress');
+        },
+        onRetry: (attempt) {
+          events.add('onRetry');
+        },
+        onComplete: (result, error) {
+          events.add('onComplete');
+        },
+      ).drain().catchError((_) {});
+
+      expect(events.last, 'onComplete');
+      expect(events, [
+        'onProgress',
+        'onRetry',
+        'onProgress',
+        'onRetry',
+        'onProgress',
+        'onComplete'
+      ]);
+    });
+
+    test('onComplete should be the last call if shouldRetry returns false', () async {
+      final strategy = FixedRetryStrategy(maxRetries: 5);
+      final events = <String>[];
+      int attempt = 0;
+
+      await strategy.executeStream(
+        () async {
+          return attempt++;
+        },
+        shouldRetry: (result) => result < 2, // Stop when result is 2
+        onProgress: (attempt, result, error) {
+          events.add('onProgress');
+        },
+        onRetry: (attempt) {
+          events.add('onRetry');
+        },
+        onComplete: (result, error) {
+          events.add('onComplete');
+        },
+      ).drain();
+
+      expect(events.last, 'onComplete');
+      expect(events, [
+        'onProgress', // attempt 0, result 0, shouldRetry true
+        'onRetry',
+        'onProgress', // attempt 1, result 1, shouldRetry true
+        'onRetry',
+        'onProgress', // attempt 2, result 2, shouldRetry false
+        'onComplete',
+      ]);
+    });
   });
 }

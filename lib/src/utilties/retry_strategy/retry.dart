@@ -94,63 +94,72 @@ abstract class RetryStrategy {
     bool Function(T result)? shouldRetry,
     Function(int retryAttempt)? onRetry,
     Function(int attempt, T? result, Object? error)? onProgress,
+    Function(T? result, Object? error)? onComplete,
   }) {
     final controller = StreamController<T>();
     final startTime = DateTime.now();
 
+    void _closeStream([T? result, Object? error]) {
+      if (error != null) {
+        controller.addError(error);
+      }
+      onComplete?.call(result, error);
+      controller.close();
+    }
+
+    Future<void> _retry(int attempt) async {
+      final delay = calculateDelay(attempt);
+      logger.i(
+          'Attempt ${attempt + 1} requires another attempt. Retrying in ${delay.inSeconds} seconds...');
+      onRetry?.call(attempt);
+      await Future.delayed(delay);
+    }
+
     void start() async {
       int retryAttempt = 0;
       Object? lastError;
+      T? lastResult;
 
       while (maxRetries == -1 || retryAttempt <= maxRetries) {
         if (controller.isClosed) return;
 
-        // Check for max execution time
         if (maxExecutionTime != null &&
             DateTime.now().difference(startTime).inSeconds >
                 maxExecutionTime!.inSeconds) {
           logger.e('Max execution time reached. Giving up.');
           final error = MaxRetriesExceededException(
-              lastResult: lastError ?? 'Max execution time exceeded');
+              lastResult: lastResult ?? lastError ?? 'Max execution time exceeded');
           onProgress?.call(retryAttempt, null, error);
-          controller.addError(error);
-          controller.close();
+          _closeStream(null, error);
           return;
         }
 
         try {
           final result = await operation();
+          lastResult = result;
+          lastError = null;
           onProgress?.call(retryAttempt, result, null);
           controller.add(result);
 
           if (!(shouldRetry?.call(result) ?? false)) {
-            // Success and no need to retry, we are done.
-            controller.close();
+            _closeStream(result, null); // No error, just complete.
             return;
           }
-          // If shouldRetry is true, we loop again after a delay.
         } catch (e) {
           lastError = e;
+          lastResult = null;
           onProgress?.call(retryAttempt, null, e);
-          // Operation failed, we loop again after a delay.
         }
 
-        // If we are here, it means we need to retry.
-        // Check if we have exceeded max retries *before* the next attempt.
         if (maxRetries != -1 && retryAttempt == maxRetries) {
           logger.e('Max retry attempts reached. Giving up.');
           final error = MaxRetriesExceededException(
-              lastResult: lastError ?? 'Max retries exceeded');
-          controller.addError(error);
-          controller.close();
+              lastResult: lastResult ?? lastError ?? 'Max retries exceeded');
+          _closeStream(null, error);
           return;
         }
 
-        final delay = calculateDelay(retryAttempt);
-        logger.i(
-            'Attempt ${retryAttempt + 1} requires another attempt. Retrying in ${delay.inSeconds} seconds...');
-        onRetry?.call(retryAttempt);
-        await Future.delayed(delay);
+        await _retry(retryAttempt);
         retryAttempt++;
       }
     }
@@ -158,6 +167,7 @@ abstract class RetryStrategy {
     start();
     return controller.stream;
   }
+
 }
 
 /// Fixed delay retry strategy by initial delay
