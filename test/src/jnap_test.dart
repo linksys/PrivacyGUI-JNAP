@@ -97,7 +97,7 @@ void main() {
       int executionCount = 0;
       const desiredExecutions = 3;
 
-      final stream = Jnap.instance.scheulded(
+      final stream = Jnap.instance.scheduled(
         action: GetDeviceInfo.instance,
         maxRetry: 5,
         firstDelayInMilliSec: 100, // Use short delays for the test
@@ -118,7 +118,8 @@ void main() {
       expect(executionCount, desiredExecutions);
     });
 
-    test('test JNAP scheulded onComplete is called when condition is met', () async {
+    test('test JNAP scheulded onComplete is called when condition is met',
+        () async {
       Jnap.init(
         baseUrl: 'https://192.168.1.1',
         path: '/JNAP/',
@@ -132,7 +133,7 @@ void main() {
       bool onCompleteCalled = false;
       JNAPResult? onCompleteResult;
 
-      final stream = Jnap.instance.scheulded(
+      final stream = Jnap.instance.scheduled(
         action: GetDeviceInfo.instance,
         maxRetry: 5,
         firstDelayInMilliSec: 100,
@@ -167,7 +168,7 @@ void main() {
       bool onCompleteCalled = false;
       Object? onCompleteError;
 
-      final stream = Jnap.instance.scheulded(
+      final stream = Jnap.instance.scheduled(
         action: GetDevices.instance,
         maxRetry: 1,
         firstDelayInMilliSec: 100,
@@ -186,7 +187,8 @@ void main() {
       expect(onCompleteCalled, isTrue);
       expect(onCompleteError, isNotNull);
       expect(onCompleteError, isA<MaxRetriesExceededException>());
-      final lastResult = (onCompleteError as MaxRetriesExceededException).lastResult;
+      final lastResult =
+          (onCompleteError as MaxRetriesExceededException).lastResult;
       expect(lastResult, isA<JNAPError>());
     });
   });

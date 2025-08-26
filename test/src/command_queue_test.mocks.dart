@@ -11,7 +11,6 @@ import 'package:http/http.dart' as _i2;
 import 'package:jnap/http.dart' as _i3;
 import 'package:jnap/src/cache/cache_manager_base.dart' as _i11;
 import 'package:jnap/src/config.dart' as _i8;
-import 'package:jnap/src/utilties/base64.dart' as _i10;
 import 'package:jnap/src/utilties/url.dart' as _i9;
 import 'package:mockito/mockito.dart' as _i1;
 import 'package:mockito/src/dummies.dart' as _i6;
@@ -382,15 +381,6 @@ class MockConfig extends _i1.Mock implements _i8.Config {
 /// See the documentation for Mockito's code generation for more information.
 class MockUrlUtils extends _i1.Mock implements _i9.UrlUtils {
   MockUrlUtils() {
-    _i1.throwOnMissingStub(this);
-  }
-}
-
-/// A class which mocks [Base64Utils].
-///
-/// See the documentation for Mockito's code generation for more information.
-class MockBase64Utils extends _i1.Mock implements _i10.Base64Utils {
-  MockBase64Utils() {
     _i1.throwOnMissingStub(this);
   }
 }

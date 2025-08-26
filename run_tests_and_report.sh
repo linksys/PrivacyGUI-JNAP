@@ -3,9 +3,11 @@
 # Exit immediately if a command exits with a non-zero status.
 set -e
 
-REPORT_JSON="report.json"
-JUNIT_XML="junit_report.xml"
-HTML_REPORT="test_report.html"
+REPORT_JSON="build/results/report.json"
+JUNIT_XML="build/results/junit_report.xml"
+HTML_REPORT="build/results/test_report.html"
+
+mkdir -p build/results
 
 echo "Step 1: Running Flutter tests and generating JSON report..."
 # Run tests and allow failures, redirecting output to JSON file

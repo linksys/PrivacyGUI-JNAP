@@ -1,3 +1,34 @@
+## [1.0.6] - 2025-08-26
+
+### Added
+- **Utilities**:
+  - `BenchMarkLogger` for performance monitoring.
+  - `StringExt` and `MapExt` extensions for various data manipulations, including `isBase64`, `capitalize`, `kebab`, `getValueByPath`, etc.
+- **Device Icon Logic**:
+  - Comprehensive rules and helpers (`node_icon_rules`, `node_icon_rules_helper`) to determine device icons from model information.
+  - `IconDeviceCategory` enum to standardize device categories.
+- **Node Model Logic**:
+  - `node_model` and `node_model_map` to identify device characteristics like `isMeshRouter`, `isCognitiveMesh`, etc.
+- **WiFi Utility**:
+  - `getWifiSignalLevel` function to determine signal strength level (e.g., excellent, good, poor).
+- **Testing**:
+  - Added extensive unit tests for all new utilities and logic (`bench_mark_test.dart`, `crypto_test.dart`, `extension_test.dart`, `node_icon_rules_test.dart`, `node_model_test.dart`, `wifi_test.dart`).
+
+### Changed
+- **Build Scripts**: Updated `run_generate_coverage.sh` and `run_tests_and_report.sh` to output results to a standardized `build/results` directory.
+
+### Fixed
+- **JNAP**:
+  - Corrected a typo in `Jnap.dart` from `scheulded` to `scheduled`.
+- **Utilities**:
+  - Fixed bugs in `getValueByPath` and `isBase64` extension methods to handle edge cases correctly.
+  - Corrected logic in `node_icon_rules_helper` and `wifi` utilities based on new test findings.
+- **Tests**:
+  - Corrected invalid hash values in `crypto_test.dart`.
+
+### Removed
+- **`Base64Utils`**: Removed the standalone `Base64Utils` class in favor of the `isBase64` string extension.
+
 ## [1.0.5] - 2025-08-25
 
 ### Added

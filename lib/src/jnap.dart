@@ -9,6 +9,7 @@ import 'package:http/http.dart';
 import 'package:jnap/jnap.dart';
 import 'package:jnap/logger.dart';
 import 'package:jnap/src/cache/data_cache_manager.dart';
+import 'package:jnap/src/utilties/extension.dart';
 import 'package:jnap/src/utilties/http/http_client.dart';
 import 'package:jnap/src/utilties/retry_strategy/retry.dart';
 import 'package:jnap/utils.dart';
@@ -125,7 +126,7 @@ class Jnap {
   static void _checkBasicAuthEncoded(
       {required String auth, required AuthType authType}) {
     if (authType == AuthType.basic) {
-      if (!Base64Utils.isBase64Encoded(auth)) {
+      if (!auth.isBase64()) {
         throw Exception('Basic auth should be base64 encoded');
       }
     }

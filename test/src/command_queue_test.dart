@@ -18,7 +18,6 @@ import 'command_queue_test.mocks.dart';
   HttpClient,
   Config,
   UrlUtils,
-  Base64Utils,
   Response,
 ])
 void main() {
