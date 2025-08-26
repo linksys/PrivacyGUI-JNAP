@@ -1,3 +1,17 @@
+## [1.0.5] - 2025-08-25
+
+### Added
+- **Caching Mechanism:** Implemented a caching layer for JNAP responses to improve performance and reduce network traffic.
+  - Caches data based on device serial number.
+  - Supports both mobile and web platforms with specific implementations.
+  - Configurable cache expiration.
+- **Command Queue:** Introduced a command queue to process JNAP requests sequentially, preventing race conditions and simplifying asynchronous operations.
+- **Unit Tests:** Added comprehensive unit tests for the new caching and command queue functionalities.
+
+### Changed
+- **JNAP Execution:** Refactored the core JNAP request handling to use the new command queue and `JNAPCommand` objects.
+- **Retry Strategy:** Enhanced the `RetryStrategy` with an `onComplete` callback to provide better feedback on the final status of a retryable operation.
+
 ## [1.0.4] - 2025-08-21
 
 ### Added
