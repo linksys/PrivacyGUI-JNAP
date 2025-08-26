@@ -131,7 +131,7 @@ class Jnap {
     }
   }
 
-  Stream<JNAPResult> scheulded({
+  Stream<JNAPResult> scheduled({
     required JNAPAction action,
     Map<String, dynamic> data = const {},
     Map<String, String> headers = const {},
