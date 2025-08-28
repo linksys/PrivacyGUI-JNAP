@@ -1,3 +1,24 @@
+## [1.0.7] - 2025-08-28
+
+### Added
+- **JNAP Data Models**:
+  - Added new data models for various JNAP services, including `AdvancedRoutingRule`, `ALGSettings`, `AutoConfigurationSettings`, `BackHaulInfo`, `DDNSSettings`, `Device`, `DeviceInfo`, `DhcpLease`, `DMZSettings`, `DynDNSSettings`, `RouterEthernetPortConnections`, `ExpressForwardingSettings`, `FirewallSettings`, `FirmwareUpdateSettings`, `FirmwareUpdateStatus`, `NodesFirmwareUpdateStatus`, `GetPortConnectionStatus`, `GetRoutingSettings`, `GuestRadioSettings`, `HealthCheckResult`, `IPv6AutomaticSettings`, `IPv6FirewallRule`, `GetIPv6Settings`, `RouterLANSettings`, `Layer2Connection`, `MACAddressCloneSettings`, `MACFilterSettings`, `ManagementSettings`, `NoIPSettings`, `NodeLightSettings`, `NodeWirelessConnections`, `PingStatus`, `PortRangeForwardingRule`, `PortRangeTriggeringRule`, `PowerTableSettings`, `GetRadioInfo`, `RemoteSetting`, `SendSysinfoEmail`, `SetRouterLANSettings`, `SetRadioSettings`, `SetRoutingSettings`, `SimpleWiFiSettings`, `SinglePortForwardingRule`, `SoftSKUSettings`, `SupportedTimezone`, `TracerouteStatus`, `TZOSettings`, `BTDiscoveryData`, `UPnPSettings`, `WanExternal`, `WANPort`, `RouterWANSettings`, `RouterWANStatus`, `WirelessConnection`.
+- **Testing**:
+  - Added comprehensive unit tests for `IpAddressUtils` (`ip_address_test.dart`).
+  - Added comprehensive unit tests for `WiFiCredential` (`wifi_credential_test.dart`).
+
+### Fixed
+- **Utilities**:
+  - Fixed `UnitUtils.formatBytes` to correctly apply decimal places for whole numbers.
+  - Fixed `IpAddressUtils`:
+    - Corrected `isValidSubnetMask` to handle `0.0.0.0` and `255.255.255.255` within prefix length constraints.
+    - Introduced `_isSyntacticallyValidSubnetMask` helper for robust subnet mask validation.
+    - Fixed off-by-one error in `getMaxUserAllowedInDHCPRange`.
+    - Corrected logic in `getEndingIpAddress`.
+    - Adjusted `getMaxUserLimit` calculation.
+  - Fixed `WiFiCredential.parse` to correctly parse `SecurityType` (case-insensitivity).
+
+
 ## [1.0.6] - 2025-08-26
 
 ### Added

@@ -9,6 +9,8 @@ mkdir -p build/results
 
 echo "Step 1: Running tests with coverage and excluding manual tests..."
 flutter test --coverage --exclude-tags manual
+
+rm -rf build/results/coverage
 mv coverage build/results/
 
 echo "Step 2: Generating HTML report from coverage data..."

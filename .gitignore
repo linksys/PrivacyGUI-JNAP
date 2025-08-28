@@ -373,3 +373,4 @@ coverage/html/src/utilties/logger/index.html
 coverage/html/src/utilties/logger/logger.dart.gcov.html
 coverage/html/src/utilties/retry_strategy/index.html
 coverage/html/src/utilties/retry_strategy/retry.dart.gcov.html
+pubspec.lock
