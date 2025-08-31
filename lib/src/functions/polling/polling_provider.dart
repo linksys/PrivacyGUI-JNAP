@@ -2,24 +2,10 @@ import 'dart:async';
 import 'package:equatable/equatable.dart';
 import 'package:jnap/jnap.dart';
 import 'package:jnap/logger.dart';
-import 'package:jnap/src/functions/polling/interfaces.dart';
-import 'package:jnap/src/functions/polling/interfaces_impl.dart';
 import 'package:jnap/src/functions/polling/polling_service.dart';
+import 'package:jnap/src/functions/polling/providers.dart';
 import 'package:jnap/src/utilties/bench_mark.dart';
 import 'package:riverpod/riverpod.dart';
-
-final pollingConfigProvider =
-    Provider<PollingConfig>((ref) => PollingConfigImpl());
-final cacheManagerProvider =
-    Provider<PollingCacheManager>((ref) => PollingCacheManagerImpl());
-final additionalTasksProvider =
-    Provider<PollingAdditionalTasks>((ref) => PollingAdditionalTasksImpl(ref));
-final completedNotifierProvider =
-    Provider<PollingCompletedNotifier>((ref) => PollingCompletedNotifierImpl());
-
-final pollingProvider =
-    AsyncNotifierProvider<PollingNotifier, CoreTransactionData>(
-        () => PollingNotifier());
 
 class CoreTransactionData extends Equatable {
   final int lastUpdate;
@@ -70,8 +56,10 @@ class PollingNotifier extends AsyncNotifier<CoreTransactionData> {
     PollingService.checkSmartMode()
         .then((mode) {
           _pollingService = PollingService(
-              pollingTransactions:
-                  PollingService.buildCoreTransaction(mode: mode));
+            ref,
+            pollingTransactions:
+                PollingService.buildCoreTransaction(mode: mode),
+          );
           fetchFirstLaunchedCacheData();
         })
         .then(

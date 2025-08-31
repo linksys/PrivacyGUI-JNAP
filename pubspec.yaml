@@ -15,6 +15,7 @@ dependencies:
   logger: ^2.5.0
   encrypt: ^5.0.3
   clock: ^1.1.0
+  riverpod: ^2.6.1
 
 
 dev_dependencies:

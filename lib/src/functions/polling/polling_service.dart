@@ -1,22 +1,24 @@
 import 'dart:async';
 
 import 'package:jnap/jnap.dart';
-import 'package:jnap/src/cache/data_cache_manager.dart';
+import 'package:jnap/src/functions/polling/providers.dart';
+import 'package:riverpod/riverpod.dart';
 
 class PollingService {
+  final Ref _ref;
   late final List<MapEntry<JNAPAction, Map<String, dynamic>>>
       pollingTransactions;
+  final Jnap _jnap;
 
-  // This constructor allows you to optionally provide a list of transactions.
-  // If you don't provide one, it initializes the list by calling the static
-  // _buildCoreTransaction method.
-  PollingService(
-      {List<MapEntry<JNAPAction, Map<String, dynamic>>>? pollingTransactions})
-      : pollingTransactions =
+  PollingService(this._ref,
+      {Jnap? jnap,
+      List<MapEntry<JNAPAction, Map<String, dynamic>>>? pollingTransactions})
+      : _jnap = jnap ?? Jnap.instance,
+        pollingTransactions =
             pollingTransactions ?? PollingService.buildCoreTransaction();
 
   Map<JNAPAction, JNAPSuccess>? fetchCacheData() {
-    final cache = DataCacheManager().data;
+    final cache = _ref.read(cacheManagerProvider).fetchCacheData();
     final commands = pollingTransactions;
     final checkCacheDataList =
         commands.where((command) => cache.keys.contains(command.key.command));
@@ -32,15 +34,16 @@ class PollingService {
   }
 
   Future<JNAPTransactionSuccessWrap> doPolling({bool force = false}) {
-    return Jnap.instance.transaction(
+    return _jnap.transaction(
       transactionBuilder:
           JNAPTransactionBuilder(commands: pollingTransactions, auth: true),
       overrides: JNAPConfigOverrides(forceRemote: force),
     );
   }
 
-  static Future<String> checkSmartMode() async {
-    return await Jnap.instance
+  static Future<String> checkSmartMode({Jnap? jnap}) async {
+    final jnapClient = jnap ?? Jnap.instance;
+    return await jnapClient
         .send(
           action: GetDeviceMode.instance,
           overrides: JNAPConfigOverrides(forceRemote: true),
