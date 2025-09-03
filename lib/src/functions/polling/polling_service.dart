@@ -36,8 +36,8 @@ class PollingService {
     return Map.fromEntries(cacheDataList);
   }
 
-  Future<JNAPTransactionSuccessWrap> doPolling({bool force = false}) {
-    return _jnap.transaction(
+  Future<JNAPTransactionSuccessWrap> doPolling({bool force = false}) async {
+    return await _jnap.transaction(
       transactionBuilder:
           JNAPTransactionBuilder(commands: pollingTransactions, auth: true),
       overrides: JNAPConfigOverrides(forceRemote: force),
@@ -45,8 +45,7 @@ class PollingService {
   }
 
   Future<String> checkSmartMode() async {
-    final jnapClient = _jnap;
-    return await jnapClient
+    return await _jnap
         .send(
           action: GetDeviceMode.instance,
           overrides: JNAPConfigOverrides(forceRemote: true),

@@ -148,6 +148,7 @@ class PollingNotifier extends AsyncNotifier<CoreTransactionData> {
       () => fetchFuture.then(
         (result) async {
           await _additionalPolling();
+          ref.read(pollingCompletedNotifierProvider).onPollingSuccess();
           return result.copyWith(isReady: true);
         },
       ).onError((e, stackTrace) {

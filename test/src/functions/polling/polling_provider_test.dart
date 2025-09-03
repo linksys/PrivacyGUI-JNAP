@@ -47,7 +47,8 @@ void main() {
         jnapProvider.overrideWithValue(mockJnap),
         pollingConfigProvider.overrideWithValue(mockPollingConfig),
         pollingAdditionalTasksProvider.overrideWithValue(mockAdditionalTasks),
-        pollingCompletedNotifierProvider.overrideWithValue(mockCompletedNotifier),
+        pollingCompletedNotifierProvider
+            .overrideWithValue(mockCompletedNotifier),
         cacheManagerProvider.overrideWithValue(PollingCacheManagerImpl()),
       ],
     );
@@ -227,7 +228,8 @@ void main() {
     test('_polling failure path updates state and calls notifier', () async {
       final exception = Exception('Polling failed');
       when(mockJnap.transaction(
-              transactionBuilder: anyNamed('transactionBuilder')))
+              transactionBuilder: anyNamed('transactionBuilder'),
+              overrides: anyNamed('overrides')))
           .thenThrow(exception);
       final notifier = container.read(pollingProvider.notifier);
       // _polling handles the error internally by setting state to AsyncError,
