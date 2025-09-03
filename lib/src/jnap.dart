@@ -144,6 +144,7 @@ class Jnap {
     int? requestTimeoutOverride,
     bool auth = false,
     void Function(JNAPResult? result, Object? error)? onComplete,
+    HttpClient? httpClient,
   }) {
     final strategy = FixedRetryStrategy(
       maxRetries: maxRetry,
@@ -157,6 +158,7 @@ class Jnap {
         data: data,
         headers: headers,
         overrides: overrides,
+        httpClient: httpClient,
       ),
       shouldRetry: (result) => condition?.call(result) ?? true,
       onRetry: (retryAttempt) {
@@ -178,6 +180,7 @@ class Jnap {
     Map<String, dynamic> data = const {},
     Map<String, String> headers = const {},
     JNAPConfigOverrides? overrides,
+    JNAPSideEffectOverrides? sideEffectOverrides,
     HttpClient? httpClient,
   }) {
     final command = JNAPCommand(
@@ -187,8 +190,11 @@ class Jnap {
       overrides: overrides,
       httpClient: httpClient,
     );
-    // TODO: handle side effect
+    final sideEffectHandler = SideEffectHandler(jnap: this);
     return CommandQueue().enqueue(command).then((result) {
+      return sideEffectHandler.handleSideEffect(result,
+          overrides: sideEffectOverrides);
+    }).then((result) {
       if (result is JNAPSuccess) {
         return result;
       }
@@ -200,6 +206,7 @@ class Jnap {
     required JNAPTransactionBuilder transactionBuilder,
     Map<String, String> headers = const {},
     JNAPConfigOverrides? overrides,
+    JNAPSideEffectOverrides? sideEffectOverrides,
     HttpClient? httpClient,
   }) {
     final payload = transactionBuilder.commands
@@ -217,8 +224,11 @@ class Jnap {
       overrides: overrides,
       httpClient: httpClient,
     );
-    // TODO: handle side effect
+    final sideEffectHandler = SideEffectHandler(jnap: this);
     return CommandQueue().enqueue(command).then((result) {
+      return sideEffectHandler.handleSideEffect(result,
+          overrides: sideEffectOverrides);
+    }).then((result) {
       if (result is JNAPTransactionSuccess) {
         return JNAPTransactionSuccessWrap(
             result: result.result,
@@ -310,7 +320,7 @@ class JNAPCommand {
   JNAPResult? _checkCache() {
     var actions = [action];
     if (isTransaction()) {
-      final jsonData = json.decode(data!) as List<Map<String, dynamic>>;
+      final jsonData = List<Map<String, dynamic>>.from(json.decode(data!));
       actions = jsonData.map((e) => e['action'] as String? ?? '').toList()
         ..removeWhere((e) => e.isEmpty);
     }

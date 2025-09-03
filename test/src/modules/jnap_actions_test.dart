@@ -1,6 +1,8 @@
 import 'package:collection/collection.dart';
 import 'package:test/test.dart';
 import 'package:jnap/src/modules/modules.dart';
+import 'package:jnap/src/modules/web_jnap_action.dart'; // Added import
+import 'package:jnap/src/modules/device_list/action.dart'; // Added import
 
 import '../../data/service_list.dart';
 
@@ -131,17 +133,19 @@ void main() {
     });
 
     test('should handle empty varients list', () {
-      final service = TestJNAPService(path: 'test/', name: 'service');
-      final action = TestJNAPAction(
-        name: 'TestAction',
-        service: service,
-        varients: [],
-      );
+        final service = TestJNAPService(path: 'test/', name: 'service');
+        final action = TestJNAPAction(
+          name: 'TestAction',
+          service: service,
+          varients: [],
+        );
 
-      // Should fall back to version 1 (empty string) when no varients provided
-      expect(action.latestVersion, '');
-      expect(action.command, 'http://linksys.com/jnap/test/TestAction');
-    });
+        // Should fall back to version 1 (empty string) when no varients provided
+        expect(action.latestVersion, '');
+        expect(action.command, 'http://linksys.com/jnap/test/TestAction');
+      });
+
+      
 
     ///
     /// Be aware, the service name should not duplicate
@@ -273,6 +277,8 @@ void main() {
         expect(action.latestVersion, '2');
         expect(action.command, 'http://linksys.com/jnap/test/TestAction2');
       });
+
+      
     });
 
     group('Test with Real JNAP Actions, do betterActions with service list',

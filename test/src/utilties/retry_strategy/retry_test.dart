@@ -1,3 +1,4 @@
+import 'package:fake_async/fake_async.dart';
 import 'package:jnap/src/utilties/retry_strategy/retry.dart';
 import 'package:test/test.dart';
 
@@ -36,6 +37,37 @@ void main() {
         ),
         throwsA(isA<MaxRetriesExceededException>()),
       );
+    });
+
+    test(
+        'should throw MaxRetriesExceededException when maxExecutionTime is reached',
+        () async {
+      fakeAsync((async) async {
+        final strategy = FixedRetryStrategy(
+            maxExecutionTime: const Duration(seconds: 5),
+            maxDelay: const Duration(seconds: 1),
+            maxRetries: -1); // Added maxRetries: -1
+
+        // This future will continuously throw an exception,
+        // causing the strategy to retry until the max execution time is exceeded.
+        final future = strategy.execute(
+          () async {
+            // This simulates a failed attempt. The strategy will retry.
+            throw Exception('simulated failure');
+          },
+        );
+
+        // Now, we expect the future to have thrown the specific exception.
+        // We use expect with a function to correctly catch the asynchronous exception.
+        expect(
+          future,
+          throwsA(isA<MaxRetriesExceededException>()),
+        );
+        // We must elapse enough time to exceed the strategy\'s maxExecutionTime.
+        // The strategy will keep retrying and failing until it runs out of time.
+        async.elapse(const Duration(seconds: 10));
+        async.flushMicrotasks(); // Added to ensure all microtasks are processed
+      });
     });
 
     test('should call onRetry callback for each retry', () async {
@@ -310,10 +342,13 @@ void main() {
       final strategy = FixedRetryStrategy(maxRetries: 1);
       Object? exception;
 
-      await strategy.executeStream(
-        () async => 'a result',
-        shouldRetry: (result) => true, // always retry
-      ).drain().catchError((e) {
+      await strategy
+          .executeStream(
+            () async => 'a result',
+            shouldRetry: (result) => true, // always retry
+          )
+          .drain()
+          .catchError((e) {
         exception = e;
       });
 
@@ -328,9 +363,12 @@ void main() {
       Object? exception;
       final failure = Exception('Permanent failure');
 
-      await strategy.executeStream(
-        () async => throw failure,
-      ).drain().catchError((e) {
+      await strategy
+          .executeStream(
+            () async => throw failure,
+          )
+          .drain()
+          .catchError((e) {
         exception = e;
       });
 
@@ -338,7 +376,7 @@ void main() {
       expect((exception as MaxRetriesExceededException).lastResult, failure);
     });
   });
-  
+
   group('onProgress callback', () {
     test('should be called for each attempt in execute', () async {
       final strategy = FixedRetryStrategy(maxRetries: 2);
@@ -397,7 +435,8 @@ void main() {
   });
 
   group('onComplete callback', () {
-    test('should be called on successful completion of executeStream', () async {
+    test('should be called on successful completion of executeStream',
+        () async {
       final strategy = FixedRetryStrategy(maxRetries: 1);
       dynamic onCompleteResult;
       dynamic onCompleteError;
@@ -419,13 +458,16 @@ void main() {
       dynamic onCompleteResult;
       dynamic onCompleteError;
 
-      await strategy.executeStream(
-        () async => throw Exception('Failure'),
-        onComplete: (result, error) {
-          onCompleteResult = result;
-          onCompleteError = error;
-        },
-      ).drain().catchError((_) {});
+      await strategy
+          .executeStream(
+            () async => throw Exception('Failure'),
+            onComplete: (result, error) {
+              onCompleteResult = result;
+              onCompleteError = error;
+            },
+          )
+          .drain()
+          .catchError((_) {});
 
       expect(onCompleteResult, isNull);
       expect(onCompleteError, isA<MaxRetriesExceededException>());
@@ -435,23 +477,26 @@ void main() {
       final strategy = FixedRetryStrategy(maxRetries: 2);
       final events = <String>[];
 
-      await strategy.executeStream(
-        () async {
-          if (events.where((e) => e.startsWith('onProgress')).length < 2) {
-            throw Exception('Failure');
-          }
-          return 'Success';
-        },
-        onProgress: (attempt, result, error) {
-          events.add('onProgress');
-        },
-        onRetry: (attempt) {
-          events.add('onRetry');
-        },
-        onComplete: (result, error) {
-          events.add('onComplete');
-        },
-      ).drain().catchError((_) {});
+      await strategy
+          .executeStream(
+            () async {
+              if (events.where((e) => e.startsWith('onProgress')).length < 2) {
+                throw Exception('Failure');
+              }
+              return 'Success';
+            },
+            onProgress: (attempt, result, error) {
+              events.add('onProgress');
+            },
+            onRetry: (attempt) {
+              events.add('onRetry');
+            },
+            onComplete: (result, error) {
+              events.add('onComplete');
+            },
+          )
+          .drain()
+          .catchError((_) {});
 
       expect(events.last, 'onComplete');
       expect(events, [
@@ -464,26 +509,29 @@ void main() {
       ]);
     });
 
-    test('onComplete should be the last call if shouldRetry returns false', () async {
+    test('onComplete should be the last call if shouldRetry returns false',
+        () async {
       final strategy = FixedRetryStrategy(maxRetries: 5);
       final events = <String>[];
       int attempt = 0;
 
-      await strategy.executeStream(
-        () async {
-          return attempt++;
-        },
-        shouldRetry: (result) => result < 2, // Stop when result is 2
-        onProgress: (attempt, result, error) {
-          events.add('onProgress');
-        },
-        onRetry: (attempt) {
-          events.add('onRetry');
-        },
-        onComplete: (result, error) {
-          events.add('onComplete');
-        },
-      ).drain();
+      await strategy
+          .executeStream(
+            () async {
+              return attempt++;
+            },
+            shouldRetry: (result) => result < 2, // Stop when result is 2
+            onProgress: (attempt, result, error) {
+              events.add('onProgress');
+            },
+            onRetry: (attempt) {
+              events.add('onRetry');
+            },
+            onComplete: (result, error) {
+              events.add('onComplete');
+            },
+          )
+          .drain();
 
       expect(events.last, 'onComplete');
       expect(events, [

@@ -51,7 +51,7 @@ void _updateUrl(JSObject options) {
 Future<JSObject> _send(String action, JSObject request) async {
   final requestData = (request.dartify() as Map).cast<String, dynamic>();
 
-  final jnapAction = JNAPAction.getVersionedActionJS(action);
+  final jnapAction = WebJNAPAction.getVersionedActionJS(action);
   if (jnapAction == null) {
     throw Exception('Action not found: $action');
   }
@@ -67,7 +67,8 @@ Future<JSObject> _transaction(JSArray commands) async {
 
   for (final command in commandList) {
     final cmdMap = command.dartify() as Map;
-    final action = JNAPAction.getVersionedActionJS(cmdMap['action'] as String);
+    final action =
+        WebJNAPAction.getVersionedActionJS(cmdMap['action'] as String);
     if (action == null) {
       throw Exception('Action not found: ${cmdMap['action']}');
     }
@@ -121,7 +122,7 @@ void _betterActions(JSArray services) {
 
 // Top-level function for get propor Actions with versions
 String _getActionsWithVersions(String action) {
-  return JNAPAction.getVersionedActionJS(action)?.command ?? '';
+  return WebJNAPAction.getVersionedActionJS(action)?.command ?? '';
 }
 
 String _decrypt(String encryptedString) {
@@ -131,11 +132,13 @@ String _decrypt(String encryptedString) {
 }
 
 Future<bool> _pollForRouterReconnected(String serialNumber) {
-  return SideEffectHandler(cachedSerialNumber: serialNumber).pollForRouterReconnected();
+  return SideEffectHandler(cachedSerialNumber: serialNumber)
+      .pollForRouterReconnected();
 }
 
 Future<bool> _pollForRouterFullyBootedUp(String serialNumber) {
-  return SideEffectHandler(cachedSerialNumber: serialNumber).pollForRouterFullyBootedUp();
+  return SideEffectHandler(cachedSerialNumber: serialNumber)
+      .pollForRouterFullyBootedUp();
 }
 
 void setupJnAPI() {

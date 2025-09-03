@@ -1,10 +1,16 @@
+import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
 
+import 'package:http/http.dart' as http;
 import 'package:jnap/jnap.dart';
-import 'package:jnap/src/cache/config.dart';
 import 'package:jnap/src/cache/data_cache_manager.dart';
-import 'package:jnap/src/utilties/retry_strategy/retry.dart';
+import 'package:jnap/src/utilties/http/http_client.dart' as client;
+import 'package:mockito/annotations.dart';
+import 'package:mockito/mockito.dart';
 import 'package:test/test.dart';
+
+import 'jnap_test.mocks.dart';
 
 class MyHttpOverrides extends HttpOverrides {
   @override
@@ -15,229 +21,56 @@ class MyHttpOverrides extends HttpOverrides {
   }
 }
 
-///
-/// These tests are test real JNAP requests
-///
-///
+class MockDataCacheManager extends Mock implements DataCacheManager {
+  @override
+  bool checkCacheDataValid(String? action, [int? expirationOverride]) {
+    return (super.noSuchMethod(
+      Invocation.method(#checkCacheDataValid, [action, expirationOverride]),
+      returnValue: false,
+      returnValueForMissingStub: false,
+    ) as bool);
+  }
+
+  @override
+  String get lastSerialNumber => (super.noSuchMethod(
+        Invocation.getter(#lastSerialNumber),
+        returnValue: '',
+        returnValueForMissingStub: '',
+      ) as String);
+
+  @override
+  Future<void> handleJNAPCached(Map<String, dynamic> record, String action,
+      [String? serialNumber]) {
+    return (super.noSuchMethod(
+      Invocation.method(#handleJNAPCached, [record, action, serialNumber]),
+      returnValue: Future<void>.value(),
+      returnValueForMissingStub: Future<void>.value(),
+    ) as Future<void>);
+  }
+
+  @override
+  Map<String, dynamic> get data => (super.noSuchMethod(
+        Invocation.getter(#data),
+        returnValue: <String, dynamic>{},
+        returnValueForMissingStub: <String, dynamic>{},
+      ) as Map<String, dynamic>);
+}
+
+@GenerateMocks([client.HttpClient, Jnap])
 void main() {
   HttpOverrides.global = MyHttpOverrides();
 
-  group('local JNAP', tags: 'manual', () {
-    test('test JNAP send without init auth', () async {
-      Jnap.init(
-        baseUrl: 'https://192.168.1.1',
-        path: '/JNAP/',
-        extraHeaders: {},
-      );
-      await Jnap.instance.send(action: GetDeviceInfo.instance);
-    });
-    test('test JNAP send', () async {
-      Jnap.init(
-        baseUrl: 'https://192.168.1.1',
-        path: '/JNAP/',
-        extraHeaders: {},
-        auth: 'YWRtaW46N3FXMTlzdDVtQA==',
-        authType: AuthType.basic,
-      );
-      await Jnap.instance.send(action: GetDeviceInfo.instance);
-    });
-
-    test('test JNAP send with cache', () async {
-      CacheConfig.expiration = 2000 * 10;
-      Jnap.init(
-        baseUrl: 'https://192.168.1.1',
-        path: '/JNAP/',
-        extraHeaders: {},
-        auth: 'YWRtaW46N3FXMTlzdDVtQA==',
-        authType: AuthType.basic,
-      );
-      // 1st send
-      await Jnap.instance.send(action: GetDeviceInfo.instance);
-      // 2nd send, should use cache
-      await Jnap.instance.send(action: GetDeviceInfo.instance);
-      // 3rd wait for cache expired
-      await Future.delayed(const Duration(seconds: 10));
-      // 4th send, should not use cache
-      await Jnap.instance.send(action: GetDeviceInfo.instance);
-    });
-
-    test('test JNAP transaction', () async {
-      Jnap.init(
-        baseUrl: 'https://192.168.1.1',
-        path: '/JNAP/',
-        extraHeaders: {},
-        auth: 'YWRtaW46N3FXMTlzdDVtQA==',
-        authType: AuthType.basic,
-      );
-      final result = await Jnap.instance.transaction(
-        transactionBuilder: JNAPTransactionBuilder(
-          commands: [
-            MapEntry(GetDeviceInfo.instance, {}),
-            MapEntry(GetWANStatus.instance, {}),
-          ],
-        ),
-      );
-      expect(result, isA<JNAPTransactionSuccessWrap>());
-      expect(result.data.length, 2);
-      expect(result.data[0].key, GetDeviceInfo.instance);
-      expect(result.data[0].value, isA<JNAPSuccess>());
-      expect(result.data[1].key, GetWANStatus.instance);
-      expect(result.data[1].value, isA<JNAPSuccess>());
-    });
-
-    test('test JNAP scheulded polls multiple times', () async {
-      Jnap.init(
-        baseUrl: 'https://192.168.1.1',
-        path: '/JNAP/',
-        extraHeaders: {},
-        auth: 'YWRtaW46N3FXMTlzdDVtQA==',
-        authType: AuthType.basic,
-      );
-
-      int executionCount = 0;
-      const desiredExecutions = 3;
-
-      final stream = Jnap.instance.scheduled(
-        action: GetDeviceInfo.instance,
-        maxRetry: 5,
-        firstDelayInMilliSec: 100, // Use short delays for the test
-        retryDelayInMilliSec: 100,
-        condition: (result) {
-          executionCount++;
-          // Return true to keep polling, until we've executed the desired number of times.
-          return executionCount < desiredExecutions;
-        },
-      );
-
-      // We expect the stream to emit a successful result `desiredExecutions` times.
-      // The final emission will have shouldRetry=false, so the stream will close.
-      final results = await stream.toList();
-
-      expect(results.length, desiredExecutions);
-      expect(results.every((r) => r is JNAPSuccess), isTrue);
-      expect(executionCount, desiredExecutions);
-    });
-
-    test('test JNAP scheulded onComplete is called when condition is met',
-        () async {
-      Jnap.init(
-        baseUrl: 'https://192.168.1.1',
-        path: '/JNAP/',
-        extraHeaders: {},
-        auth: 'YWRtaW46N3FXMTlzdDVtQA==',
-        authType: AuthType.basic,
-      );
-
-      int executionCount = 0;
-      const desiredExecutions = 2;
-      bool onCompleteCalled = false;
-      JNAPResult? onCompleteResult;
-
-      final stream = Jnap.instance.scheduled(
-        action: GetDeviceInfo.instance,
-        maxRetry: 5,
-        firstDelayInMilliSec: 100,
-        retryDelayInMilliSec: 100,
-        condition: (result) {
-          executionCount++;
-          return executionCount < desiredExecutions;
-        },
-        onComplete: (result, error) {
-          onCompleteCalled = true;
-          onCompleteResult = result;
-        },
-      );
-
-      final results = await stream.toList();
-
-      expect(results.length, desiredExecutions);
-      expect(onCompleteCalled, isTrue);
-      expect(onCompleteResult, isA<JNAPSuccess>());
-      expect(onCompleteResult, results.last);
-    });
-
-    test('test JNAP scheulded onComplete is called on error', () async {
-      Jnap.init(
-        baseUrl: 'https://192.168.1.1',
-        path: '/JNAP/',
-        extraHeaders: {},
-        auth: 'd3Jvbmc6d3Jvbmc=', // wrong:wrong
-        authType: AuthType.basic,
-      );
-
-      bool onCompleteCalled = false;
-      Object? onCompleteError;
-
-      final stream = Jnap.instance.scheduled(
-        action: GetDevices.instance,
-        maxRetry: 1,
-        firstDelayInMilliSec: 100,
-        retryDelayInMilliSec: 100,
-        onComplete: (result, error) {
-          onCompleteCalled = true;
-          onCompleteError = error;
-        },
-      );
-
-      await stream.toList().catchError((e) {
-        // Catch error to prevent test failure
-        return <JNAPResult>[];
-      });
-
-      expect(onCompleteCalled, isTrue);
-      expect(onCompleteError, isNotNull);
-      expect(onCompleteError, isA<MaxRetriesExceededException>());
-      final lastResult =
-          (onCompleteError as MaxRetriesExceededException).lastResult;
-      expect(lastResult, isA<JNAPError>());
-    });
-  });
-
-  group('remote JNAP', tags: 'manual', () {
-    test('test JNAP send', () async {
-      const sessionId = 'FB2246D2-2429-4278-85C9-C5B1CD2E1D73';
-      Jnap.init(
-        baseUrl: 'https://qa.cloud1.linksyssmartwifi.com',
-        path:
-            '/cloud/v1/guardians/remote-assistances/sessions/$sessionId/actions/jnap/',
-        extraHeaders: {
-          'X-Linksys-Client-Type-Id': 'BB426FA7-16A9-5C1C-55AF-63A4167B26AD'
-        },
-        auth:
-            'AGENT0879559D914540F18B4DD61485F6C6410854E66E6F03447481EC27B9525',
-        authType: AuthType.token,
-      );
-      await Jnap.instance.send(action: GetDevices.instance);
-    });
-
-    test('test JNAP transaction', () async {
-      const sessionId = 'FB2246D2-2429-4278-85C9-C5B1CD2E1D73';
-      Jnap.init(
-        baseUrl: 'https://qa.cloud1.linksyssmartwifi.com',
-        path:
-            '/cloud/v1/guardians/remote-assistances/sessions/$sessionId/actions/jnap/',
-        extraHeaders: {
-          'X-Linksys-Client-Type-Id': 'BB426FA7-16A9-5C1C-55AF-63A4167B26AD'
-        },
-        auth:
-            'AGENT0879559D914540F18B4DD61485F6C6410854E66E6F03447481EC27B9525',
-        authType: AuthType.token,
-      );
-      await Jnap.instance.transaction(
-        transactionBuilder: JNAPTransactionBuilder(
-          commands: [
-            MapEntry(GetDevices.instance, {}),
-            MapEntry(GetWANStatus.instance, {}),
-          ],
-        ),
-      );
-    });
-  });
-
   group('Jnap unit tests', () {
+    late MockHttpClient mockHttpClient;
+    late MockDataCacheManager mockDataCacheManager;
+
     setUp(() {
       // Reset config before each test
       Jnap.init(baseUrl: '', path: '', extraHeaders: {});
+      CommandQueue.reset();
+      mockHttpClient = MockHttpClient();
+      mockDataCacheManager = MockDataCacheManager();
+      DataCacheManager.setInstance(mockDataCacheManager);
     });
 
     group('init', () {
@@ -306,6 +139,396 @@ void main() {
         expect(
             () => Jnap.updateAuth(auth: 'not-base64', authType: AuthType.basic),
             throwsException);
+      });
+    });
+
+    group('CommandQueue', () {
+      test('should enqueue and process commands', () async {
+        final commandQueue = CommandQueue();
+        final command = JNAPCommand(
+          action: 'testAction',
+          httpClient: mockHttpClient,
+          cacheManager: mockDataCacheManager,
+        );
+
+        when(mockHttpClient.post(any,
+                body: anyNamed('body'), headers: anyNamed('headers')))
+            .thenAnswer(
+                (_) async => http.Response(jsonEncode({'result': 'OK'}), 200));
+
+        final future = commandQueue.enqueue(command);
+        expect(commandQueue.queue.length, 1);
+
+        await future;
+        expect(commandQueue.queue.length, 0);
+      });
+
+      test('should pause and resume command processing', () async {
+        final commandQueue = CommandQueue();
+        commandQueue.pause = true;
+
+        final command = JNAPCommand(
+          action: 'testAction',
+          httpClient: mockHttpClient,
+          cacheManager: mockDataCacheManager,
+        );
+
+        when(mockHttpClient.post(any,
+                body: anyNamed('body'), headers: anyNamed('headers')))
+            .thenAnswer(
+                (_) async => http.Response(jsonEncode({'result': 'OK'}), 200));
+
+        commandQueue.enqueue(command);
+        expect(commandQueue.queue.length, 1);
+
+        await Future.delayed(Duration(milliseconds: 100));
+        expect(commandQueue.queue.length, 1);
+
+        commandQueue.pause = false;
+        await Future.delayed(Duration(milliseconds: 100));
+        expect(commandQueue.queue.length, 0);
+      });
+    });
+
+    group('JNAPCommand', () {
+      test('should execute command and return success', () async {
+        final command = JNAPCommand(
+          action: 'testAction',
+          httpClient: mockHttpClient,
+          cacheManager: mockDataCacheManager,
+        );
+
+        when(mockDataCacheManager.checkCacheDataValid(any)).thenReturn(false);
+        when(mockHttpClient.post(any,
+                body: anyNamed('body'), headers: anyNamed('headers')))
+            .thenAnswer(
+                (_) async => http.Response(jsonEncode({'result': 'OK'}), 200));
+
+        final result = await command.execute();
+        expect(result, isA<JNAPSuccess>());
+        expect(result.result, 'OK');
+      });
+
+      test('should use cache when available', () async {
+        final command = JNAPCommand(
+          action: 'testAction',
+          httpClient: mockHttpClient,
+          cacheManager: mockDataCacheManager,
+        );
+
+        when(mockDataCacheManager.checkCacheDataValid(any)).thenReturn(true);
+        when(mockDataCacheManager.data).thenReturn({
+          'testAction': {
+            'data': {'result': 'OK', 'output': <String, dynamic>{}}
+          }
+        });
+
+        final result = await command.execute();
+        expect(result, isA<JNAPSuccess>());
+        verifyNever(mockHttpClient.post(any,
+            body: anyNamed('body'), headers: anyNamed('headers')));
+      });
+
+      test('should fetch from remote when cache is invalid', () async {
+        final command = JNAPCommand(
+          action: 'testAction',
+          httpClient: mockHttpClient,
+          cacheManager: mockDataCacheManager,
+        );
+
+        when(mockDataCacheManager.checkCacheDataValid(any)).thenReturn(false);
+        when(mockHttpClient.post(any,
+                body: anyNamed('body'), headers: anyNamed('headers')))
+            .thenAnswer(
+                (_) async => http.Response(jsonEncode({'result': 'OK'}), 200));
+
+        await command.execute();
+        verify(mockHttpClient.post(any,
+                body: anyNamed('body'), headers: anyNamed('headers')))
+            .called(1);
+      });
+
+      test('should throw ErrorResponse on http error', () async {
+        final command = JNAPCommand(
+          action: 'testAction',
+          httpClient: mockHttpClient,
+          cacheManager: mockDataCacheManager,
+        );
+
+        when(mockDataCacheManager.checkCacheDataValid(any)).thenReturn(false);
+        when(mockHttpClient.post(any, body: anyNamed('body'), headers: anyNamed('headers')))
+            .thenAnswer((_) async => http.Response(jsonEncode({'error': 'Unauthorized'}), 401));
+
+        expect(command.execute(), throwsA(isA<ErrorResponse>()));
+      });
+    });
+
+    group('Jnap.send', () {
+      test('should enqueue a command and return success', () async {
+        final jnap = Jnap.instance;
+        final action = GetDeviceInfo.instance;
+
+        when(mockHttpClient.post(any,
+                body: anyNamed('body'), headers: anyNamed('headers')))
+            .thenAnswer((_) async => http.Response(
+                jsonEncode({
+                  'result': 'OK',
+                  'output': {'deviceName': 'TestDevice'}
+                }),
+                200));
+
+        final result =
+            await jnap.send(action: action, httpClient: mockHttpClient);
+
+        expect(result, isA<JNAPSuccess>());
+      });
+
+      test('should throw JNAPError on command failure', () async {
+        final jnap = Jnap.instance;
+        final action = GetDeviceInfo.instance;
+
+        when(mockHttpClient.post(any, body: anyNamed('body'), headers: anyNamed('headers')))
+            .thenAnswer((_) async => http.Response(jsonEncode({'result': 'ERROR', 'error': 'Device not found'}), 200));
+
+        expect(jnap.send(action: action, httpClient: mockHttpClient), throwsA(isA<JNAPError>()));
+      });
+    });
+
+    group('JNAPConfigOverrides', () {
+      test('should override default config', () async {
+        Jnap.init(
+          baseUrl: 'http://example.com',
+          path: '/api',
+          extraHeaders: {},
+        );
+
+        final overrides = JNAPConfigOverrides(
+          baseUrl: 'http://override.com',
+          path: '/override',
+          extraHeaders: {'X-Override': 'true'},
+          timeoutMs: 5000,
+        );
+
+        final command = JNAPCommand(
+          action: 'testAction',
+          overrides: overrides,
+          httpClient: mockHttpClient,
+          cacheManager: mockDataCacheManager,
+        );
+
+        when(mockDataCacheManager.checkCacheDataValid(any)).thenReturn(false);
+        when(mockHttpClient.post(any,
+                body: anyNamed('body'), headers: anyNamed('headers')))
+            .thenAnswer(
+                (_) async => http.Response(jsonEncode({'result': 'OK'}), 200));
+
+        await command.execute();
+
+        final captured = verify(mockHttpClient.post(captureAny,
+                body: anyNamed('body'), headers: captureAnyNamed('headers')))
+            .captured;
+        final uri = captured[0] as Uri;
+        final headers = captured[1] as Map<String, String>;
+
+        expect(uri.toString(), 'http://override.com/override');
+        expect(headers['X-Override'], 'true');
+        verify(mockHttpClient.timeoutMs = 5000);
+      });
+    });
+
+    group('Jnap.transaction', () {
+      test('should send a transaction and return success', () async {
+        final jnap = Jnap.instance;
+        final action1 = GetDeviceInfo.instance;
+        final action2 = GetNetworkConnections.instance;
+
+        final transactionBuilder = JNAPTransactionBuilder()
+            .add(action1)
+            .add(action2, data: {'some_key': 'some_value'});
+
+        final transactionResponse = {
+          'result': 'OK',
+          'responses': [
+            {'result': 'OK', 'output': {'deviceName': 'TestDevice'}},
+            {'result': 'OK', 'output': {'connections': []}}
+          ]
+        };
+
+        when(mockHttpClient.post(any, body: anyNamed('body'), headers: anyNamed('headers')))
+            .thenAnswer((_) async => http.Response(jsonEncode(transactionResponse), 200));
+
+        final result = await jnap.transaction(
+          transactionBuilder: transactionBuilder,
+          httpClient: mockHttpClient,
+        );
+
+        expect(result, isA<JNAPTransactionSuccessWrap>());
+        expect(result.data.length, 2);
+        expect(result.data[0].key, action1);
+        expect(result.data[0].value.result, 'OK');
+        expect((result.data[0].value as JNAPSuccess).output, {'deviceName': 'TestDevice'});
+        expect(result.data[1].key, action2);
+        expect(result.data[1].value.result, 'OK');
+        expect((result.data[1].value as JNAPSuccess).output, {'connections': []});
+
+        final captured = verify(mockHttpClient.post(any, body: captureAnyNamed('body'), headers: anyNamed('headers'))).captured;
+        final body = jsonDecode(captured.first);
+
+        expect(body, isA<List>());
+        expect(body.length, 2);
+        expect(body[0]['action'], action1.command);
+        expect(body[1]['action'], action2.command);
+        expect(body[1]['request'], {'some_key': 'some_value'});
+      });
+
+      test('should use cache when available for transaction', () async {
+        final jnap = Jnap.instance;
+        final action1 = GetDeviceInfo.instance;
+        final action2 = GetNetworkConnections.instance;
+
+        final transactionBuilder = JNAPTransactionBuilder()
+            .add(action1)
+            .add(action2, data: {'some_key': 'some_value'});
+
+        // Mock checkCacheDataValid for the transaction action
+        // Assuming Jnap.transaction uses a specific action name for caching, e.g., 'transaction'
+        when(mockDataCacheManager.checkCacheDataValid(any)).thenReturn(true);
+        when(mockDataCacheManager.data).thenReturn({
+          'http://linksys.com/jnap/core/GetDeviceInfo': {
+            'data': {'result': 'OK', 'output': {'deviceName': 'CachedDevice'}}
+          },
+          'http://linksys.com/jnap/networkconnections/GetNetworkConnections': {
+            'data': {'result': 'OK', 'output': {'connections': ['cached_connection']}}
+          }
+        });
+
+        final result = await jnap.transaction(
+          transactionBuilder: transactionBuilder,
+          httpClient: mockHttpClient,
+        );
+
+        expect(result, isA<JNAPTransactionSuccessWrap>());
+        expect(result.data.length, 2);
+        expect(result.data[0].key, action1);
+        expect(result.data[0].value.result, 'OK');
+        expect((result.data[0].value as JNAPSuccess).output, {'deviceName': 'CachedDevice'});
+        expect(result.data[1].key, action2);
+        expect(result.data[1].value.result, 'OK');
+        expect((result.data[1].value as JNAPSuccess).output, {'connections': ['cached_connection']});
+
+        // Verify that no HTTP request was made
+        verifyNever(mockHttpClient.post(any,
+            body: anyNamed('body'), headers: anyNamed('headers')));
+      });
+
+      test('should send HTTP request when some commands are not cached in transaction', () async {
+        Jnap.init(baseUrl: 'http://linksys.com', path: '/jnap', extraHeaders: {}); // Added Jnap.init
+        final jnap = Jnap.instance;
+        final action1 = GetDeviceInfo.instance; // This one will be cached
+        final action2 = GetNetworkConnections.instance; // This one will NOT be cached
+
+        final transactionBuilder = JNAPTransactionBuilder()
+            .add(action1)
+            .add(action2, data: {'some_key': 'some_value'});
+
+        final remoteTransactionResponse = {
+          'result': 'OK',
+          'responses': [
+            {'result': 'OK', 'output': {'deviceName': 'RemoteDevice'}},
+            {'result': 'OK', 'output': {'connections': ['remote_connection']}}
+          ]
+        };
+
+        // Mock checkCacheDataValid: action1 is cached, action2 is NOT cached
+        when(mockDataCacheManager.checkCacheDataValid(action1.command)).thenReturn(true);
+        when(mockDataCacheManager.checkCacheDataValid(action2.command)).thenReturn(false);
+
+        // Mock cached data for action1
+        when(mockDataCacheManager.data).thenReturn({
+          action1.command: {
+            'data': {'result': 'OK', 'output': {'deviceName': 'CachedDevice'}}
+          }
+        });
+
+        // Mock HTTP client response for the transaction
+        when(mockHttpClient.post(any, body: anyNamed('body'), headers: anyNamed('headers')))
+            .thenAnswer((_) async => http.Response(jsonEncode(remoteTransactionResponse), 200));
+
+        final result = await jnap.transaction(
+          transactionBuilder: transactionBuilder,
+          httpClient: mockHttpClient,
+        );
+
+        expect(result, isA<JNAPTransactionSuccessWrap>());
+        expect(result.data.length, 2);
+
+        // Expect action1 to be from remote (as the entire transaction was fetched remotely)
+        expect(result.data[0].key, action1);
+        expect(result.data[0].value.result, 'OK');
+        expect((result.data[0].value as JNAPSuccess).output, {'deviceName': 'RemoteDevice'});
+
+        // Expect action2 to be from remote
+        expect(result.data[1].key, action2);
+        expect(result.data[1].value.result, 'OK');
+        expect((result.data[1].value as JNAPSuccess).output, {'connections': ['remote_connection']});
+
+        // Verify that HTTP request was made exactly once and capture arguments
+        final captured = verify(mockHttpClient.post(captureAny, body: captureAnyNamed('body'), headers: captureAnyNamed('headers'))).captured;
+        final uri = captured[0] as Uri;
+        final body = jsonDecode(captured[1]);
+        final headers = captured[2] as Map<String, String>;
+
+        expect(uri.toString(), 'http://linksys.com/jnap'); // Corrected URL expectation
+        expect(headers['X-JNAP-Action'], 'http://linksys.com/jnap/core/Transaction'); // Assuming this header
+        expect(headers['content-type'], 'application/json'); // Assuming this header
+
+        expect(body, isA<List>());
+        expect(body.length, 2);
+        expect(body[0]['action'], action1.command);
+        expect(body[1]['action'], action2.command);
+        expect(body[1]['request'], {'some_key': 'some_value'});
+      });
+    });
+
+    group('Jnap.scheduled', () {
+      test('should poll and retry until condition is met', () async {
+        final jnap = Jnap.instance;
+        final action = GetDeviceInfo.instance;
+
+        var callCount = 0;
+        when(mockHttpClient.post(any, body: anyNamed('body'), headers: anyNamed('headers')))
+            .thenAnswer((_) async {
+          callCount++;
+          if (callCount == 1) {
+            return http.Response(jsonEncode({'result': 'OK', 'output': {'status': 'pending'}}), 200);
+          } else {
+            return http.Response(jsonEncode({'result': 'OK', 'output': {'status': 'completed'}}), 200);
+          }
+        });
+
+        final stream = jnap.scheduled(
+          action: action,
+          condition: (result) {
+            if (result is JNAPSuccess) {
+              return result.output['status'] == 'pending';
+            }
+            return true;
+          },
+          maxRetry: 5,
+          firstDelayInMilliSec: 10,
+          retryDelayInMilliSec: 10,
+          httpClient: mockHttpClient,
+        );
+
+        final results = await stream.toList();
+
+        expect(results.length, 2);
+        expect(results[0], isA<JNAPSuccess>());
+        expect((results[0] as JNAPSuccess).output['status'], 'pending');
+        expect(results[1], isA<JNAPSuccess>());
+        expect((results[1] as JNAPSuccess).output['status'], 'completed');
+
+        verify(mockHttpClient.post(any, body: anyNamed('body'), headers: anyNamed('headers'))).called(2);
       });
     });
   });

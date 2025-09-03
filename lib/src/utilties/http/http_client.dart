@@ -8,14 +8,15 @@ import 'package:http/http.dart' as http;
 import 'package:http/http.dart';
 import 'package:jnap/http.dart';
 import 'package:jnap/logger.dart';
+import 'package:meta/meta.dart';
 import 'client/get_client.dart'
     if (dart.library.io) 'client/mobile_client.dart'
     if (dart.library.html) 'client/web_client.dart';
+
 ///
 /// timeout - will throw Timeout exception on ${timeout} seconds
 ///
 class HttpClient extends http.BaseClient {
-
   HttpClient({
     BaseClient? client,
     FutureOr<bool> Function(http.BaseResponse) when = _defaultWhen,
@@ -28,8 +29,6 @@ class HttpClient extends http.BaseClient {
         _whenError = whenError,
         _delay = delay,
         _onRetry = onRetry;
-
-  
 
   final BaseClient _inner;
 
@@ -52,9 +51,15 @@ class HttpClient extends http.BaseClient {
     _timeoutMs = ms;
   }
 
+  @visibleForTesting
+  int get timeoutMs => _timeoutMs;
+
   set retries(int times) {
     _retries = times;
   }
+
+  @visibleForTesting
+  int get retries => _retries;
 
   @override
   Future<http.StreamedResponse> send(http.BaseRequest request) async {
@@ -76,7 +81,7 @@ class HttpClient extends http.BaseClient {
 
         response = await _inner
             .send(copied)
-            .timeout(Duration(milliseconds:   _timeoutMs));
+            .timeout(Duration(milliseconds: _timeoutMs));
       } catch (error, stackTrace) {
         logger.e('Http Request Error: $error');
         if (i == _retries || !await _whenError(error, stackTrace)) {
@@ -139,8 +144,8 @@ class HttpClient extends http.BaseClient {
   @override
   Future<Response> put(Uri url,
       {Map<String, String>? headers, Object? body, Encoding? encoding}) async {
-    final response = await super
-        .put(url, headers: headers, body: body, encoding: encoding);
+    final response =
+        await super.put(url, headers: headers, body: body, encoding: encoding);
     _logResponse(response);
     return response;
   }
@@ -148,8 +153,8 @@ class HttpClient extends http.BaseClient {
   @override
   Future<Response> post(Uri url,
       {Map<String, String>? headers, Object? body, Encoding? encoding}) async {
-    final response = await super
-        .post(url, headers: headers, body: body, encoding: encoding);
+    final response =
+        await super.post(url, headers: headers, body: body, encoding: encoding);
     _logResponse(response);
     return response;
   }
@@ -169,11 +174,10 @@ class HttpClient extends http.BaseClient {
     return response;
   }
 
-  Future<Response> download(Uri url,
-      {Map<String, String>? headers}) async {
+  Future<Response> download(Uri url, {Map<String, String>? headers}) async {
     final response = await super.get(url, headers: headers);
-      _logResponse(response, ignoreResponse: true);
-      return response;
+    _logResponse(response, ignoreResponse: true);
+    return response;
   }
 
   Future<Response> upload(Uri url, List<MultipartFile> multipartList,

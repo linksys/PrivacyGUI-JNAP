@@ -45,21 +45,7 @@ abstract class JNAPAction {
     return '${service.servicePath}$name$latestVersion';
   }
 
-  static JNAPAction? getVersionedAction(JNAPAction action) {
-    return getVersionedActionJS(action.rawCommand);
-  }
-
-  static JNAPAction? getVersionedActionJS(String action) {
-    // identify if action has digit at last
-    RegExp regExp = RegExp(r'.*(\d)$');
-    final match = regExp.firstMatch(action);
-    if (match != null) {
-      action = action.replaceAll(match.group(1)!, '');
-    }
-    final jnapAction = JNAPAction.all
-        .firstWhereOrNull((element) => element.rawCommand == action);
-    return jnapAction;
-  }
+  
 
   static List<JNAPAction> get all => [
         ...AirtimeFairnessAction.all,

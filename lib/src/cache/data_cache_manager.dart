@@ -13,6 +13,11 @@ class DataCacheManager {
   DataCacheManager._(BasedCacheManager cache) {
     init(cache);
   }
+  @visibleForTesting
+  static void setInstance(DataCacheManager instance) {
+    _instance = instance;
+  }
+
   factory DataCacheManager([BasedCacheManager? cache]) {
     _instance ??= DataCacheManager._(cache ?? BasedCacheManager());
     return _instance!;

@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:math';
 
 import 'package:jnap/logger.dart';
+import 'package:clock/clock.dart';
 
 class RetryException implements Exception {
   final String message;
@@ -40,8 +41,8 @@ abstract class RetryStrategy {
   });
 
   /// Calculates the next wait time based on the retry attempt.
-  Duration calculateDelay(int retryAttempt);  
-  
+  Duration calculateDelay(int retryAttempt);
+
   /// Simulates an asynchronous operation that retries based on the strategy.
   Future<T> execute<T>(
     Future<T> Function() operation, {
@@ -50,7 +51,7 @@ abstract class RetryStrategy {
     Function(int attempt, T? result, Object? error)? onProgress,
   }) async {
     int retryAttempt = 0;
-    final startTime = DateTime.now();
+    final startTime = clock.now();
     while (maxRetries == -1 || retryAttempt <= maxRetries) {
       try {
         final result = await operation();
@@ -62,9 +63,8 @@ abstract class RetryStrategy {
         }
       } catch (e) {
         onProgress?.call(retryAttempt, null, e);
-        if (maxExecutionTime != null &&
-            DateTime.now().difference(startTime).inSeconds >
-                maxExecutionTime!.inSeconds) {
+        final delta = clock.now().difference(startTime).inSeconds;
+        if (maxExecutionTime != null && delta > maxExecutionTime!.inSeconds) {
           logger.e(
               'Max execution time reached. Giving up. Last result: ${e is ShouldRetryException ? e.result : e}');
           final lastResult = e is ShouldRetryException ? e.result : e;
@@ -97,7 +97,7 @@ abstract class RetryStrategy {
     Function(T? result, Object? error)? onComplete,
   }) {
     final controller = StreamController<T>();
-    final startTime = DateTime.now();
+    final startTime = clock.now();
 
     void _closeStream([T? result, Object? error]) {
       if (error != null) {
@@ -122,13 +122,15 @@ abstract class RetryStrategy {
 
       while (maxRetries == -1 || retryAttempt <= maxRetries) {
         if (controller.isClosed) return;
-
+        final delta = clock.now().difference(startTime);
+        logger.d(
+            '[Retry] Current delta: ${delta.inMilliseconds}, max execution time: ${maxExecutionTime?.inSeconds}');
         if (maxExecutionTime != null &&
-            DateTime.now().difference(startTime).inSeconds >
-                maxExecutionTime!.inSeconds) {
+            delta.inSeconds > maxExecutionTime!.inSeconds) {
           logger.e('Max execution time reached. Giving up.');
           final error = MaxRetriesExceededException(
-              lastResult: lastResult ?? lastError ?? 'Max execution time exceeded');
+              lastResult:
+                  lastResult ?? lastError ?? 'Max execution time exceeded');
           onProgress?.call(retryAttempt, null, error);
           _closeStream(null, error);
           return;
@@ -167,7 +169,6 @@ abstract class RetryStrategy {
     start();
     return controller.stream;
   }
-
 }
 
 /// Fixed delay retry strategy by initial delay
