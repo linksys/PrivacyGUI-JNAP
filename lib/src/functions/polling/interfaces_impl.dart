@@ -31,9 +31,9 @@ class PollingCacheManagerImpl implements PollingCacheManager {
   }
 }
 
-class PollingAdditionalTasksImpl implements PollingAdditionalTasks {
-  final Ref _ref;
-  PollingAdditionalTasksImpl(this._ref);
+class PollingAdditionalTasksRefBased implements PollingAdditionalTasks {
+  final Ref ref;
+  PollingAdditionalTasksRefBased(this.ref);
 
   @override
   Future<void> additionalPolling() async {

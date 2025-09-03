@@ -3,11 +3,11 @@
 // Do not manually edit this file.
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
-import 'dart:async' as _i5;
+import 'dart:async' as _i4;
 
 import 'package:jnap/jnap.dart' as _i2;
 import 'package:jnap/src/functions/polling/interfaces.dart' as _i3;
-import 'package:jnap/src/functions/polling/polling_service.dart' as _i4;
+import 'package:jnap/src/utilties/http/http_client.dart' as _i5;
 import 'package:mockito/mockito.dart' as _i1;
 
 // ignore_for_file: type=lint
@@ -24,9 +24,19 @@ import 'package:mockito/mockito.dart' as _i1;
 // ignore_for_file: camel_case_types
 // ignore_for_file: subtype_of_sealed_class
 
-class _FakeJNAPTransactionSuccessWrap_0 extends _i1.SmartFake
+class _FakeJNAPSuccess_0 extends _i1.SmartFake implements _i2.JNAPSuccess {
+  _FakeJNAPSuccess_0(
+    Object parent,
+    Invocation parentInvocation,
+  ) : super(
+          parent,
+          parentInvocation,
+        );
+}
+
+class _FakeJNAPTransactionSuccessWrap_1 extends _i1.SmartFake
     implements _i2.JNAPTransactionSuccessWrap {
-  _FakeJNAPTransactionSuccessWrap_0(
+  _FakeJNAPTransactionSuccessWrap_1(
     Object parent,
     Invocation parentInvocation,
   ) : super(
@@ -35,8 +45,8 @@ class _FakeJNAPTransactionSuccessWrap_0 extends _i1.SmartFake
         );
 }
 
-class _FakeDuration_1 extends _i1.SmartFake implements Duration {
-  _FakeDuration_1(
+class _FakeDuration_2 extends _i1.SmartFake implements Duration {
+  _FakeDuration_2(
     Object parent,
     Invocation parentInvocation,
   ) : super(
@@ -45,8 +55,8 @@ class _FakeDuration_1 extends _i1.SmartFake implements Duration {
         );
 }
 
-class _FakePollingConfig_2 extends _i1.SmartFake implements _i3.PollingConfig {
-  _FakePollingConfig_2(
+class _FakePollingConfig_3 extends _i1.SmartFake implements _i3.PollingConfig {
+  _FakePollingConfig_3(
     Object parent,
     Invocation parentInvocation,
   ) : super(
@@ -55,51 +65,121 @@ class _FakePollingConfig_2 extends _i1.SmartFake implements _i3.PollingConfig {
         );
 }
 
-/// A class which mocks [PollingService].
+/// A class which mocks [Jnap].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockPollingService extends _i1.Mock implements _i4.PollingService {
-  MockPollingService() {
+class MockJnap extends _i1.Mock implements _i2.Jnap {
+  MockJnap() {
     _i1.throwOnMissingStub(this);
   }
 
   @override
-  List<MapEntry<_i2.JNAPAction, Map<String, dynamic>>>
-      get pollingTransactions => (super.noSuchMethod(
-            Invocation.getter(#pollingTransactions),
-            returnValue: <MapEntry<_i2.JNAPAction, Map<String, dynamic>>>[],
-          ) as List<MapEntry<_i2.JNAPAction, Map<String, dynamic>>>);
-
-  @override
-  set pollingTransactions(
-          List<MapEntry<_i2.JNAPAction, Map<String, dynamic>>>?
-              _pollingTransactions) =>
-      super.noSuchMethod(
-        Invocation.setter(
-          #pollingTransactions,
-          _pollingTransactions,
-        ),
-        returnValueForMissingStub: null,
-      );
-
-  @override
-  _i5.Future<_i2.JNAPTransactionSuccessWrap> doPolling({bool? force = false}) =>
+  _i4.Stream<_i2.JNAPResult> scheduled({
+    required _i2.JNAPAction? action,
+    Map<String, dynamic>? data = const {},
+    Map<String, String>? headers = const {},
+    _i2.JNAPConfigOverrides? overrides,
+    int? retryDelayInMilliSec = 5000,
+    int? maxRetry = 10,
+    int? firstDelayInMilliSec = 3000,
+    bool Function(_i2.JNAPResult)? condition,
+    int? requestTimeoutOverride,
+    bool? auth = false,
+    void Function(
+      _i2.JNAPResult?,
+      Object?,
+    )? onComplete,
+  }) =>
       (super.noSuchMethod(
         Invocation.method(
-          #doPolling,
+          #scheduled,
           [],
-          {#force: force},
+          {
+            #action: action,
+            #data: data,
+            #headers: headers,
+            #overrides: overrides,
+            #retryDelayInMilliSec: retryDelayInMilliSec,
+            #maxRetry: maxRetry,
+            #firstDelayInMilliSec: firstDelayInMilliSec,
+            #condition: condition,
+            #requestTimeoutOverride: requestTimeoutOverride,
+            #auth: auth,
+            #onComplete: onComplete,
+          },
         ),
-        returnValue: _i5.Future<_i2.JNAPTransactionSuccessWrap>.value(
-            _FakeJNAPTransactionSuccessWrap_0(
+        returnValue: _i4.Stream<_i2.JNAPResult>.empty(),
+      ) as _i4.Stream<_i2.JNAPResult>);
+
+  @override
+  _i4.Future<_i2.JNAPSuccess> send({
+    required _i2.JNAPAction? action,
+    Map<String, dynamic>? data = const {},
+    Map<String, String>? headers = const {},
+    _i2.JNAPConfigOverrides? overrides,
+    _i5.HttpClient? httpClient,
+  }) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #send,
+          [],
+          {
+            #action: action,
+            #data: data,
+            #headers: headers,
+            #overrides: overrides,
+            #httpClient: httpClient,
+          },
+        ),
+        returnValue: _i4.Future<_i2.JNAPSuccess>.value(_FakeJNAPSuccess_0(
           this,
           Invocation.method(
-            #doPolling,
+            #send,
             [],
-            {#force: force},
+            {
+              #action: action,
+              #data: data,
+              #headers: headers,
+              #overrides: overrides,
+              #httpClient: httpClient,
+            },
           ),
         )),
-      ) as _i5.Future<_i2.JNAPTransactionSuccessWrap>);
+      ) as _i4.Future<_i2.JNAPSuccess>);
+
+  @override
+  _i4.Future<_i2.JNAPTransactionSuccessWrap> transaction({
+    required _i2.JNAPTransactionBuilder? transactionBuilder,
+    Map<String, String>? headers = const {},
+    _i2.JNAPConfigOverrides? overrides,
+    _i5.HttpClient? httpClient,
+  }) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #transaction,
+          [],
+          {
+            #transactionBuilder: transactionBuilder,
+            #headers: headers,
+            #overrides: overrides,
+            #httpClient: httpClient,
+          },
+        ),
+        returnValue: _i4.Future<_i2.JNAPTransactionSuccessWrap>.value(
+            _FakeJNAPTransactionSuccessWrap_1(
+          this,
+          Invocation.method(
+            #transaction,
+            [],
+            {
+              #transactionBuilder: transactionBuilder,
+              #headers: headers,
+              #overrides: overrides,
+              #httpClient: httpClient,
+            },
+          ),
+        )),
+      ) as _i4.Future<_i2.JNAPTransactionSuccessWrap>);
 }
 
 /// A class which mocks [PollingConfig].
@@ -113,7 +193,7 @@ class MockPollingConfig extends _i1.Mock implements _i3.PollingConfig {
   @override
   Duration get refreshInterval => (super.noSuchMethod(
         Invocation.getter(#refreshInterval),
-        returnValue: _FakeDuration_1(
+        returnValue: _FakeDuration_2(
           this,
           Invocation.getter(#refreshInterval),
         ),
@@ -174,7 +254,7 @@ class MockPollingConfig extends _i1.Mock implements _i3.PollingConfig {
             #isPaused: isPaused,
           },
         ),
-        returnValue: _FakePollingConfig_2(
+        returnValue: _FakePollingConfig_3(
           this,
           Invocation.method(
             #copyWith,
@@ -199,14 +279,14 @@ class MockPollingAdditionalTasks extends _i1.Mock
   }
 
   @override
-  _i5.Future<void> additionalPolling() => (super.noSuchMethod(
+  _i4.Future<void> additionalPolling() => (super.noSuchMethod(
         Invocation.method(
           #additionalPolling,
           [],
         ),
-        returnValue: _i5.Future<void>.value(),
-        returnValueForMissingStub: _i5.Future<void>.value(),
-      ) as _i5.Future<void>);
+        returnValue: _i4.Future<void>.value(),
+        returnValueForMissingStub: _i4.Future<void>.value(),
+      ) as _i4.Future<void>);
 }
 
 /// A class which mocks [PollingCompletedNotifier].
@@ -231,36 +311,6 @@ class MockPollingCompletedNotifier extends _i1.Mock
   void onPollingSuccess() => super.noSuchMethod(
         Invocation.method(
           #onPollingSuccess,
-          [],
-        ),
-        returnValueForMissingStub: null,
-      );
-}
-
-/// A class which mocks [Timer].
-///
-/// See the documentation for Mockito's code generation for more information.
-class MockTimer extends _i1.Mock implements _i5.Timer {
-  MockTimer() {
-    _i1.throwOnMissingStub(this);
-  }
-
-  @override
-  int get tick => (super.noSuchMethod(
-        Invocation.getter(#tick),
-        returnValue: 0,
-      ) as int);
-
-  @override
-  bool get isActive => (super.noSuchMethod(
-        Invocation.getter(#isActive),
-        returnValue: false,
-      ) as bool);
-
-  @override
-  void cancel() => super.noSuchMethod(
-        Invocation.method(
-          #cancel,
           [],
         ),
         returnValueForMissingStub: null,

@@ -38,11 +38,11 @@ void main() {
     });
   });
 
-  group('PollingAdditionalTasksImpl', () {
+  group('PollingAdditionalTasksRefBased', () {
     test('additionalPolling completes', () async {
       final container = ProviderContainer();
       final ref = container.read(Provider((ref) => ref));
-      final tasks = PollingAdditionalTasksImpl(ref);
+      final tasks = PollingAdditionalTasksRefBased(ref);
       await expectLater(tasks.additionalPolling(), completes);
     });
   });

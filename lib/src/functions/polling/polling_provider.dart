@@ -5,6 +5,7 @@ import 'package:jnap/logger.dart';
 import 'package:jnap/src/functions/polling/polling_service.dart';
 import 'package:jnap/src/functions/polling/providers.dart';
 import 'package:jnap/src/utilties/bench_mark.dart';
+import 'package:meta/meta.dart';
 import 'package:riverpod/riverpod.dart';
 
 class CoreTransactionData extends Equatable {
@@ -35,11 +36,13 @@ class CoreTransactionData extends Equatable {
 }
 
 class PollingNotifier extends AsyncNotifier<CoreTransactionData> {
-  static Timer? _timer;
-  late final PollingService _pollingService;
+  @visibleForTesting
+  Timer? timer;
+  late PollingService _pollingService;
 
   @override
   FutureOr<CoreTransactionData> build() {
+    _pollingService = PollingService(ref, jnap: ref.read(jnapProvider));
     return const CoreTransactionData(lastUpdate: 0, isReady: false, data: {});
   }
 
@@ -53,13 +56,11 @@ class PollingNotifier extends AsyncNotifier<CoreTransactionData> {
       return;
     }
     logger.d('[Polling]: prepare start polling data');
-    PollingService.checkSmartMode()
+    await _pollingService
+        .checkSmartMode()
         .then((mode) {
-          _pollingService = PollingService(
-            ref,
-            pollingTransactions:
-                PollingService.buildCoreTransaction(mode: mode),
-          );
+          _pollingService.pollingTransactions =
+              _pollingService.buildCoreTransaction(mode: mode);
           fetchFirstLaunchedCacheData();
         })
         .then(
@@ -76,15 +77,15 @@ class PollingNotifier extends AsyncNotifier<CoreTransactionData> {
         )
         .onError((error, stackTrace) {
           logger.e(
-              '[Polling]: Check Smart Mode failed, Error: $error, $stackTrace');
+              '[Polling]: Check Smart Mode failed, Error: $error, \n$stackTrace');
           throw error ?? '';
         });
   }
 
   stopPolling() {
     logger.d('[Polling]: stop polling data');
-    if ((_timer?.isActive ?? false)) {
-      _timer?.cancel();
+    if ((timer?.isActive ?? false)) {
+      timer?.cancel();
     }
   }
 
@@ -93,7 +94,7 @@ class PollingNotifier extends AsyncNotifier<CoreTransactionData> {
     if (!hasAuth) {
       return;
     }
-    if (!force && (_timer?.isActive ?? false)) {
+    if (!force && (timer?.isActive ?? false)) {
       return;
     } else {
       stopPolling();
@@ -101,13 +102,13 @@ class PollingNotifier extends AsyncNotifier<CoreTransactionData> {
     }
   }
 
-  Future forcePolling() {
-    return _polling(force: true).then((_) => _setTimePeriod());
+  Future forcePolling() async {
+    return await _polling(force: true).then((_) => _setTimePeriod());
   }
 
   _setTimePeriod() {
-    _timer?.cancel();
-    _timer = Timer.periodic(ref.read(pollingConfigProvider).refreshInterval,
+    timer?.cancel();
+    timer = Timer.periodic(ref.read(pollingConfigProvider).refreshInterval,
         (timer) {
       _polling();
     });
@@ -138,7 +139,7 @@ class PollingNotifier extends AsyncNotifier<CoreTransactionData> {
         .onError((error, stackTrace) {
       logger.e('[Polling]: Error: $error, $stackTrace');
       logger.f('[Polling]: Polling failed');
-      ref.read(completedNotifierProvider).onPollingFailed();
+      ref.read(pollingCompletedNotifierProvider).onPollingFailed();
 
       throw error ?? '';
     });
@@ -150,7 +151,7 @@ class PollingNotifier extends AsyncNotifier<CoreTransactionData> {
           return result.copyWith(isReady: true);
         },
       ).onError((e, stackTrace) {
-        logger.e('[Polling]: Error: $e, $stackTrace');
+        logger.e('[Polling]: Error: $e, \n$stackTrace');
         throw e ?? '';
       }),
     );
@@ -159,6 +160,6 @@ class PollingNotifier extends AsyncNotifier<CoreTransactionData> {
   }
 
   Future _additionalPolling() async {
-    await ref.read(additionalTasksProvider).additionalPolling();
+    await ref.read(pollingAdditionalTasksProvider).additionalPolling();
   }
 }

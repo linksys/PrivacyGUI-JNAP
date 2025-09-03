@@ -47,13 +47,13 @@ void main() {
     });
 
     test('fetchCacheData returns data when cache is complete', () {
-      final commands = PollingService.buildCoreTransaction();
+      final ref = container.read(Provider((ref) => ref));
+      final commands = PollingService(ref).buildCoreTransaction();
       final cache = Map.fromEntries(commands.map((e) => MapEntry(e.key.command,
           {'data': JNAPSuccess(result: 'OK', output: {}).toJson()})));
 
       when(mockPollingCacheManager.fetchCacheData()).thenReturn(cache);
 
-      final ref = container.read(Provider((ref) => ref));
       final service = PollingService(ref, jnap: mockJnap);
       final result = service.fetchCacheData();
 
@@ -85,7 +85,8 @@ void main() {
       )).thenAnswer(
           (_) async => JNAPSuccess(result: 'OK', output: {'mode': 'Master'}));
 
-      final mode = await PollingService.checkSmartMode(jnap: mockJnap);
+      final ref = container.read(Provider((ref) => ref));
+      final mode = await PollingService(ref, jnap: mockJnap).checkSmartMode();
 
       expect(mode, 'Master');
       verify(mockJnap.send(
@@ -95,13 +96,15 @@ void main() {
     });
 
     test('buildCoreTransaction builds commands correctly for Master mode', () {
-      final commands = PollingService.buildCoreTransaction(mode: 'Master');
+      final ref = container.read(Provider((ref) => ref));
+      final commands = PollingService(ref, jnap: mockJnap).buildCoreTransaction(mode: 'Master');
       expect(commands.any((e) => e.key == GetBackhaulInfo.instance), isTrue);
     });
 
     test('buildCoreTransaction builds commands correctly for non-Master mode',
         () {
-      final commands = PollingService.buildCoreTransaction(mode: 'Satellite');
+      final ref = container.read(Provider((ref) => ref));
+      final commands = PollingService(ref, jnap: mockJnap).buildCoreTransaction(mode: 'Satellite');
       expect(commands.any((e) => e.key == GetBackhaulInfo.instance), isFalse);
     });
   });

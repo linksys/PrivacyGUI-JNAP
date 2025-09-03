@@ -6,16 +6,19 @@ import 'package:riverpod/riverpod.dart';
 
 class PollingService {
   final Ref _ref;
-  late final List<MapEntry<JNAPAction, Map<String, dynamic>>>
-      pollingTransactions;
+  List<MapEntry<JNAPAction, Map<String, dynamic>>>? _pollingTransactions;
+  List<MapEntry<JNAPAction, Map<String, dynamic>>> get pollingTransactions =>
+      _pollingTransactions ?? buildCoreTransaction();
+  set pollingTransactions(
+          List<MapEntry<JNAPAction, Map<String, dynamic>>> value) =>
+      _pollingTransactions = value;
   final Jnap _jnap;
 
   PollingService(this._ref,
       {Jnap? jnap,
       List<MapEntry<JNAPAction, Map<String, dynamic>>>? pollingTransactions})
       : _jnap = jnap ?? Jnap.instance,
-        pollingTransactions =
-            pollingTransactions ?? PollingService.buildCoreTransaction();
+        _pollingTransactions = pollingTransactions;
 
   Map<JNAPAction, JNAPSuccess>? fetchCacheData() {
     final cache = _ref.read(cacheManagerProvider).fetchCacheData();
@@ -41,8 +44,8 @@ class PollingService {
     );
   }
 
-  static Future<String> checkSmartMode({Jnap? jnap}) async {
-    final jnapClient = jnap ?? Jnap.instance;
+  Future<String> checkSmartMode() async {
+    final jnapClient = _jnap;
     return await jnapClient
         .send(
           action: GetDeviceMode.instance,
@@ -51,7 +54,7 @@ class PollingService {
         .then((value) => value.output['mode'] ?? 'Unconfigured');
   }
 
-  static List<MapEntry<JNAPAction, Map<String, dynamic>>> buildCoreTransaction(
+  List<MapEntry<JNAPAction, Map<String, dynamic>>> buildCoreTransaction(
       {String? mode}) {
     List<MapEntry<JNAPAction, Map<String, dynamic>>> commands = [
       MapEntry(GetNodesWirelessNetworkConnections.instance, {}),

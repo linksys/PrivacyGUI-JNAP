@@ -1,3 +1,4 @@
+import 'package:jnap/jnap.dart';
 import 'package:jnap/src/functions/polling/interfaces.dart';
 import 'package:jnap/src/functions/polling/interfaces_impl.dart';
 import 'package:jnap/src/functions/polling/polling_provider.dart';
@@ -10,12 +11,13 @@ final pollingProvider =
 final pollingConfigProvider =
     Provider<PollingConfig>((ref) => PollingConfigImpl());
 
-final additionalTasksProvider =
-    Provider<PollingAdditionalTasks>((ref) => PollingAdditionalTasksImpl(ref));
+final pollingAdditionalTasksProvider =
+    Provider<PollingAdditionalTasks>((ref) => PollingAdditionalTasksRefBased(ref));
 
-final completedNotifierProvider =
+final pollingCompletedNotifierProvider =
     Provider<PollingCompletedNotifier>((ref) => PollingCompletedNotifierImpl());
 
 final cacheManagerProvider =
     Provider<PollingCacheManager>((ref) => PollingCacheManagerImpl());
 
+final jnapProvider = Provider<Jnap>((ref) => Jnap.instance);
