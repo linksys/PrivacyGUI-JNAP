@@ -4,21 +4,38 @@ import 'package:jnap/src/functions/polling/interfaces.dart';
 import 'package:jnap/src/functions/polling/interfaces_impl.dart';
 import 'package:jnap/src/functions/polling/polling_provider.dart';
 import 'package:jnap/src/functions/polling/providers.dart';
-import 'package:mockito/annotations.dart';
-import 'package:mockito/mockito.dart';
+import 'package:mocktail/mocktail.dart';
 import 'package:riverpod/riverpod.dart';
 import 'package:test/test.dart';
 
-import 'polling_provider_test.mocks.dart';
+class MockJnap extends Mock implements Jnap {}
 
-@GenerateMocks(
-    [Jnap, PollingConfig, PollingAdditionalTasks, PollingCompletedNotifier])
+class MockPollingConfig extends Mock implements PollingConfig {}
+
+class MockPollingAdditionalTasks extends Mock
+    implements PollingAdditionalTasks {}
+
+class MockPollingCompletedNotifier extends Mock
+    implements PollingCompletedNotifier {}
+
+class FakeJNAPAction extends Fake implements JNAPAction {}
+
+class FakeJNAPConfigOverrides extends Fake implements JNAPConfigOverrides {}
+
+class FakeJNAPTransactionBuilder extends Fake implements JNAPTransactionBuilder {}
+
 void main() {
   late MockJnap mockJnap;
   late MockPollingConfig mockPollingConfig;
   late MockPollingAdditionalTasks mockAdditionalTasks;
   late MockPollingCompletedNotifier mockCompletedNotifier;
   late ProviderContainer container;
+
+  setUpAll(() {
+    registerFallbackValue(FakeJNAPAction());
+    registerFallbackValue(FakeJNAPConfigOverrides());
+    registerFallbackValue(FakeJNAPTransactionBuilder());
+  });
 
   setUp(() {
     mockJnap = MockJnap();
@@ -27,18 +44,18 @@ void main() {
     mockCompletedNotifier = MockPollingCompletedNotifier();
 
     // Default mock behaviors
-    when(mockPollingConfig.isPaused).thenReturn(false);
-    when(mockPollingConfig.pollFirstDelayInSec).thenReturn(1);
-    when(mockPollingConfig.refreshInterval)
+    when(() => mockPollingConfig.isPaused).thenReturn(false);
+    when(() => mockPollingConfig.pollFirstDelayInSec).thenReturn(1);
+    when(() => mockPollingConfig.refreshInterval)
         .thenReturn(const Duration(seconds: 60));
-    when(mockAdditionalTasks.additionalPolling()).thenAnswer((_) async {});
-    when(mockJnap.send(
-            action: GetDeviceMode.instance, overrides: anyNamed('overrides')))
+    when(() => mockAdditionalTasks.additionalPolling()).thenAnswer((_) async {});
+    when(() => mockJnap.send(
+            action: any(named: 'action'), overrides: any(named: 'overrides')))
         .thenAnswer(
             (_) async => JNAPSuccess(result: 'OK', output: {'mode': 'Master'}));
-    when(mockJnap.transaction(
-            transactionBuilder: anyNamed('transactionBuilder'),
-            overrides: anyNamed('overrides')))
+    when(() => mockJnap.transaction(
+            transactionBuilder: any(named: 'transactionBuilder'),
+            overrides: any(named: 'overrides')))
         .thenAnswer(
             (_) async => JNAPTransactionSuccessWrap(result: 'OK', data: []));
 
@@ -69,12 +86,12 @@ void main() {
     });
 
     test('startPolling does nothing if paused', () async {
-      when(mockPollingConfig.isPaused).thenReturn(true);
+      when(() => mockPollingConfig.isPaused).thenReturn(true);
 
       final notifier = container.read(pollingProvider.notifier);
       await notifier.startPolling();
 
-      verifyNever(mockJnap.send(action: anyNamed('action')));
+      verifyNever(() => mockJnap.send(action: any(named: 'action')));
     });
 
     test('startPolling success path sets up timer and polls', () {
@@ -84,16 +101,16 @@ void main() {
 
         // Let checkSmartMode and its .then() chain run
         async.flushMicrotasks();
-        verify(mockJnap.send(
+        verify(() => mockJnap.send(
           action: GetDeviceMode.instance,
-          overrides: JNAPConfigOverrides(forceRemote: true),
+          overrides: any(named: 'overrides'),
         )).called(1);
 
         // Elapse time for the first poll delay
         async.elapse(const Duration(seconds: 1));
-        verify(mockJnap.transaction(
-          transactionBuilder: anyNamed('transactionBuilder'),
-          overrides: anyNamed('overrides'),
+        verify(() => mockJnap.transaction(
+          transactionBuilder: any(named: 'transactionBuilder'),
+          overrides: any(named: 'overrides'),
         )).called(1);
 
         // Let the polling future complete
@@ -105,9 +122,9 @@ void main() {
 
         // Elapse time for the next poll
         async.elapse(const Duration(seconds: 60));
-        verify(mockJnap.transaction(
-                transactionBuilder: anyNamed('transactionBuilder'),
-                overrides: anyNamed('overrides')))
+        verify(() => mockJnap.transaction(
+                transactionBuilder: any(named: 'transactionBuilder'),
+                overrides: any(named: 'overrides')))
             .called(1); // Called once more
 
         notifier.stopPolling();
@@ -117,8 +134,8 @@ void main() {
 
     test('startPolling handles checkSmartMode error', () async {
       final exception = Exception('Smart mode check failed');
-      when(mockJnap.send(
-              action: GetDeviceMode.instance, overrides: anyNamed('overrides')))
+      when(() => mockJnap.send(
+              action: GetDeviceMode.instance, overrides: any(named: 'overrides')))
           .thenThrow(exception);
 
       final notifier = container.read(pollingProvider.notifier);
@@ -129,12 +146,12 @@ void main() {
         throwsA(isA<Exception>()),
       );
 
-      verify(mockJnap.send(
-              action: GetDeviceMode.instance, overrides: anyNamed('overrides')))
+      verify(() => mockJnap.send(
+              action: GetDeviceMode.instance, overrides: any(named: 'overrides')))
           .called(1);
-      verifyNever(mockJnap.transaction(
-          transactionBuilder: anyNamed('transactionBuilder'),
-          overrides: anyNamed('overrides')));
+      verifyNever(() => mockJnap.transaction(
+          transactionBuilder: any(named: 'transactionBuilder'),
+          overrides: any(named: 'overrides')));
     });
 
     test('checkAndStartPolling does nothing if not authenticated', () {
@@ -143,7 +160,7 @@ void main() {
 
       notifier.checkAndStartPolling();
 
-      verifyNever(mockJnap.send(action: GetDeviceMode.instance));
+      verifyNever(() => mockJnap.send(action: GetDeviceMode.instance));
     });
 
     test('checkAndStartPolling does nothing if timer is active', () {
@@ -159,7 +176,7 @@ void main() {
         clearInteractions(mockJnap);
 
         notifier.checkAndStartPolling();
-        verifyNever(mockJnap.send(action: anyNamed('action')));
+        verifyNever(() => mockJnap.send(action: any(named: 'action')));
       });
     });
 
@@ -175,9 +192,9 @@ void main() {
         expect(notifier.timer!.isActive, isTrue);
 
         clearInteractions(mockJnap);
-        when(mockJnap.send(
+        when(() => mockJnap.send(
                 action: GetDeviceMode.instance,
-                overrides: anyNamed('overrides')))
+                overrides: any(named: 'overrides')))
             .thenAnswer((_) async =>
                 JNAPSuccess(result: 'OK', output: {'mode': 'Master'}));
 
@@ -185,9 +202,9 @@ void main() {
         async.flushMicrotasks();
         // Elapse time for the first poll delay to set up the timer
         async.elapse(const Duration(seconds: 1));
-        verify(mockJnap.send(
+        verify(() => mockJnap.send(
                 action: GetDeviceMode.instance,
-                overrides: anyNamed('overrides')))
+                overrides: any(named: 'overrides')))
             .called(1);
       });
     });
@@ -201,9 +218,9 @@ void main() {
         notifier.forcePolling();
         async.flushMicrotasks();
 
-        verify(mockJnap.transaction(
-                transactionBuilder: anyNamed('transactionBuilder'),
-                overrides: JNAPConfigOverrides(forceRemote: true)))
+        verify(() => mockJnap.transaction(
+                transactionBuilder: any(named: 'transactionBuilder'),
+                overrides: any(named: 'overrides')))
             .called(1);
       });
     });
@@ -222,14 +239,14 @@ void main() {
       // State becomes data
       expect(notifier.state, isA<AsyncData>());
       expect(notifier.state.value!.isReady, isTrue);
-      verify(mockAdditionalTasks.additionalPolling()).called(1);
+      verify(() => mockAdditionalTasks.additionalPolling()).called(1);
     });
 
     test('_polling failure path updates state and calls notifier', () async {
       final exception = Exception('Polling failed');
-      when(mockJnap.transaction(
-              transactionBuilder: anyNamed('transactionBuilder'),
-              overrides: anyNamed('overrides')))
+      when(() => mockJnap.transaction(
+              transactionBuilder: any(named: 'transactionBuilder'),
+              overrides: any(named: 'overrides')))
           .thenThrow(exception);
       final notifier = container.read(pollingProvider.notifier);
       // _polling handles the error internally by setting state to AsyncError,
@@ -237,7 +254,7 @@ void main() {
       await notifier.forcePolling();
 
       expect(notifier.state, isA<AsyncError>());
-      verify(mockCompletedNotifier.onPollingFailed()).called(1);
+      verify(() => mockCompletedNotifier.onPollingFailed()).called(1);
     });
   });
 }

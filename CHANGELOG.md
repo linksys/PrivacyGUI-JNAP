@@ -1,3 +1,16 @@
+
+## [1.0.9] - 2025-09-04
+
+### Changed
+- Enhanced JNAP client with improved testing and caching.
+- Implemented and refactored polling module.
+- Refactored polling mechanism and updated tests.
+- Added more robust test cases for HttpClient.
+- Removed mockito library and used mocktail instead.
+
+### Fixed
+- [Polling] Fixed testing fail.
+
 ## [1.0.8] - 2025-09-03
 
 ### Added

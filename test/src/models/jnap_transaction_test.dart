@@ -1,7 +1,7 @@
 import 'package:test/test.dart';
 import 'package:jnap/src/models/jnap_transaction.dart';
 import 'package:jnap/src/modules/jnap_action.dart';
-import 'package:mockito/mockito.dart';
+import 'package:mocktail/mocktail.dart';
 
 class MockJNAPAction extends Mock implements JNAPAction {}
 
@@ -15,7 +15,6 @@ void main() {
       builder = JNAPTransactionBuilder();
       mockAction1 = MockJNAPAction();
       mockAction2 = MockJNAPAction();
-      
     });
 
     test('initializes with empty commands list', () {

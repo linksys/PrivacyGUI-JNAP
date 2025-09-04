@@ -3,23 +3,19 @@ import 'package:jnap/src/cache/cache_manager_base.dart'
     if (dart.library.io) 'package:jnap/src/cache/cache_manager_mobile.dart'
     if (dart.library.html) 'package:jnap/src/cache/cache_manager_web.dart';
 import 'package:jnap/src/cache/data_cache_manager.dart';
-import 'package:mockito/annotations.dart';
-import 'package:mockito/mockito.dart';
+import 'package:mocktail/mocktail.dart';
 import 'package:test/test.dart';
 
-import 'data_cache_manager_test.mocks.dart';
+class MockBasedCacheManager extends Mock implements BasedCacheManager {}
 
-typedef MyBasedCacheManager = BasedCacheManager;
-
-@GenerateNiceMocks([MockSpec<MyBasedCacheManager>()])
 void main() {
   group('DataCacheManager', () {
     late DataCacheManager cacheManager;
-    late MockMyBasedCacheManager mockBasedCacheManager;
+    late MockBasedCacheManager mockBasedCacheManager;
 
     setUp(() async {
-      mockBasedCacheManager = MockMyBasedCacheManager();
-      when(mockBasedCacheManager.get()).thenAnswer((_) async => '');
+      mockBasedCacheManager = MockBasedCacheManager();
+      when(() => mockBasedCacheManager.get()).thenAnswer((_) async => '');
       cacheManager = DataCacheManager(mockBasedCacheManager);
     });
 
@@ -28,7 +24,7 @@ void main() {
     });
 
     test('initializes correctly', () async {
-      when(mockBasedCacheManager.get()).thenAnswer((_) async => null);
+      when(() => mockBasedCacheManager.get()).thenAnswer((_) async => null);
       cacheManager.init(mockBasedCacheManager);
       expect(cacheManager.data, isEmpty);
       expect(cacheManager.lastSerialNumber, isEmpty);
@@ -37,30 +33,30 @@ void main() {
     test('clearCache clears all data when action is empty', () async {
       cacheManager.data['action1'] = {'data': 'some data'};
       cacheManager.lastSerialNumber = 'SN123';
-      when(mockBasedCacheManager.set(any)).thenAnswer((_) async {});
+      when(() => mockBasedCacheManager.set(any())).thenAnswer((_) async {});
 
       await cacheManager.clearCache('');
 
       expect(cacheManager.data, isEmpty);
-      verify(mockBasedCacheManager.set(any));
+      verify(() => mockBasedCacheManager.set(any()));
     });
 
     test('clearCache clears specific action', () async {
       cacheManager.data['action1'] = {'data': 'some data'};
       cacheManager.data['action2'] = {'data': 'other data'};
       cacheManager.lastSerialNumber = 'SN123';
-      when(mockBasedCacheManager.set(any)).thenAnswer((_) async {});
+      when(() => mockBasedCacheManager.set(any())).thenAnswer((_) async {});
 
       await cacheManager.clearCache('action1');
 
       expect(cacheManager.data.containsKey('action1'), isFalse);
       expect(cacheManager.data.containsKey('action2'), isTrue);
-      verify(mockBasedCacheManager.set(any));
+      verify(() => mockBasedCacheManager.set(any()));
     });
 
     test('loadCache returns true for new serial number with no cache',
         () async {
-      when(mockBasedCacheManager.get()).thenAnswer((_) async => null);
+      when(() => mockBasedCacheManager.get()).thenAnswer((_) async => null);
 
       final result = await cacheManager.loadCache(serialNumber: 'SN123');
 
@@ -75,7 +71,7 @@ void main() {
           'action1': {'data': 'some data'}
         }
       };
-      when(mockBasedCacheManager.get())
+      when(() => mockBasedCacheManager.get())
           .thenAnswer((_) async => jsonEncode(cacheData));
 
       await cacheManager.loadCache(serialNumber: 'SN123');
@@ -88,7 +84,7 @@ void main() {
     });
 
     test('loadCache handles error during cache retrieval', () async {
-      when(mockBasedCacheManager.get())
+      when(() => mockBasedCacheManager.get())
           .thenThrow(Exception('Failed to retrieve cache'));
 
       final result = await cacheManager.loadCache(serialNumber: 'SN123');
@@ -102,12 +98,12 @@ void main() {
 
     test('saveCache saves data for a new serial number', () async {
       cacheManager.data['action1'] = {'data': 'some data'};
-      when(mockBasedCacheManager.get()).thenAnswer((_) async => '');
-      when(mockBasedCacheManager.set(any)).thenAnswer((_) async {});
+      when(() => mockBasedCacheManager.get()).thenAnswer((_) async => '');
+      when(() => mockBasedCacheManager.set(any())).thenAnswer((_) async {});
 
       await cacheManager.saveCache('SN123');
 
-      verify(mockBasedCacheManager.set(jsonEncode({
+      verify(() => mockBasedCacheManager.set(jsonEncode({
         'SN123': {
           'action1': {'data': 'some data'}
         }
@@ -116,8 +112,8 @@ void main() {
 
     test('saveCache handles error during cache saving', () async {
       cacheManager.data['action1'] = {'data': 'some data'};
-      when(mockBasedCacheManager.get()).thenAnswer((_) async => '');
-      when(mockBasedCacheManager.set(any))
+      when(() => mockBasedCacheManager.get()).thenAnswer((_) async => '');
+      when(() => mockBasedCacheManager.set(any()))
           .thenThrow(Exception('Failed to save cache'));
 
       // Now that saveCache is async and handles errors internally, we await it.
@@ -147,46 +143,46 @@ void main() {
 
     test('handleJNAPCached saves data correctly', () async {
       final record = {'key': 'value'};
-      when(mockBasedCacheManager.set(any)).thenAnswer((_) async {});
+      when(() => mockBasedCacheManager.set(any())).thenAnswer((_) async {});
 
       await cacheManager.handleJNAPCached(record, 'action1', 'SN123');
 
       expect(cacheManager.data['action1'], isNotNull);
       expect(cacheManager.data['action1']['data'], record);
-      verify(mockBasedCacheManager.set(any));
+      verify(() => mockBasedCacheManager.set(any()));
     });
 
     test('handleJNAPCached saves null data correctly', () async {
       final record = <String, dynamic>{};
-      when(mockBasedCacheManager.set(any)).thenAnswer((_) async {});
+      when(() => mockBasedCacheManager.set(any())).thenAnswer((_) async {});
 
       await cacheManager.handleJNAPCached(record, 'action_null', 'SN123');
 
       expect(cacheManager.data['action_null'], isNotNull);
       expect(cacheManager.data['action_null']['data'], record);
-      verify(mockBasedCacheManager.set(any));
+      verify(() => mockBasedCacheManager.set(any()));
     });
 
     test('handleJNAPCached saves empty map data correctly', () async {
       final record = <String, dynamic>{};
-      when(mockBasedCacheManager.set(any)).thenAnswer((_) async {});
+      when(() => mockBasedCacheManager.set(any())).thenAnswer((_) async {});
 
       await cacheManager.handleJNAPCached(record, 'action_empty_map', 'SN123');
 
       expect(cacheManager.data['action_empty_map'], isNotNull);
       expect(cacheManager.data['action_empty_map']['data'], record);
-      verify(mockBasedCacheManager.set(any));
+      verify(() => mockBasedCacheManager.set(any()));
     });
 
     test('handleJNAPCached saves empty list data correctly', () async {
       final record = <String, dynamic>{};
-      when(mockBasedCacheManager.set(any)).thenAnswer((_) async {});
+      when(() => mockBasedCacheManager.set(any())).thenAnswer((_) async {});
 
       await cacheManager.handleJNAPCached(record, 'action_empty_list', 'SN123');
 
       expect(cacheManager.data['action_empty_list'], isNotNull);
       expect(cacheManager.data['action_empty_list']['data'], record);
-      verify(mockBasedCacheManager.set(any));
+      verify(() => mockBasedCacheManager.set(any()));
     });
 
     test('checkCacheDataValid returns true for valid cache', () {

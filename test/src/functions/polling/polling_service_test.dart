@@ -2,12 +2,20 @@ import 'package:jnap/jnap.dart';
 import 'package:jnap/src/functions/polling/interfaces.dart';
 import 'package:jnap/src/functions/polling/polling_service.dart';
 import 'package:jnap/src/functions/polling/providers.dart';
-import 'package:mockito/annotations.dart';
-import 'package:mockito/mockito.dart';
+import 'package:mocktail/mocktail.dart';
 import 'package:riverpod/riverpod.dart';
 import 'package:test/test.dart';
 
-import 'polling_service_test.mocks.dart';
+class MockJnap extends Mock implements Jnap {}
+
+class MockPollingCacheManager extends Mock implements PollingCacheManager {}
+
+class FakeJNAPAction extends Fake implements JNAPAction {}
+
+class FakeJNAPConfigOverrides extends Fake implements JNAPConfigOverrides {}
+
+class FakeJNAPTransactionBuilder extends Fake
+    implements JNAPTransactionBuilder {}
 
 List<JNAPService> mockServiceList = [
   airtimeFairnessService,
@@ -18,11 +26,16 @@ List<JNAPService> mockServiceList = [
   deviceListService,
 ];
 
-@GenerateMocks([Jnap, PollingCacheManager])
 void main() {
   late MockJnap mockJnap;
   late MockPollingCacheManager mockPollingCacheManager;
   late ProviderContainer container;
+
+  setUpAll(() {
+    registerFallbackValue(FakeJNAPAction());
+    registerFallbackValue(FakeJNAPConfigOverrides());
+    registerFallbackValue(FakeJNAPTransactionBuilder());
+  });
 
   setUp(() {
     mockJnap = MockJnap();
@@ -37,7 +50,7 @@ void main() {
     test('fetchCacheData returns null when cache is incomplete', () {
       final ref = container.read(Provider((ref) => ref));
       final service = PollingService(ref, jnap: mockJnap);
-      when(mockPollingCacheManager.fetchCacheData()).thenReturn({
+      when(() => mockPollingCacheManager.fetchCacheData()).thenReturn({
         'GetNodesWirelessNetworkConnections': {'data': {}}
       });
 
@@ -52,7 +65,7 @@ void main() {
       final cache = Map.fromEntries(commands.map((e) => MapEntry(e.key.command,
           {'data': JNAPSuccess(result: 'OK', output: {}).toJson()})));
 
-      when(mockPollingCacheManager.fetchCacheData()).thenReturn(cache);
+      when(() => mockPollingCacheManager.fetchCacheData()).thenReturn(cache);
 
       final service = PollingService(ref, jnap: mockJnap);
       final result = service.fetchCacheData();
@@ -64,24 +77,24 @@ void main() {
     test('doPolling calls jnap.transaction', () async {
       final ref = container.read(Provider((ref) => ref));
       final service = PollingService(ref, jnap: mockJnap);
-      when(mockJnap.transaction(
-        transactionBuilder: anyNamed('transactionBuilder'),
-        overrides: anyNamed('overrides'),
+      when(() => mockJnap.transaction(
+        transactionBuilder: any(named: 'transactionBuilder'),
+        overrides: any(named: 'overrides'),
       )).thenAnswer(
           (_) async => JNAPTransactionSuccessWrap(result: 'OK', data: []));
 
       await service.doPolling();
 
-      verify(mockJnap.transaction(
-        transactionBuilder: anyNamed('transactionBuilder'),
-        overrides: anyNamed('overrides'),
+      verify(() => mockJnap.transaction(
+        transactionBuilder: any(named: 'transactionBuilder'),
+        overrides: any(named: 'overrides'),
       )).called(1);
     });
 
     test('checkSmartMode calls jnap.send and returns mode', () async {
-      when(mockJnap.send(
+      when(() => mockJnap.send(
         action: GetDeviceMode.instance,
-        overrides: anyNamed('overrides'),
+        overrides: any(named: 'overrides'),
       )).thenAnswer(
           (_) async => JNAPSuccess(result: 'OK', output: {'mode': 'Master'}));
 
@@ -89,7 +102,7 @@ void main() {
       final mode = await PollingService(ref, jnap: mockJnap).checkSmartMode();
 
       expect(mode, 'Master');
-      verify(mockJnap.send(
+      verify(() => mockJnap.send(
         action: GetDeviceMode.instance,
         overrides: JNAPConfigOverrides(forceRemote: true),
       )).called(1);

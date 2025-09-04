@@ -1,11 +1,10 @@
 import 'package:jnap/jnap.dart';
 import 'package:jnap/src/utilties/retry_strategy/retry.dart';
-import 'package:mockito/annotations.dart';
-import 'package:mockito/mockito.dart';
+import 'package:mocktail/mocktail.dart';
 import 'package:test/test.dart';
 import 'package:fake_async/fake_async.dart';
 
-import 'side_effects_test.mocks.dart';
+class MockJnap extends Mock implements Jnap {}
 
 // Mock JNAPResult for testing side effects
 class MockJNAPResult extends JNAPResult with SideEffectGetter {
@@ -41,8 +40,20 @@ class MockPollFunction {
   }
 }
 
-@GenerateMocks([Jnap])
+class FakeJNAPAction extends Fake implements JNAPAction {}
+
+class FakeJNAPConfigOverrides extends Fake implements JNAPConfigOverrides {}
+
+class FakeJNAPSideEffectOverrides extends Fake
+    implements JNAPSideEffectOverrides {}
+
 void main() {
+  setUpAll(() {
+    registerFallbackValue(FakeJNAPAction());
+    registerFallbackValue(FakeJNAPConfigOverrides());
+    registerFallbackValue(FakeJNAPSideEffectOverrides());
+  });
+
   group('SideEffectHandler', () {
     late SideEffectHandler sideEffectHandler;
     late MockJnap mockJnap;
@@ -65,12 +76,13 @@ void main() {
       test('should throw SideEffectMaxRetryException on poll failure',
           () async {
         // Make the underlying poll functions fail
-        when(mockJnap.send(
-          action: anyNamed('action'),
-          data: anyNamed('data'),
-          headers: anyNamed('headers'),
-          overrides: anyNamed('overrides'),
-          httpClient: anyNamed('httpClient'),
+        when(() => mockJnap.send(
+          action: any(named: 'action'),
+          data: any(named: 'data'),
+          headers: any(named: 'headers'),
+          overrides: any(named: 'overrides'),
+          sideEffectOverrides: any(named: 'sideEffectOverrides'),
+          httpClient: any(named: 'httpClient'),
         )).thenAnswer(
             (_) async => JNAPSuccess(result: 'ERROR')); // Simulate failure
 
@@ -94,12 +106,13 @@ void main() {
         var beforeCalled = false;
         var afterCalled = false;
 
-        when(mockJnap.send(
-          action: anyNamed('action'),
-          data: anyNamed('data'),
-          headers: anyNamed('headers'),
-          overrides: anyNamed('overrides'),
-          httpClient: anyNamed('httpClient'),
+        when(() => mockJnap.send(
+          action: any(named: 'action'),
+          data: any(named: 'data'),
+          headers: any(named: 'headers'),
+          overrides: any(named: 'overrides'),
+          sideEffectOverrides: any(named: 'sideEffectOverrides'),
+          httpClient: any(named: 'httpClient'),
         )).thenAnswer((invocation) async {
           final action = invocation.namedArguments[#action] as JNAPAction;
           if (action.name == GetWANStatus.instance.name) {
@@ -135,12 +148,13 @@ void main() {
 
       test('should call afterHandle even on failure', () async {
         var afterCalled = false;
-        when(mockJnap.send(
-          action: anyNamed('action'),
-          data: anyNamed('data'),
-          headers: anyNamed('headers'),
-          overrides: anyNamed('overrides'),
-          httpClient: anyNamed('httpClient'),
+        when(() => mockJnap.send(
+          action: any(named: 'action'),
+          data: any(named: 'data'),
+          headers: any(named: 'headers'),
+          overrides: any(named: 'overrides'),
+          sideEffectOverrides: any(named: 'sideEffectOverrides'),
+          httpClient: any(named: 'httpClient'),
         )).thenAnswer(
             (_) async => JNAPSuccess(result: 'ERROR')); // Simulate failure
 
@@ -169,21 +183,23 @@ void main() {
       test('should return true when device reconnected and fully booted',
           () async {
         // Arrange
-        when(mockJnap.send(
+        when(() => mockJnap.send(
                 action: GetDeviceInfo.instance,
-                data: anyNamed('data'),
-                headers: anyNamed('headers'),
-                overrides: anyNamed('overrides'),
-                httpClient: anyNamed('httpClient')))
+                data: any(named: 'data'),
+                headers: any(named: 'headers'),
+                overrides: any(named: 'overrides'),
+                sideEffectOverrides: any(named: 'sideEffectOverrides'),
+                httpClient: any(named: 'httpClient')))
             .thenAnswer((_) async =>
                 JNAPSuccess(result: 'OK', output: {'serialNumber': 'TEST_SN'}));
 
-        when(mockJnap.send(
+        when(() => mockJnap.send(
                 action: GetWANStatus.instance,
-                data: anyNamed('data'),
-                headers: anyNamed('headers'),
-                overrides: anyNamed('overrides'),
-                httpClient: anyNamed('httpClient')))
+                data: any(named: 'data'),
+                headers: any(named: 'headers'),
+                overrides: any(named: 'overrides'),
+                sideEffectOverrides: any(named: 'sideEffectOverrides'),
+                httpClient: any(named: 'httpClient')))
             .thenAnswer((_) async =>
                 JNAPSuccess(result: 'OK', output: {'wanStatus': 'Connected'}));
 
@@ -200,12 +216,13 @@ void main() {
         sideEffectHandler =
             SideEffectHandler(jnap: mockJnap, cachedSerialNumber: 'SN123');
 
-        when(mockJnap.send(
+        when(() => mockJnap.send(
                 action: GetDeviceInfo.instance,
-                data: anyNamed('data'),
-                headers: anyNamed('headers'),
-                overrides: anyNamed('overrides'),
-                httpClient: anyNamed('httpClient')))
+                data: any(named: 'data'),
+                headers: any(named: 'headers'),
+                overrides: any(named: 'overrides'),
+                sideEffectOverrides: any(named: 'sideEffectOverrides'),
+                httpClient: any(named: 'httpClient')))
             .thenAnswer((_) async =>
                 JNAPSuccess(result: 'OK', output: {'serialNumber': 'SN456'}));
 
@@ -214,12 +231,13 @@ void main() {
       });
 
       test('should return false when GetDeviceInfo fails', () async {
-        when(mockJnap.send(
-          action: anyNamed('action'),
-          data: anyNamed('data'),
-          headers: anyNamed('headers'),
-          overrides: anyNamed('overrides'),
-          httpClient: anyNamed('httpClient'),
+        when(() => mockJnap.send(
+          action: any(named: 'action'),
+          data: any(named: 'data'),
+          headers: any(named: 'headers'),
+          overrides: any(named: 'overrides'),
+          sideEffectOverrides: any(named: 'sideEffectOverrides'),
+          httpClient: any(named: 'httpClient'),
         )).thenThrow(Exception('Network Error'));
 
         final result = await sideEffectHandler.testRouterReconnected();
@@ -229,12 +247,13 @@ void main() {
 
     group('testRouterFullyBootedUp', () {
       test('should return true when WAN is connected', () async {
-        when(mockJnap.send(
-          action: anyNamed('action'),
-          data: anyNamed('data'),
-          headers: anyNamed('headers'),
-          overrides: anyNamed('overrides'),
-          httpClient: anyNamed('httpClient'),
+        when(() => mockJnap.send(
+          action: any(named: 'action'),
+          data: any(named: 'data'),
+          headers: any(named: 'headers'),
+          overrides: any(named: 'overrides'),
+          sideEffectOverrides: any(named: 'sideEffectOverrides'),
+          httpClient: any(named: 'httpClient'),
         )).thenAnswer((_) async =>
             JNAPSuccess(result: 'OK', output: {'wanStatus': 'Connected'}));
 
@@ -245,12 +264,13 @@ void main() {
       });
 
       test('should return false when WAN is not connected', () async {
-        when(mockJnap.send(
-          action: anyNamed('action'),
-          data: anyNamed('data'),
-          headers: anyNamed('headers'),
-          overrides: anyNamed('overrides'),
-          httpClient: anyNamed('httpClient'),
+        when(() => mockJnap.send(
+          action: any(named: 'action'),
+          data: any(named: 'data'),
+          headers: any(named: 'headers'),
+          overrides: any(named: 'overrides'),
+          sideEffectOverrides: any(named: 'sideEffectOverrides'),
+          httpClient: any(named: 'httpClient'),
         )).thenAnswer((_) async =>
             JNAPSuccess(result: 'OK', output: {'wanStatus': 'Disconnected'}));
 
@@ -262,12 +282,13 @@ void main() {
 
       test('should return false when router is not responding long enough',
           () async {
-        when(mockJnap.send(
-          action: anyNamed('action'),
-          data: anyNamed('data'),
-          headers: anyNamed('headers'),
-          overrides: anyNamed('overrides'),
-          httpClient: anyNamed('httpClient'),
+        when(() => mockJnap.send(
+          action: any(named: 'action'),
+          data: any(named: 'data'),
+          headers: any(named: 'headers'),
+          overrides: any(named: 'overrides'),
+          sideEffectOverrides: any(named: 'sideEffectOverrides'),
+          httpClient: any(named: 'httpClient'),
         )).thenAnswer((_) async =>
             JNAPSuccess(result: 'OK', output: {'wanStatus': 'Connected'}));
 
@@ -277,12 +298,13 @@ void main() {
       });
 
       test('should return false when GetWANStatus fails', () async {
-        when(mockJnap.send(
-          action: anyNamed('action'),
-          data: anyNamed('data'),
-          headers: anyNamed('headers'),
-          overrides: anyNamed('overrides'),
-          httpClient: anyNamed('httpClient'),
+        when(() => mockJnap.send(
+          action: any(named: 'action'),
+          data: any(named: 'data'),
+          headers: any(named: 'headers'),
+          overrides: any(named: 'overrides'),
+          sideEffectOverrides: any(named: 'sideEffectOverrides'),
+          httpClient: any(named: 'httpClient'),
         )).thenThrow(Exception('Network Error'));
 
         final result = await sideEffectHandler.testRouterFullyBootedUp();

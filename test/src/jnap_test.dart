@@ -6,11 +6,25 @@ import 'package:http/http.dart' as http;
 import 'package:jnap/jnap.dart';
 import 'package:jnap/src/cache/data_cache_manager.dart';
 import 'package:jnap/src/utilties/http/http_client.dart' as client;
-import 'package:mockito/annotations.dart';
-import 'package:mockito/mockito.dart';
+import 'package:mocktail/mocktail.dart';
 import 'package:test/test.dart';
 
-import 'jnap_test.mocks.dart';
+class MockHttpClient extends Mock implements client.HttpClient {}
+
+class MockJnap extends Mock implements Jnap {}
+
+class MockDataCacheManager extends Mock implements DataCacheManager {}
+
+class FakeUri extends Fake implements Uri {}
+
+class FakeBaseRequest extends Fake implements http.BaseRequest {}
+
+class FakeJNAPAction extends Fake implements JNAPAction {}
+
+class FakeJNAPConfigOverrides extends Fake implements JNAPConfigOverrides {}
+
+class FakeJNAPTransactionBuilder extends Fake
+    implements JNAPTransactionBuilder {}
 
 class MyHttpOverrides extends HttpOverrides {
   @override
@@ -21,48 +35,20 @@ class MyHttpOverrides extends HttpOverrides {
   }
 }
 
-class MockDataCacheManager extends Mock implements DataCacheManager {
-  @override
-  bool checkCacheDataValid(String? action, [int? expirationOverride]) {
-    return (super.noSuchMethod(
-      Invocation.method(#checkCacheDataValid, [action, expirationOverride]),
-      returnValue: false,
-      returnValueForMissingStub: false,
-    ) as bool);
-  }
-
-  @override
-  String get lastSerialNumber => (super.noSuchMethod(
-        Invocation.getter(#lastSerialNumber),
-        returnValue: '',
-        returnValueForMissingStub: '',
-      ) as String);
-
-  @override
-  Future<void> handleJNAPCached(Map<String, dynamic> record, String action,
-      [String? serialNumber]) {
-    return (super.noSuchMethod(
-      Invocation.method(#handleJNAPCached, [record, action, serialNumber]),
-      returnValue: Future<void>.value(),
-      returnValueForMissingStub: Future<void>.value(),
-    ) as Future<void>);
-  }
-
-  @override
-  Map<String, dynamic> get data => (super.noSuchMethod(
-        Invocation.getter(#data),
-        returnValue: <String, dynamic>{},
-        returnValueForMissingStub: <String, dynamic>{},
-      ) as Map<String, dynamic>);
-}
-
-@GenerateMocks([client.HttpClient, Jnap])
 void main() {
   HttpOverrides.global = MyHttpOverrides();
 
   group('Jnap unit tests', () {
     late MockHttpClient mockHttpClient;
     late MockDataCacheManager mockDataCacheManager;
+
+    setUpAll(() {
+      registerFallbackValue(FakeUri());
+      registerFallbackValue(FakeBaseRequest());
+      registerFallbackValue(FakeJNAPAction());
+      registerFallbackValue(FakeJNAPConfigOverrides());
+      registerFallbackValue(FakeJNAPTransactionBuilder());
+    });
 
     setUp(() {
       // Reset config before each test
@@ -71,6 +57,12 @@ void main() {
       mockHttpClient = MockHttpClient();
       mockDataCacheManager = MockDataCacheManager();
       DataCacheManager.setInstance(mockDataCacheManager);
+
+      when(() => mockDataCacheManager.checkCacheDataValid(any())).thenReturn(false);
+      when(() => mockDataCacheManager.lastSerialNumber).thenReturn('');
+      when(() => mockDataCacheManager.handleJNAPCached(any(), any()))
+          .thenAnswer((_) async {});
+      when(() => mockDataCacheManager.data).thenReturn({});
     });
 
     group('init', () {
@@ -151,8 +143,8 @@ void main() {
           cacheManager: mockDataCacheManager,
         );
 
-        when(mockHttpClient.post(any,
-                body: anyNamed('body'), headers: anyNamed('headers')))
+        when(() => mockHttpClient.post(any(),
+                body: any(named: 'body'), headers: any(named: 'headers')))
             .thenAnswer(
                 (_) async => http.Response(jsonEncode({'result': 'OK'}), 200));
 
@@ -173,8 +165,8 @@ void main() {
           cacheManager: mockDataCacheManager,
         );
 
-        when(mockHttpClient.post(any,
-                body: anyNamed('body'), headers: anyNamed('headers')))
+        when(() => mockHttpClient.post(any(),
+                body: any(named: 'body'), headers: any(named: 'headers')))
             .thenAnswer(
                 (_) async => http.Response(jsonEncode({'result': 'OK'}), 200));
 
@@ -198,9 +190,8 @@ void main() {
           cacheManager: mockDataCacheManager,
         );
 
-        when(mockDataCacheManager.checkCacheDataValid(any)).thenReturn(false);
-        when(mockHttpClient.post(any,
-                body: anyNamed('body'), headers: anyNamed('headers')))
+        when(() => mockHttpClient.post(any(),
+                body: any(named: 'body'), headers: any(named: 'headers')))
             .thenAnswer(
                 (_) async => http.Response(jsonEncode({'result': 'OK'}), 200));
 
@@ -216,8 +207,8 @@ void main() {
           cacheManager: mockDataCacheManager,
         );
 
-        when(mockDataCacheManager.checkCacheDataValid(any)).thenReturn(true);
-        when(mockDataCacheManager.data).thenReturn({
+        when(() => mockDataCacheManager.checkCacheDataValid(any())).thenReturn(true);
+        when(() => mockDataCacheManager.data).thenReturn({
           'testAction': {
             'data': {'result': 'OK', 'output': <String, dynamic>{}}
           }
@@ -225,8 +216,8 @@ void main() {
 
         final result = await command.execute();
         expect(result, isA<JNAPSuccess>());
-        verifyNever(mockHttpClient.post(any,
-            body: anyNamed('body'), headers: anyNamed('headers')));
+        verifyNever(() => mockHttpClient.post(any(),
+            body: any(named: 'body'), headers: any(named: 'headers')));
       });
 
       test('should fetch from remote when cache is invalid', () async {
@@ -236,15 +227,14 @@ void main() {
           cacheManager: mockDataCacheManager,
         );
 
-        when(mockDataCacheManager.checkCacheDataValid(any)).thenReturn(false);
-        when(mockHttpClient.post(any,
-                body: anyNamed('body'), headers: anyNamed('headers')))
+        when(() => mockHttpClient.post(any(),
+                body: any(named: 'body'), headers: any(named: 'headers')))
             .thenAnswer(
                 (_) async => http.Response(jsonEncode({'result': 'OK'}), 200));
 
         await command.execute();
-        verify(mockHttpClient.post(any,
-                body: anyNamed('body'), headers: anyNamed('headers')))
+        verify(() => mockHttpClient.post(any(),
+                body: any(named: 'body'), headers: any(named: 'headers')))
             .called(1);
       });
 
@@ -255,8 +245,7 @@ void main() {
           cacheManager: mockDataCacheManager,
         );
 
-        when(mockDataCacheManager.checkCacheDataValid(any)).thenReturn(false);
-        when(mockHttpClient.post(any, body: anyNamed('body'), headers: anyNamed('headers')))
+        when(() => mockHttpClient.post(any(), body: any(named: 'body'), headers: any(named: 'headers')))
             .thenAnswer((_) async => http.Response(jsonEncode({'error': 'Unauthorized'}), 401));
 
         expect(command.execute(), throwsA(isA<ErrorResponse>()));
@@ -268,8 +257,8 @@ void main() {
         final jnap = Jnap.instance;
         final action = GetDeviceInfo.instance;
 
-        when(mockHttpClient.post(any,
-                body: anyNamed('body'), headers: anyNamed('headers')))
+        when(() => mockHttpClient.post(any(),
+                body: any(named: 'body'), headers: any(named: 'headers')))
             .thenAnswer((_) async => http.Response(
                 jsonEncode({
                   'result': 'OK',
@@ -287,7 +276,7 @@ void main() {
         final jnap = Jnap.instance;
         final action = GetDeviceInfo.instance;
 
-        when(mockHttpClient.post(any, body: anyNamed('body'), headers: anyNamed('headers')))
+        when(() => mockHttpClient.post(any(), body: any(named: 'body'), headers: any(named: 'headers')))
             .thenAnswer((_) async => http.Response(jsonEncode({'result': 'ERROR', 'error': 'Device not found'}), 200));
 
         expect(jnap.send(action: action, httpClient: mockHttpClient), throwsA(isA<JNAPError>()));
@@ -316,23 +305,22 @@ void main() {
           cacheManager: mockDataCacheManager,
         );
 
-        when(mockDataCacheManager.checkCacheDataValid(any)).thenReturn(false);
-        when(mockHttpClient.post(any,
-                body: anyNamed('body'), headers: anyNamed('headers')))
+        when(() => mockHttpClient.post(any(),
+                body: any(named: 'body'), headers: any(named: 'headers')))
             .thenAnswer(
                 (_) async => http.Response(jsonEncode({'result': 'OK'}), 200));
 
         await command.execute();
 
-        final captured = verify(mockHttpClient.post(captureAny,
-                body: anyNamed('body'), headers: captureAnyNamed('headers')))
+        final captured = verify(() => mockHttpClient.post(captureAny(),
+                body: any(named: 'body'), headers: captureAny(named: 'headers')))
             .captured;
         final uri = captured[0] as Uri;
         final headers = captured[1] as Map<String, String>;
 
         expect(uri.toString(), 'http://override.com/override');
         expect(headers['X-Override'], 'true');
-        verify(mockHttpClient.timeoutMs = 5000);
+        verify(() => mockHttpClient.timeoutMs = 5000);
       });
     });
 
@@ -354,7 +342,7 @@ void main() {
           ]
         };
 
-        when(mockHttpClient.post(any, body: anyNamed('body'), headers: anyNamed('headers')))
+        when(() => mockHttpClient.post(any(), body: any(named: 'body'), headers: any(named: 'headers')))
             .thenAnswer((_) async => http.Response(jsonEncode(transactionResponse), 200));
 
         final result = await jnap.transaction(
@@ -371,7 +359,7 @@ void main() {
         expect(result.data[1].value.result, 'OK');
         expect((result.data[1].value as JNAPSuccess).output, {'connections': []});
 
-        final captured = verify(mockHttpClient.post(any, body: captureAnyNamed('body'), headers: anyNamed('headers'))).captured;
+        final captured = verify(() => mockHttpClient.post(any(), body: captureAny(named: 'body'), headers: any(named: 'headers'))).captured;
         final body = jsonDecode(captured.first);
 
         expect(body, isA<List>());
@@ -390,10 +378,8 @@ void main() {
             .add(action1)
             .add(action2, data: {'some_key': 'some_value'});
 
-        // Mock checkCacheDataValid for the transaction action
-        // Assuming Jnap.transaction uses a specific action name for caching, e.g., 'transaction'
-        when(mockDataCacheManager.checkCacheDataValid(any)).thenReturn(true);
-        when(mockDataCacheManager.data).thenReturn({
+        when(() => mockDataCacheManager.checkCacheDataValid(any())).thenReturn(true);
+        when(() => mockDataCacheManager.data).thenReturn({
           'http://linksys.com/jnap/core/GetDeviceInfo': {
             'data': {'result': 'OK', 'output': {'deviceName': 'CachedDevice'}}
           },
@@ -416,9 +402,8 @@ void main() {
         expect(result.data[1].value.result, 'OK');
         expect((result.data[1].value as JNAPSuccess).output, {'connections': ['cached_connection']});
 
-        // Verify that no HTTP request was made
-        verifyNever(mockHttpClient.post(any,
-            body: anyNamed('body'), headers: anyNamed('headers')));
+        verifyNever(() => mockHttpClient.post(any(),
+            body: any(named: 'body'), headers: any(named: 'headers')));
       });
 
       test('should send HTTP request when some commands are not cached in transaction', () async {
@@ -439,19 +424,16 @@ void main() {
           ]
         };
 
-        // Mock checkCacheDataValid: action1 is cached, action2 is NOT cached
-        when(mockDataCacheManager.checkCacheDataValid(action1.command)).thenReturn(true);
-        when(mockDataCacheManager.checkCacheDataValid(action2.command)).thenReturn(false);
+        when(() => mockDataCacheManager.checkCacheDataValid(action1.command)).thenReturn(true);
+        when(() => mockDataCacheManager.checkCacheDataValid(action2.command)).thenReturn(false);
 
-        // Mock cached data for action1
-        when(mockDataCacheManager.data).thenReturn({
+        when(() => mockDataCacheManager.data).thenReturn({
           action1.command: {
             'data': {'result': 'OK', 'output': {'deviceName': 'CachedDevice'}}
           }
         });
 
-        // Mock HTTP client response for the transaction
-        when(mockHttpClient.post(any, body: anyNamed('body'), headers: anyNamed('headers')))
+        when(() => mockHttpClient.post(any(), body: any(named: 'body'), headers: any(named: 'headers')))
             .thenAnswer((_) async => http.Response(jsonEncode(remoteTransactionResponse), 200));
 
         final result = await jnap.transaction(
@@ -462,25 +444,22 @@ void main() {
         expect(result, isA<JNAPTransactionSuccessWrap>());
         expect(result.data.length, 2);
 
-        // Expect action1 to be from remote (as the entire transaction was fetched remotely)
         expect(result.data[0].key, action1);
         expect(result.data[0].value.result, 'OK');
         expect((result.data[0].value as JNAPSuccess).output, {'deviceName': 'RemoteDevice'});
 
-        // Expect action2 to be from remote
         expect(result.data[1].key, action2);
         expect(result.data[1].value.result, 'OK');
         expect((result.data[1].value as JNAPSuccess).output, {'connections': ['remote_connection']});
 
-        // Verify that HTTP request was made exactly once and capture arguments
-        final captured = verify(mockHttpClient.post(captureAny, body: captureAnyNamed('body'), headers: captureAnyNamed('headers'))).captured;
+        final captured = verify(() => mockHttpClient.post(captureAny(), body: captureAny(named: 'body'), headers: captureAny(named: 'headers'))).captured;
         final uri = captured[0] as Uri;
         final body = jsonDecode(captured[1]);
         final headers = captured[2] as Map<String, String>;
 
-        expect(uri.toString(), 'http://linksys.com/jnap'); // Corrected URL expectation
-        expect(headers['X-JNAP-Action'], 'http://linksys.com/jnap/core/Transaction'); // Assuming this header
-        expect(headers['content-type'], 'application/json'); // Assuming this header
+        expect(uri.toString(), 'http://linksys.com/jnap');
+        expect(headers['X-JNAP-Action'], 'http://linksys.com/jnap/core/Transaction');
+        expect(headers['content-type'], 'application/json');
 
         expect(body, isA<List>());
         expect(body.length, 2);
@@ -496,7 +475,7 @@ void main() {
         final action = GetDeviceInfo.instance;
 
         var callCount = 0;
-        when(mockHttpClient.post(any, body: anyNamed('body'), headers: anyNamed('headers')))
+        when(() => mockHttpClient.post(any(), body: any(named: 'body'), headers: any(named: 'headers')))
             .thenAnswer((_) async {
           callCount++;
           if (callCount == 1) {
@@ -528,7 +507,7 @@ void main() {
         expect(results[1], isA<JNAPSuccess>());
         expect((results[1] as JNAPSuccess).output['status'], 'completed');
 
-        verify(mockHttpClient.post(any, body: anyNamed('body'), headers: anyNamed('headers'))).called(2);
+        verify(() => mockHttpClient.post(any(), body: any(named: 'body'), headers: any(named: 'headers'))).called(2);
       });
     });
   });

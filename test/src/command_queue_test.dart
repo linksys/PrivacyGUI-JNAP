@@ -1,40 +1,47 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:http/http.dart' as http;
 import 'package:http/http.dart';
-import 'package:jnap/http.dart';
+import 'package:jnap/http.dart' as my_http;
 import 'package:jnap/jnap.dart';
 import 'package:jnap/logger.dart';
 import 'package:jnap/src/cache/data_cache_manager.dart';
+import 'package:jnap/src/cache/cache_manager_base.dart'
+    if (dart.library.io) 'package:jnap/src/cache/cache_manager_mobile.dart'
+    if (dart.library.html) 'package:jnap/src/cache/cache_manager_web.dart';
 import 'package:jnap/utils.dart';
-import 'package:mockito/annotations.dart';
-import 'package:mockito/mockito.dart';
+import 'package:mocktail/mocktail.dart';
 import 'package:test/test.dart';
 
-import 'cache/data_cache_manager_test.mocks.dart';
-import 'command_queue_test.mocks.dart';
+class MockHttpClient extends Mock implements my_http.HttpClient {}
 
-@GenerateMocks([
-  HttpClient,
-  Config,
-  UrlUtils,
-  Response,
-])
+class MockResponse extends Mock implements Response {}
+
+class MockBasedCacheManager extends Mock implements BasedCacheManager {}
+
+class FakeUri extends Fake implements Uri {}
+
 void main() {
   late MockHttpClient mockHttpClient;
   late MockResponse mockResponse;
-  late MockMyBasedCacheManager mockBasedCacheManager;
+  late MockBasedCacheManager mockBasedCacheManager;
   late DataCacheManager cacheManager;
+
+  setUpAll(() {
+    registerFallbackValue(FakeUri());
+    registerFallbackValue(http.Request('GET', FakeUri()));
+  });
 
   setUp(() {
     logger.d('JNAP Command setUp');
     mockHttpClient = MockHttpClient();
     mockResponse = MockResponse();
-    mockBasedCacheManager = MockMyBasedCacheManager();
+    mockBasedCacheManager = MockBasedCacheManager();
+    when(() => mockBasedCacheManager.get()).thenAnswer((_) async => '');
     cacheManager = DataCacheManager(mockBasedCacheManager);
 
-    // when(mockBasedCacheManager.get()).thenAnswer((_) async => null);
-    when(mockBasedCacheManager.set(any)).thenAnswer((_) async {});
+    when(() => mockBasedCacheManager.set(any())).thenAnswer((_) async {});
 
     Config.baseUrl = 'http://default.com';
     Config.path = '/jnap';
@@ -65,11 +72,11 @@ void main() {
 
     test('execute sends correct HTTP request with default config', () async {
       Config.auth = 'YWRtaW46cGFzc3dvcmQ='; // admin:password
-      when(mockResponse.statusCode).thenReturn(200);
-      when(mockResponse.body)
+      when(() => mockResponse.statusCode).thenReturn(200);
+      when(() => mockResponse.body)
           .thenReturn('{"result": "OK", "output": {"status": "success"}}');
-      when(mockHttpClient.post(any,
-              body: anyNamed('body'), headers: anyNamed('headers')))
+      when(() => mockHttpClient.post(any(),
+              body: any(named: 'body'), headers: any(named: 'headers')))
           .thenAnswer((_) async => mockResponse);
 
       final command = JNAPCommand(
@@ -83,10 +90,10 @@ void main() {
       expect(result, isA<JNAPSuccess>());
       expect((result as JNAPSuccess).result, 'OK');
 
-      final captured = verify(mockHttpClient.post(
+      final captured = verify(() => mockHttpClient.post(
         Uri.parse('http://default.com/jnap'),
         body: '{"param": "value"}',
-        headers: captureAnyNamed('headers'),
+        headers: captureAny(named: 'headers'),
       )).captured;
 
       final headers = captured.first as Map<String, String>;
@@ -94,8 +101,8 @@ void main() {
       expect(headers[HttpHeaders.authorizationHeader],
           'Basic YWRtaW46cGFzc3dvcmQ=');
 
-      verify(mockHttpClient.timeoutMs = 10000).called(1);
-      verify(mockHttpClient.retries = 1).called(1);
+      verify(() => mockHttpClient.timeoutMs = 10000).called(1);
+      verify(() => mockHttpClient.retries = 1).called(1);
     });
 
     test('execute sends correct HTTP request with overrides', () async {
@@ -111,13 +118,13 @@ void main() {
         cached: false,
       );
 
-      when(mockResponse.statusCode).thenReturn(200);
-      when(mockResponse.body)
+      when(() => mockResponse.statusCode).thenReturn(200);
+      when(() => mockResponse.body)
           .thenReturn('{"result": "OK", "output": {"status": "success"}}');
-      when(mockHttpClient.post(any,
-              body: anyNamed('body'), headers: anyNamed('headers')))
+      when(() => mockHttpClient.post(any(),
+              body: any(named: 'body'), headers: any(named: 'headers')))
           .thenAnswer((_) async => mockResponse);
-      cacheManager.loadCache(serialNumber: 'SN1');
+      await cacheManager.loadCache(serialNumber: 'SN1');
       final command = JNAPCommand(
         action: 'testAction',
         data: '{"param": "value"}',
@@ -131,10 +138,10 @@ void main() {
       expect(result, isA<JNAPSuccess>());
       expect((result as JNAPSuccess).result, 'OK');
 
-      final captured = verify(mockHttpClient.post(
+      final captured = verify(() => mockHttpClient.post(
         Uri.parse('http://override.com/override'),
         body: '{"param": "value"}',
-        headers: captureAnyNamed('headers'),
+        headers: captureAny(named: 'headers'),
       )).captured;
 
       final headers = captured.first as Map<String, String>;
@@ -143,8 +150,8 @@ void main() {
       expect(headers['X-Override'], 'true');
       expect(headers['Custom-Header'], 'value');
 
-      verify(mockHttpClient.timeoutMs = 5000).called(1);
-      verify(mockHttpClient.retries = 3).called(1);
+      verify(() => mockHttpClient.timeoutMs = 5000).called(1);
+      verify(() => mockHttpClient.retries = 3).called(1);
     });
 
     test('isComplete returns true after complete is called', () {
@@ -180,7 +187,6 @@ void main() {
     group('with caching', () {
       setUp(() {
         logger.d('JNAP Command with caching setUp');
-        // DataCacheManager.init(cacheManager);
       });
       tearDown(() {
         cacheManager.clearAllCache();
@@ -196,7 +202,7 @@ void main() {
             'cachedAt': DateTime.now().millisecondsSinceEpoch,
           }
         };
-        when(mockBasedCacheManager.get())
+        when(() => mockBasedCacheManager.get())
             .thenAnswer((_) async => jsonEncode({'SN12345': cacheData}));
         await cacheManager.loadCache(serialNumber: 'SN12345');
 
@@ -211,8 +217,8 @@ void main() {
 
         expect(result, isA<JNAPSuccess>());
         expect((result as JNAPSuccess).output['status'], 'cached_success');
-        verifyNever(mockHttpClient.post(any,
-            body: anyNamed('body'), headers: anyNamed('headers')));
+        verifyNever(() => mockHttpClient.post(any(),
+            body: any(named: 'body'), headers: any(named: 'headers')));
       });
 
       test('execute makes HTTP request when cache is expired', () async {
@@ -225,15 +231,15 @@ void main() {
             'cachedAt': 0, // A long time ago
           }
         };
-        when(mockBasedCacheManager.get())
+        when(() => mockBasedCacheManager.get())
             .thenAnswer((_) async => jsonEncode({'SN1234': cacheData}));
         await cacheManager.loadCache(serialNumber: 'SN1234');
 
-        when(mockResponse.statusCode).thenReturn(200);
-        when(mockResponse.body).thenReturn(
+        when(() => mockResponse.statusCode).thenReturn(200);
+        when(() => mockResponse.body).thenReturn(
             '{"result": "OK", "output": {"status": "remote_success"}}');
-        when(mockHttpClient.post(any,
-                body: anyNamed('body'), headers: anyNamed('headers')))
+        when(() => mockHttpClient.post(any(),
+                body: any(named: 'body'), headers: any(named: 'headers')))
             .thenAnswer((_) async => mockResponse);
 
         final command = JNAPCommand(
@@ -246,10 +252,10 @@ void main() {
 
         expect(result, isA<JNAPSuccess>());
         expect((result as JNAPSuccess).output['status'], 'remote_success');
-        verify(mockHttpClient.post(any,
-                body: anyNamed('body'), headers: anyNamed('headers')))
+        verify(() => mockHttpClient.post(any(),
+                body: any(named: 'body'), headers: any(named: 'headers')))
             .called(1);
-        verify(mockBasedCacheManager.set(any)).called(1);
+        verify(() => mockBasedCacheManager.set(any())).called(1);
       });
 
       test('execute makes HTTP request when forceRemote is true', () async {
@@ -263,15 +269,15 @@ void main() {
             'cachedAt': DateTime.now().millisecondsSinceEpoch,
           }
         };
-        when(mockBasedCacheManager.get())
+        when(() => mockBasedCacheManager.get())
             .thenAnswer((_) async => jsonEncode({'SN222': cacheData}));
         await cacheManager.loadCache(serialNumber: 'SN222');
 
-        when(mockResponse.statusCode).thenReturn(200);
-        when(mockResponse.body).thenReturn(
+        when(() => mockResponse.statusCode).thenReturn(200);
+        when(() => mockResponse.body).thenReturn(
             '{"result": "OK", "output": {"status": "force_remote_success"}}');
-        when(mockHttpClient.post(any,
-                body: anyNamed('body'), headers: anyNamed('headers')))
+        when(() => mockHttpClient.post(any(),
+                body: any(named: 'body'), headers: any(named: 'headers')))
             .thenAnswer((_) async => mockResponse);
 
         final command = JNAPCommand(
@@ -286,20 +292,20 @@ void main() {
         expect(result, isA<JNAPSuccess>());
         expect(
             (result as JNAPSuccess).output['status'], 'force_remote_success');
-        verify(mockHttpClient.post(any,
-                body: anyNamed('body'), headers: anyNamed('headers')))
+        verify(() => mockHttpClient.post(any(),
+                body: any(named: 'body'), headers: any(named: 'headers')))
             .called(1);
-        verify(mockBasedCacheManager.set(any)).called(1);
+        verify(() => mockBasedCacheManager.set(any())).called(1);
       });
 
       test('execute makes HTTP request and does not cache when cached is false',
           () async {
         final overrides = JNAPConfigOverrides(cached: false);
-        when(mockResponse.statusCode).thenReturn(200);
-        when(mockResponse.body).thenReturn(
+        when(() => mockResponse.statusCode).thenReturn(200);
+        when(() => mockResponse.body).thenReturn(
             '{"result": "OK", "output": {"status": "no_cache_success"}}');
-        when(mockHttpClient.post(any,
-                body: anyNamed('body'), headers: anyNamed('headers')))
+        when(() => mockHttpClient.post(any(),
+                body: any(named: 'body'), headers: any(named: 'headers')))
             .thenAnswer((_) async => mockResponse);
 
         final command = JNAPCommand(
@@ -313,10 +319,10 @@ void main() {
 
         expect(result, isA<JNAPSuccess>());
         expect((result as JNAPSuccess).output['status'], 'no_cache_success');
-        verify(mockHttpClient.post(any,
-                body: anyNamed('body'), headers: anyNamed('headers')))
+        verify(() => mockHttpClient.post(any(),
+                body: any(named: 'body'), headers: any(named: 'headers')))
             .called(1);
-        verifyNever(mockBasedCacheManager.set(any));
+        verifyNever(() => mockBasedCacheManager.set(any()));
       });
 
       test('execute make transaction request and caching correctly', () async {
@@ -342,15 +348,15 @@ void main() {
             'cachedAt': now
           }
         };
-        when(mockBasedCacheManager.get())
+        when(() => mockBasedCacheManager.get())
             .thenAnswer((_) async => jsonEncode({'SN333': cacheData}));
         await cacheManager.loadCache(serialNumber: 'SN333');
 
-        when(mockResponse.statusCode).thenReturn(200);
-        when(mockResponse.body).thenReturn(
+        when(() => mockResponse.statusCode).thenReturn(200);
+        when(() => mockResponse.body).thenReturn(
             '{"result": "OK", "responses": [{"result":"OK","output": {"status": "force_remote_success_1"}},{"result":"OK","output": {"status": "force_remote_success_2"}}]}');
-        when(mockHttpClient.post(any,
-                body: anyNamed('body'), headers: anyNamed('headers')))
+        when(() => mockHttpClient.post(any(),
+                body: any(named: 'body'), headers: any(named: 'headers')))
             .thenAnswer((_) async => mockResponse);
 
         final command = JNAPCommand(
@@ -369,9 +375,9 @@ void main() {
         expect(transactionResult.responses.length, 2);
         expect(transactionResult.responses[0].result, 'OK');
         expect(transactionResult.responses[1].result, 'OK');
-        verify(mockHttpClient.post(any,
-            body: anyNamed('body'), headers: anyNamed('headers')));
-        verify(mockBasedCacheManager.set(any));
+        verify(() => mockHttpClient.post(any(),
+            body: any(named: 'body'), headers: any(named: 'headers')));
+        verify(() => mockBasedCacheManager.set(any()));
       });
     });
   });
@@ -383,12 +389,12 @@ void main() {
     setUp(() {
       mockHttpClient = MockHttpClient();
       mockResponse = MockResponse();
-      when(mockResponse.statusCode).thenReturn(200);
-      when(mockResponse.body)
+      when(() => mockResponse.statusCode).thenReturn(200);
+      when(() => mockResponse.body)
           .thenReturn('{"result": "OK", "output": {"status": "success"}}');
 
-      when(mockHttpClient.post(any,
-              body: anyNamed('body'), headers: anyNamed('headers')))
+      when(() => mockHttpClient.post(any(),
+              body: any(named: 'body'), headers: any(named: 'headers')))
           .thenAnswer((_) async => mockResponse);
 
       CommandQueue.reset();
@@ -444,8 +450,8 @@ void main() {
           httpClient: mockHttpClient,
           cacheManager: cacheManager);
 
-      when(mockHttpClient.post(any,
-              body: anyNamed('body'), headers: anyNamed('headers')))
+      when(() => mockHttpClient.post(any(),
+              body: any(named: 'body'), headers: any(named: 'headers')))
           .thenAnswer((invocation) async {
         final actionHeader = (invocation.namedArguments[#headers]
             as Map<String, String>)['X-JNAP-Action'];
@@ -478,14 +484,14 @@ void main() {
 
       await Future.delayed(const Duration(milliseconds: 100));
       expect(command.isComplete(), isFalse);
-      verifyNever(mockHttpClient.post(any,
-          body: anyNamed('body'), headers: anyNamed('headers')));
+      verifyNever(() => mockHttpClient.post(any(),
+          body: any(named: 'body'), headers: any(named: 'headers')));
 
       queue.isPaused = false;
       await Future.delayed(const Duration(milliseconds: 100));
       expect(command.isComplete(), isTrue);
-      verify(mockHttpClient.post(any,
-              body: anyNamed('body'), headers: anyNamed('headers')))
+      verify(() => mockHttpClient.post(any(),
+              body: any(named: 'body'), headers: any(named: 'headers')))
           .called(1);
     });
 
