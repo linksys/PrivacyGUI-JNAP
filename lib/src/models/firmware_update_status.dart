@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:equatable/equatable.dart';
+import 'package:jnap/src/models/types.dart';
 
 class FirmwareUpdateStatus extends Equatable {
   final String lastSuccessfulCheckTime;

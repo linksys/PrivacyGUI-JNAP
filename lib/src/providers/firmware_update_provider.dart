@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'package:collection/collection.dart';
 import 'package:http/http.dart';
 import 'package:http_parser/http_parser.dart';
 import 'package:jnap/jnap.dart';
@@ -7,24 +6,20 @@ import 'package:jnap/src/models/firmware_update_settings.dart';
 import 'package:jnap/src/models/firmware_update_status.dart';
 import 'package:jnap/src/models/firmware_update_status_nodes.dart';
 import 'package:jnap/http.dart';
+import 'package:jnap/src/providers/firmware_update_service.dart';
 import 'package:jnap/src/providers/firmware_update_state.dart';
-import 'package:jnap/src/providers/polling_provider.dart';
 import 'package:jnap/src/utilties/extension.dart';
-import 'package:jnap/src/utilties/logger/bench_mark_logger.dart';
+import 'package:jnap/src/utilties/bench_mark.dart';
 import 'package:jnap/src/utilties/retry_strategy/retry.dart';
 import 'package:jnap/src/providers/side_effect_provider.dart';
 import 'package:jnap/logger.dart';
 import 'package:meta/meta.dart';
 import 'package:riverpod/riverpod.dart';
 
-class FirmwareUpdateManager {
-  FirmwareUpdateSettings? fwUpdateSettings;
-  List<FirmwareUpdateStatus>? resultStatusList;
-
-  FirmwareUpdateManager(this.fwUpdateSettings, this.resultStatusList);
-
-  
-}
+// Expose FirmwareUpdateService via DI so tests (and callers) can override it
+final firmwareUpdateServiceProvider = Provider<FirmwareUpdateService>((ref) {
+  return FirmwareUpdateService(Jnap.instance);
+});
 
 final firmwareUpdateProvider =
     NotifierProvider<FirmwareUpdateNotifier, FirmwareUpdateState>(
@@ -35,23 +30,31 @@ class FirmwareUpdateNotifier extends Notifier<FirmwareUpdateState> {
 
   @override
   FirmwareUpdateState build() {
-    final fwUpdateSettingsRaw = ref.watch(pollingProvider.select<JNAPResult?>(
-        (value) => value.value?.data[GetFirmwareUpdateSettings.instance]));
-    final nodesFwUpdateCheckRaw = ref.watch(pollingProvider.select(
-        (value) => value.value?.data[NodeGetFirmwareUpdateStatus.instance]));
+    // final fwUpdateSettingsRaw = ref.watch(
+    //   pollingProvider.select<JNAPResult?>(
+    //       (value) => value.value?.data[GetFirmwareUpdateSettings.instance]),
+    // );
+    // final nodesFwUpdateCheckRaw = ref.watch(pollingProvider.select(
+    //     (value) => value.value?.data[NodeGetFirmwareUpdateStatus.instance]));
+    final fwUpdateSettingsRaw = JNAPSuccess(result: "OK");//TODO: Remove
+    final nodesFwUpdateCheckRaw = JNAPSuccess(result: "OK");//TODO: Remove
 
     FirmwareUpdateSettings? fwUpdateSettings;
-    if (fwUpdateSettingsRaw is JNAPSuccess) {
+    if (fwUpdateSettingsRaw is JNAPSuccess &&
+        fwUpdateSettingsRaw.output.isNotEmpty) {
       fwUpdateSettings =
           FirmwareUpdateSettings.fromMap(fwUpdateSettingsRaw.output);
     }
 
-    List<FirmwareUpdateStatus>? resultStatusList =
-        nodesFwUpdateCheckRaw is JNAPSuccess
-            ? List.from(nodesFwUpdateCheckRaw.output['firmwareUpdateStatus'])
-                .map((e) => NodesFirmwareUpdateStatus.fromMap(e))
-                .toList()
-            : [];
+    List<FirmwareUpdateStatus>? resultStatusList = [];
+    if (nodesFwUpdateCheckRaw is JNAPSuccess) {
+      final rawList =
+          (nodesFwUpdateCheckRaw.output['firmwareUpdateStatus'] as List?) ??
+              const [];
+      resultStatusList = rawList
+          .map((e) => NodesFirmwareUpdateStatus.fromMap(e))
+          .toList();
+    }
     final fwUpdateStatusRecord = _examineStatusResult(resultStatusList);
 
     final state = FirmwareUpdateState(
@@ -69,24 +72,19 @@ class FirmwareUpdateNotifier extends Notifier<FirmwareUpdateState> {
 
   Future<void> setFirmwareUpdatePolicy(String policy) {
     final newSettings = state.settings.copyWith(updatePolicy: policy);
-    return Jnap.instance
-        .send(
-      action: SetFirmwareUpdateSettings.instance,
-      data: newSettings.toMap(),
-      overrides: JNAPConfigOverrides(cached: false),
-    )
-        .then((_) async {
-      await Jnap.instance.send(action: GetFirmwareUpdateSettings.instance, overrides: JNAPConfigOverrides(forceRemote: true),);
-    }).then((_) {
+    return ref.read(firmwareUpdateServiceProvider)
+        .updateFirmwareUpdateSettings(newSettings.toMap())
+        .then((_) {
       state = state.copyWith(settings: newSettings);
     });
   }
 
-  Future fetchAvailableFirmwareUpdates() {
-    logger.i('[FIRMWARE]: Examine if there are firmware updates available');
+  //TODO: Renamed from fetchAvailableFirmwareUpdates
+  Future<void> fetchNodeFirmwareStatus() {
+    logger.i('[FIRMWARE]: Update node firmware status list to state');
     final benchmark = BenchMarkLogger(name: 'FirmwareUpdate');
     benchmark.start();
-    return fetchFirmwareUpdateStream(force: true, retry: 2)
+    return firmwareUpdateStatusStream()
         .last
         .onError((error, stackTrace) => [])
         .then((resultList) {
@@ -94,7 +92,7 @@ class FirmwareUpdateNotifier extends Notifier<FirmwareUpdateState> {
       // In addition to the build function, state updates here should also be examined
       final statusRecord = _examineStatusResult(resultList);
       logger.d(
-          '[FIRMWARE]: Fetch available firmware updates: saved status list = $statusRecord');
+          '[FIRMWARE]: Update node firmware status list to state: saved = $statusRecord');
       state = state.copyWith(
         nodesStatus: statusRecord.$1,
         isWaitingChildrenAfterUpdating: statusRecord.$2,
@@ -102,30 +100,24 @@ class FirmwareUpdateNotifier extends Notifier<FirmwareUpdateState> {
     });
   }
 
-  Stream<List<FirmwareUpdateStatus>> fetchFirmwareUpdateStream(
-      {bool force = false, int retry = 3}) async* {
-    final lastCheckTime =
-        (state.nodesStatus?.map((e) => e.lastSuccessfulCheckTime).toList() ??
-                    [])
-                .map((e) => DateTime.tryParse(e))
-                .map((e) => e?.millisecondsSinceEpoch ?? 0)
-                .maxOrNull ??
-            0;
-    if (!_isNeedDoFetch(lastCheckTime: lastCheckTime) && !force) {
-      logger.i(
-          '[FIRMWARE]: Skip checking firmware update avaliable: last check time {${DateTime.fromMillisecondsSinceEpoch(lastCheckTime)}}');
-      yield [];
-    } else {
-      await Jnap.instance
-          .send(
-            action: NodeUpdateFirmwareNow.instance,
-            data: {'onlyCheck': true},
-            overrides: JNAPConfigOverrides(retries: 0, cached: false, forceRemote: true,),
-          )
-          .then((_) {});
-      yield* _startCheckFirmwareUpdateStatus(
-          retryTimes: retry, onCompleted: (result, error) {});
-    }
+  Stream<List<FirmwareUpdateStatus>> firmwareUpdateStatusStream() async* {
+    await ref
+        .read(firmwareUpdateServiceProvider)
+        .checkAvailableFirmwareUpdates();
+    yield* ref
+        .read(firmwareUpdateServiceProvider)
+        .scheduleCheckFirmwareUpdateStatus(
+      retryTimes: 2,
+      onCompleted: (result, error) {},
+    )
+        .map((result) {
+      if (result is! JNAPSuccess) {
+        throw result;
+      }
+      return List.from(result.output['firmwareUpdateStatus'])
+          .map((e) => NodesFirmwareUpdateStatus.fromMap(e))
+          .toList();
+    });
   }
 
   Future updateFirmware() async {
@@ -138,18 +130,15 @@ class FirmwareUpdateNotifier extends Notifier<FirmwareUpdateState> {
     final statusRecords = state.nodesStatus ?? [];
     ref.read(firmwareUpdateCandidateProvider.notifier).state = statusRecords;
     logger.d('[FIRMWARE]: Saved current status records: $statusRecords');
-    
-    await Jnap.instance.send(
-      action: NodeUpdateFirmwareNow.instance,
-      data: {'onlyCheck': false},
-      overrides: JNAPConfigOverrides(cached: false, forceRemote: true,),
-    );
+
+    await ref.read(firmwareUpdateServiceProvider).updateFirmwareNow();
     _sub?.cancel();
-    ref.read(pollingProvider.notifier).stopPolling();
-    _sub = _startCheckFirmwareUpdateStatus(
+    // ref.read(pollingProvider.notifier).stopPolling();//TODO: Enable polling
+    _sub = ref.read(firmwareUpdateServiceProvider)
+        .scheduleCheckFirmwareUpdateStatus(
       retryTimes: 60 * getAvailableUpdateNumber(),
       stopCondition: (result) =>
-          _checkFirmwareUpdateComplete(result, state.nodesStatus ?? []),
+          _isUpdatingCompleted(result, state.nodesStatus ?? []),
       onCompleted: (result, error) {
         final hasExceededMaxRetry = result is MaxRetriesExceededException;
         state = state.copyWith(isRetryMaxReached: hasExceededMaxRetry);
@@ -169,30 +158,34 @@ class FirmwareUpdateNotifier extends Notifier<FirmwareUpdateState> {
           });
         }
       },
-    ).listen((statusList) {
+    )
+        .map((result) {
+      if (result is! JNAPSuccess) {
+        throw result;
+      }
+      return List.from(result.output['firmwareUpdateStatus'])
+          .map((e) => NodesFirmwareUpdateStatus.fromMap(e))
+          .toList();
+    }).listen((statusList) {
       // The updated list here will be continuously rendered on different screens
       // No need to examine the node status number
       state = state.copyWith(nodesStatus: statusList);
     });
   }
 
-  Future finishFirmwareUpdate() {
-    final polling = ref.read(pollingProvider.notifier);
-    return polling
-        .forcePolling()
-        .then((_) => fetchAvailableFirmwareUpdates())
-        .then((_) {
+  Future finishFirmwareUpdate() async {
+    // await ref.read(pollingProvider.notifier).forcePolling();//TODO: Enable polling
+    return fetchNodeFirmwareStatus().then((_) {
       state = state.copyWith(isUpdating: false);
       //TODO: Removed SharedPreferences in JNAP repo, need to implement in PrivacyGUI
       // SharedPreferences.getInstance().then((pref) {
       //   pref.setBool(pFWUpdated, true);
       // });
-
-      polling.startPolling();
+      // ref.read(pollingProvider.notifier).startPolling();//TODO: Enable polling
     });
   }
 
-  bool _checkFirmwareUpdateComplete(
+  bool _isUpdatingCompleted(
     JNAPResult result,
     List<FirmwareUpdateStatus> records,
   ) {
@@ -268,8 +261,6 @@ class FirmwareUpdateNotifier extends Notifier<FirmwareUpdateState> {
     return (resultList, false);
   }
 
-
-
   ///
   /// Check all nodes connect back
   ///
@@ -299,34 +290,17 @@ class FirmwareUpdateNotifier extends Notifier<FirmwareUpdateState> {
         true, (value, element) => value & checkExist(element));
   }
 
-  Stream<List<FirmwareUpdateStatus>> _startCheckFirmwareUpdateStatus({
-    int? retryTimes = 1,
-    int? retryDelayInMilliSec,
-    bool Function(JNAPResult)? stopCondition,
-    Function(JNAPResult?, Object?)? onCompleted,
-  }) {
-    return Jnap.instance.scheduled(action: NodeGetFirmwareUpdateStatus.instance,
-    maxRetry: retryTimes ?? -1,
-    retryDelayInMilliSec: retryDelayInMilliSec ?? 2000,
-    condition: stopCondition,
-    onComplete: onCompleted,
-    requestTimeoutOverride: 3000,
-    ).map((result) {
-      if (result is! JNAPSuccess) {
-        throw result;
-      }
-      return List.from(result.output['firmwareUpdateStatus'])
-          .map((e) => NodesFirmwareUpdateStatus.fromMap(e))
-          .toList();
-    });
-  }
+  // bool _isNeedDoFetch({required int lastCheckTime}) {
+  //   final period = Duration(minutes: 5).inMilliseconds;
+  //   return (DateTime.now().millisecondsSinceEpoch - lastCheckTime) >= period;
+  // }
 
-  bool _isNeedDoFetch({required int lastCheckTime}) {
-    final period = Duration(minutes: 5).inMilliseconds;
-    return (DateTime.now().millisecondsSinceEpoch - lastCheckTime) >= period;
-  }
-
-  Future<bool> manualFirmwareUpdate(String filename, List<int> bytes, String localPwd) async {
+  Future<bool> manualFirmwareUpdate(
+    String filename,
+    List<int> bytes,
+    String localPwd,
+    String localIp,
+  ) async {
     final client = HttpClient()
       ..timeoutMs = 300000
       ..retries = 0;
@@ -342,14 +316,15 @@ class FirmwareUpdateNotifier extends Notifier<FirmwareUpdateState> {
     );
     final log = BenchMarkLogger(name: 'Manual FW update');
     log.start();
-    await ref.read(pollingProvider.notifier).stopPolling();
-    return client.upload(Uri.parse('https://${getLocalIp(ref)}/jcgi/'), [
+    // await ref.read(pollingProvider.notifier).stopPolling();//TODO: Enable polling
+    return client.upload(Uri.parse('https://$localIp/jcgi/'), [
       multiPart,
     ], fields: {
       kJNAPAction: 'updatefirmware',
       kJNAPAuthorization: 'Basic ${('admin:$localPwd').base64Encode()}'
     }).then((response) {
-      final result = (response.body.base64Decode() as Map<String, dynamic>)['result'];
+      final result =
+          (response.body.base64Decode() as Map<String, dynamic>)['result'];
       log.end();
       if (result == 'OK') {
         return true;
@@ -372,7 +347,7 @@ class FirmwareUpdateNotifier extends Notifier<FirmwareUpdateState> {
         .read(sideEffectProvider.notifier)
         .manualDeviceRestart()
         .whenComplete(() {
-      ref.read(pollingProvider.notifier).startPolling();
+      // ref.read(pollingProvider.notifier).startPolling();//TODO: Enable polling
     });
   }
 }
