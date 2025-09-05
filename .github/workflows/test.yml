@@ -1,4 +1,4 @@
-name: Dart CI
+name: Run Unit tests and Code coverage
 
 on:
   push:
@@ -21,6 +21,9 @@ jobs:
 
     - name: Install dependencies
       run: flutter pub get
+
+    - name: Install lcov
+      run: sudo apt-get update && sudo apt-get install -y lcov
 
     - name: Run tests and generate report
       run: sh run_tests_and_report.sh
