@@ -1,4 +1,17 @@
 
+## [1.0.10] - 2025-09-05
+
+### Added
+- Firmware Update: Added `FirmwareUpdateNotifier` provider and `FirmwareUpdateService`, with initial unit tests.
+- Tests: Expanded provider tests to cover `fetchNodeFirmwareStatus`, `updateFirmware`, and `manualFirmwareUpdate` flows.
+- Tests: Added a dedicated test suite for `FirmwareUpdateState`.
+
+### Changed
+- Firmware Update: Migrated `FirmwareUpdateProvider` and its dependencies to the new module structure.
+- Firmware Update: Improved `manualFirmwareUpdate` for testability by allowing an optional `HttpClient` injection; enhanced base64/JSON decoding robustness and error handling.
+- Provider build: Hardened parsing in `build()` to safely handle empty/missing outputs for settings and status lists.
+- Tests: Strengthened `setFirmwareUpdatePolicy` test using a `Completer` to ensure state updates only after the service resolves, and verified payload sent to the service.
+
 ## [1.0.9] - 2025-09-04
 
 ### Changed
