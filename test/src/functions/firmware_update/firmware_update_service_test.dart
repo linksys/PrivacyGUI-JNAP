@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'package:jnap/jnap.dart';
-import 'package:jnap/src/providers/firmware_update_service.dart';
+import 'package:jnap/src/functions/firmware_update/firmware_update_service.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:test/test.dart';
 
@@ -119,7 +119,6 @@ void main() {
             retryDelayInMilliSec: 2000,
             condition: any(named: 'condition'),
             onComplete: any(named: 'onComplete'),
-            requestTimeoutOverride: 3000,
           )).thenAnswer((_) => stream);
 
       final result = firmwareUpdateService.scheduleCheckFirmwareUpdateStatus();
@@ -138,7 +137,6 @@ void main() {
             retryDelayInMilliSec: 2000,
             condition: any(named: 'condition'),
             onComplete: any(named: 'onComplete'),
-            requestTimeoutOverride: 3000,
           )).called(1);
     });
 
@@ -153,7 +151,6 @@ void main() {
             retryDelayInMilliSec: 2000,
             condition: any(named: 'condition'),
             onComplete: any(named: 'onComplete'),
-            requestTimeoutOverride: 3000,
           )).thenAnswer((_) => streamController.stream);
 
       final result = firmwareUpdateService.scheduleCheckFirmwareUpdateStatus();

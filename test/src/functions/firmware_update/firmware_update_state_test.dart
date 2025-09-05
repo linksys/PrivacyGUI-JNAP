@@ -1,5 +1,5 @@
 import 'package:test/test.dart';
-import 'package:jnap/src/providers/firmware_update_state.dart';
+import 'package:jnap/src/functions/firmware_update/firmware_update_state.dart';
 import 'package:jnap/src/models/firmware_update_settings.dart';
 import 'package:jnap/src/models/firmware_update_status.dart';
 import 'package:jnap/src/models/firmware_update_status_nodes.dart';

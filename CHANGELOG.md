@@ -1,3 +1,8 @@
+## [1.0.11] - 2025-09-05
+
+### Added
+- Internet Connection: Introduced `InternetConnectionService` and `InternetConnectionNotifier` provider with `isInternetConnected` state and `check()` to schedule connectivity checks.
+- Tests: Added unit tests for `InternetConnectionService` and `InternetConnectionProvider` to validate stream handling, parameter forwarding, and state updates on success/error.
 
 ## [1.0.10] - 2025-09-05
 

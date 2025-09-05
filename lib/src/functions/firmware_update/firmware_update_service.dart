@@ -43,7 +43,6 @@ class FirmwareUpdateService {
       retryDelayInMilliSec: retryDelayInMilliSec ?? 2000,
       condition: stopCondition,
       onComplete: onCompleted,
-      requestTimeoutOverride: 3000,
     );
   }
 
