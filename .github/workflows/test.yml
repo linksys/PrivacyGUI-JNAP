@@ -1,0 +1,35 @@
+name: Dart CI
+
+on:
+  push:
+    branches: [ main ]
+  schedule:
+    - cron: '0 3 * * 5' # Runs every Friday at 3 AM UTC
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    - name: Set up Flutter
+      uses: subosito/flutter-action@v2
+      with:
+        flutter-version: '3.29.0'
+
+    - name: Install dependencies
+      run: flutter pub get
+
+    - name: Run tests and generate report
+      run: sh run_tests_and_report.sh
+
+    - name: Generate coverage report
+      run: sh run_generate_coverage.sh
+
+    - name: Upload build artifacts
+      uses: actions/upload-artifact@v3
+      with:
+        name: build-artifacts
+        path: build/
