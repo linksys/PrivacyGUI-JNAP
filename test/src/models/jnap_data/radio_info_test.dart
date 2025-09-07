@@ -19,7 +19,8 @@ void main() {
     });
 
     test('fromMap creates a valid object', () {
-      expect(SupportedChannelsForChannelWidths.fromMap(supportedChannelsMap), supportedChannels);
+      expect(SupportedChannelsForChannelWidths.fromMap(supportedChannelsMap),
+          supportedChannels);
     });
 
     test('toJson returns a valid JSON string', () {
@@ -27,7 +28,10 @@ void main() {
     });
 
     test('fromJson creates a valid object from JSON string', () {
-      expect(SupportedChannelsForChannelWidths.fromJson(json.encode(supportedChannelsMap)), supportedChannels);
+      expect(
+          SupportedChannelsForChannelWidths.fromJson(
+              json.encode(supportedChannelsMap)),
+          supportedChannels);
     });
 
     test('copyWith returns a new object with updated values', () {
@@ -39,9 +43,12 @@ void main() {
     });
 
     test('props are correct', () {
-      final sc1 = SupportedChannelsForChannelWidths(channelWidth: 'w1', channels: [1]);
-      final sc2 = SupportedChannelsForChannelWidths(channelWidth: 'w1', channels: [1]);
-      final sc3 = SupportedChannelsForChannelWidths(channelWidth: 'w2', channels: [2]);
+      final sc1 =
+          SupportedChannelsForChannelWidths(channelWidth: 'w1', channels: [1]);
+      final sc2 =
+          SupportedChannelsForChannelWidths(channelWidth: 'w1', channels: [1]);
+      final sc3 =
+          SupportedChannelsForChannelWidths(channelWidth: 'w2', channels: [2]);
       expect(sc1, sc2);
       expect(sc1.props, sc2.props);
       expect(sc1 == sc3, false);
@@ -93,9 +100,27 @@ void main() {
     });
 
     test('props are correct', () {
-      final ws1 = WepSettings(encryption: 'e1', key1: 'k1', key2: 'k2', key3: 'k3', key4: 'k4', txKey: 1);
-      final ws2 = WepSettings(encryption: 'e1', key1: 'k1', key2: 'k2', key3: 'k3', key4: 'k4', txKey: 1);
-      final ws3 = WepSettings(encryption: 'e2', key1: 'k5', key2: 'k6', key3: 'k7', key4: 'k8', txKey: 2);
+      final ws1 = WepSettings(
+          encryption: 'e1',
+          key1: 'k1',
+          key2: 'k2',
+          key3: 'k3',
+          key4: 'k4',
+          txKey: 1);
+      final ws2 = WepSettings(
+          encryption: 'e1',
+          key1: 'k1',
+          key2: 'k2',
+          key3: 'k3',
+          key4: 'k4',
+          txKey: 1);
+      final ws3 = WepSettings(
+          encryption: 'e2',
+          key1: 'k5',
+          key2: 'k6',
+          key3: 'k7',
+          key4: 'k8',
+          txKey: 2);
       expect(ws1, ws2);
       expect(ws1.props, ws2.props);
       expect(ws1 == ws3, false);
@@ -117,7 +142,8 @@ void main() {
     });
 
     test('fromMap creates a valid object', () {
-      expect(WpaPersonalSettings.fromMap(wpaPersonalSettingsMap), wpaPersonalSettings);
+      expect(WpaPersonalSettings.fromMap(wpaPersonalSettingsMap),
+          wpaPersonalSettings);
     });
 
     test('toJson returns a valid JSON string', () {
@@ -125,7 +151,8 @@ void main() {
     });
 
     test('fromJson creates a valid object from JSON string', () {
-      expect(WpaPersonalSettings.fromJson(json.encode(wpaPersonalSettingsMap)), wpaPersonalSettings);
+      expect(WpaPersonalSettings.fromJson(json.encode(wpaPersonalSettingsMap)),
+          wpaPersonalSettings);
     });
 
     test('copyWith returns a new object with updated values', () {
@@ -164,15 +191,19 @@ void main() {
     });
 
     test('fromMap creates a valid object', () {
-      expect(WpaEnterpriseSettings.fromMap(wpaEnterpriseSettingsMap), wpaEnterpriseSettings);
+      expect(WpaEnterpriseSettings.fromMap(wpaEnterpriseSettingsMap),
+          wpaEnterpriseSettings);
     });
 
     test('toJson returns a valid JSON string', () {
-      expect(wpaEnterpriseSettings.toJson(), json.encode(wpaEnterpriseSettingsMap));
+      expect(wpaEnterpriseSettings.toJson(),
+          json.encode(wpaEnterpriseSettingsMap));
     });
 
     test('fromJson creates a valid object from JSON string', () {
-      expect(WpaEnterpriseSettings.fromJson(json.encode(wpaEnterpriseSettingsMap)), wpaEnterpriseSettings);
+      expect(
+          WpaEnterpriseSettings.fromJson(json.encode(wpaEnterpriseSettingsMap)),
+          wpaEnterpriseSettings);
     });
 
     test('copyWith returns a new object with updated values', () {
@@ -184,9 +215,12 @@ void main() {
     });
 
     test('props are correct', () {
-      final wes1 = WpaEnterpriseSettings(radiusServer: 's1', radiusPort: 1, sharedKey: 'k1');
-      final wes2 = WpaEnterpriseSettings(radiusServer: 's1', radiusPort: 1, sharedKey: 'k1');
-      final wes3 = WpaEnterpriseSettings(radiusServer: 's2', radiusPort: 2, sharedKey: 'k2');
+      final wes1 = WpaEnterpriseSettings(
+          radiusServer: 's1', radiusPort: 1, sharedKey: 'k1');
+      final wes2 = WpaEnterpriseSettings(
+          radiusServer: 's1', radiusPort: 1, sharedKey: 'k1');
+      final wes3 = WpaEnterpriseSettings(
+          radiusServer: 's2', radiusPort: 2, sharedKey: 'k2');
       expect(wes1, wes2);
       expect(wes1.props, wes2.props);
       expect(wes1 == wes3, false);
@@ -243,7 +277,8 @@ void main() {
     });
 
     test('fromMap creates a valid object', () {
-      expect(RouterRadioSettings.fromMap(routerRadioSettingsMap), routerRadioSettings);
+      expect(RouterRadioSettings.fromMap(routerRadioSettingsMap),
+          routerRadioSettings);
     });
 
     test('toJson returns a valid JSON string', () {
@@ -251,7 +286,8 @@ void main() {
     });
 
     test('fromJson creates a valid object from JSON string', () {
-      expect(RouterRadioSettings.fromJson(json.encode(routerRadioSettingsMap)), routerRadioSettings);
+      expect(RouterRadioSettings.fromJson(json.encode(routerRadioSettingsMap)),
+          routerRadioSettings);
     });
 
     test('copyWith returns a new object with updated values', () {
@@ -265,9 +301,30 @@ void main() {
     });
 
     test('props are correct', () {
-      final rrs1 = RouterRadioSettings(isEnabled: true, mode: 'm1', ssid: 's1', broadcastSSID: true, channelWidth: 'cw1', channel: 1, security: 'sec1');
-      final rrs2 = RouterRadioSettings(isEnabled: true, mode: 'm1', ssid: 's1', broadcastSSID: true, channelWidth: 'cw1', channel: 1, security: 'sec1');
-      final rrs3 = RouterRadioSettings(isEnabled: false, mode: 'm2', ssid: 's2', broadcastSSID: false, channelWidth: 'cw2', channel: 2, security: 'sec2');
+      final rrs1 = RouterRadioSettings(
+          isEnabled: true,
+          mode: 'm1',
+          ssid: 's1',
+          broadcastSSID: true,
+          channelWidth: 'cw1',
+          channel: 1,
+          security: 'sec1');
+      final rrs2 = RouterRadioSettings(
+          isEnabled: true,
+          mode: 'm1',
+          ssid: 's1',
+          broadcastSSID: true,
+          channelWidth: 'cw1',
+          channel: 1,
+          security: 'sec1');
+      final rrs3 = RouterRadioSettings(
+          isEnabled: false,
+          mode: 'm2',
+          ssid: 's2',
+          broadcastSSID: false,
+          channelWidth: 'cw2',
+          channel: 2,
+          security: 'sec2');
       expect(rrs1, rrs2);
       expect(rrs1.props, rrs2.props);
       expect(rrs1 == rrs3, false);
@@ -343,9 +400,36 @@ void main() {
     });
 
     test('props are correct', () {
-      final rr1 = RouterRadio(radioID: 'r1', physicalRadioID: 'pr1', bssid: 'b1', band: 'band1', supportedModes: ['m1'], supportedChannelsForChannelWidths: [supportedChannels], supportedSecurityTypes: ['s1'], maxRadiusSharedKeyLength: 1, settings: routerRadioSettings);
-      final rr2 = RouterRadio(radioID: 'r1', physicalRadioID: 'pr1', bssid: 'b1', band: 'band1', supportedModes: ['m1'], supportedChannelsForChannelWidths: [supportedChannels], supportedSecurityTypes: ['s1'], maxRadiusSharedKeyLength: 1, settings: routerRadioSettings);
-      final rr3 = RouterRadio(radioID: 'r2', physicalRadioID: 'pr2', bssid: 'b2', band: 'band2', supportedModes: ['m2'], supportedChannelsForChannelWidths: [], supportedSecurityTypes: [], maxRadiusSharedKeyLength: 2, settings: routerRadioSettings.copyWith(isEnabled: false));
+      final rr1 = RouterRadio(
+          radioID: 'r1',
+          physicalRadioID: 'pr1',
+          bssid: 'b1',
+          band: 'band1',
+          supportedModes: ['m1'],
+          supportedChannelsForChannelWidths: [supportedChannels],
+          supportedSecurityTypes: ['s1'],
+          maxRadiusSharedKeyLength: 1,
+          settings: routerRadioSettings);
+      final rr2 = RouterRadio(
+          radioID: 'r1',
+          physicalRadioID: 'pr1',
+          bssid: 'b1',
+          band: 'band1',
+          supportedModes: ['m1'],
+          supportedChannelsForChannelWidths: [supportedChannels],
+          supportedSecurityTypes: ['s1'],
+          maxRadiusSharedKeyLength: 1,
+          settings: routerRadioSettings);
+      final rr3 = RouterRadio(
+          radioID: 'r2',
+          physicalRadioID: 'pr2',
+          bssid: 'b2',
+          band: 'band2',
+          supportedModes: ['m2'],
+          supportedChannelsForChannelWidths: [],
+          supportedSecurityTypes: [],
+          maxRadiusSharedKeyLength: 2,
+          settings: routerRadioSettings.copyWith(isEnabled: false));
       expect(rr1, rr2);
       expect(rr1.props, rr2.props);
       expect(rr1 == rr3, false);
@@ -380,7 +464,7 @@ void main() {
       settings: routerRadioSettings,
     );
 
-    const getRadioInfo = GetRadioInfo(
+    const getRadioInfo = GetRadioInfoData(
       isBandSteeringSupported: true,
       radios: [routerRadio],
     );
@@ -395,7 +479,7 @@ void main() {
     });
 
     test('fromMap creates a valid object', () {
-      expect(GetRadioInfo.fromMap(getRadioInfoMap), getRadioInfo);
+      expect(GetRadioInfoData.fromMap(getRadioInfoMap), getRadioInfo);
     });
 
     test('toJson returns a valid JSON string', () {
@@ -403,7 +487,8 @@ void main() {
     });
 
     test('fromJson creates a valid object from JSON string', () {
-      expect(GetRadioInfo.fromJson(json.encode(getRadioInfoMap)), getRadioInfo);
+      expect(GetRadioInfoData.fromJson(json.encode(getRadioInfoMap)),
+          getRadioInfo);
     });
 
     test('copyWith returns a new object with updated values', () {
@@ -415,9 +500,11 @@ void main() {
     });
 
     test('props are correct', () {
-      final gri1 = GetRadioInfo(isBandSteeringSupported: true, radios: [routerRadio]);
-      final gri2 = GetRadioInfo(isBandSteeringSupported: true, radios: [routerRadio]);
-      final gri3 = GetRadioInfo(isBandSteeringSupported: false, radios: []);
+      final gri1 = GetRadioInfoData(
+          isBandSteeringSupported: true, radios: [routerRadio]);
+      final gri2 = GetRadioInfoData(
+          isBandSteeringSupported: true, radios: [routerRadio]);
+      final gri3 = GetRadioInfoData(isBandSteeringSupported: false, radios: []);
       expect(gri1, gri2);
       expect(gri1.props, gri2.props);
       expect(gri1 == gri3, false);

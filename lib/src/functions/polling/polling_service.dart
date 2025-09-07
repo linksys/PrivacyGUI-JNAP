@@ -39,7 +39,7 @@ class PollingService {
   Future<JNAPTransactionSuccessWrap> doPolling({bool force = false}) async {
     return await _jnap.transaction(
       transactionBuilder:
-          JNAPTransactionBuilder(commands: pollingTransactions, auth: true),
+          JNAPTransactionBuilder(commands: pollingTransactions),
       overrides: JNAPConfigOverrides(forceRemote: force),
     );
   }

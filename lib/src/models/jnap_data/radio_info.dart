@@ -3,21 +3,21 @@ import 'dart:convert';
 import 'package:jnap/src/models/jsonable.dart';
 
 // This data model is based on 'GetRadioInfo3'
-class GetRadioInfo extends Jsonable {
+class GetRadioInfoData extends Jsonable {
   final bool isBandSteeringSupported;
   final List<RouterRadio> radios;
 
-  const GetRadioInfo({
+  const GetRadioInfoData({
     required this.isBandSteeringSupported,
     required this.radios,
   });
 
   @override
-  GetRadioInfo copyWith({
+  GetRadioInfoData copyWith({
     bool? isBandSteeringSupported,
     List<RouterRadio>? radios,
   }) {
-    return GetRadioInfo(
+    return GetRadioInfoData(
       isBandSteeringSupported:
           isBandSteeringSupported ?? this.isBandSteeringSupported,
       radios: radios ?? this.radios,
@@ -33,8 +33,8 @@ class GetRadioInfo extends Jsonable {
   }
 
   @override
-  factory GetRadioInfo.fromMap(Map<String, dynamic> map) {
-    return GetRadioInfo(
+  factory GetRadioInfoData.fromMap(Map<String, dynamic> map) {
+    return GetRadioInfoData(
       isBandSteeringSupported: map['isBandSteeringSupported'] as bool,
       radios: List<RouterRadio>.from(
         (map['radios'] as List<dynamic>).map<RouterRadio>(
@@ -47,8 +47,8 @@ class GetRadioInfo extends Jsonable {
   @override
   List<Object> get props => [isBandSteeringSupported, radios];
 
-  factory GetRadioInfo.fromJson(String source) =>
-      GetRadioInfo.fromMap(jsonDecode(source));
+  factory GetRadioInfoData.fromJson(String source) =>
+      GetRadioInfoData.fromMap(jsonDecode(source));
 }
 
 class RouterRadio extends Jsonable {
