@@ -76,7 +76,7 @@ void main() {
 
       final result = await service.getWANStatusData();
 
-      expect(result, isA<RouterWANStatus>());
+      expect(result, isA<RouterWANStatusData>());
       expect(result.wanStatus, 'Connected');
       expect(result.wanConnection?.ipAddress, '192.168.1.87');
     });

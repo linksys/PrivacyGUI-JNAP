@@ -49,7 +49,7 @@ void main() {
     });
   });
 
-  group('GetPortConnectionStatus', () {
+  group('GetPortConnectionStatusData', () {
     const portConnectionStatus1 = PortConnectionStatus(
       portId: 1,
       connectionState: 'Connected',
@@ -59,7 +59,7 @@ void main() {
       connectionState: 'Disconnected',
     );
 
-    const getPortConnectionStatus = GetPortConnectionStatus(
+    const getPortConnectionStatus = GetPortConnectionStatusData(
       portConnectionStatus: [portConnectionStatus1, portConnectionStatus2],
     );
 
@@ -72,7 +72,7 @@ void main() {
     });
 
     test('fromMap creates a valid object', () {
-      expect(GetPortConnectionStatus.fromMap(getPortConnectionStatusMap), getPortConnectionStatus);
+      expect(GetPortConnectionStatusData.fromMap(getPortConnectionStatusMap), getPortConnectionStatus);
     });
 
     test('toJson returns a valid JSON string', () {
@@ -80,7 +80,7 @@ void main() {
     });
 
     test('fromJson creates a valid object from JSON string', () {
-      expect(GetPortConnectionStatus.fromJson(json.encode(getPortConnectionStatusMap)), getPortConnectionStatus);
+      expect(GetPortConnectionStatusData.fromJson(json.encode(getPortConnectionStatusMap)), getPortConnectionStatus);
     });
 
     test('copyWith returns a new object with updated values', () {
@@ -92,9 +92,9 @@ void main() {
     });
 
     test('props are correct', () {
-      final status1 = GetPortConnectionStatus(portConnectionStatus: [portConnectionStatus1]);
-      final status2 = GetPortConnectionStatus(portConnectionStatus: [portConnectionStatus1]);
-      final status3 = GetPortConnectionStatus(portConnectionStatus: [portConnectionStatus2]);
+      final status1 = GetPortConnectionStatusData(portConnectionStatus: [portConnectionStatus1]);
+      final status2 = GetPortConnectionStatusData(portConnectionStatus: [portConnectionStatus1]);
+      final status3 = GetPortConnectionStatusData(portConnectionStatus: [portConnectionStatus2]);
 
       expect(status1, status2);
       expect(status1.props, status2.props);

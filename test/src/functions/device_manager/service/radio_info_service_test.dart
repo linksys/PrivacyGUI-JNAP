@@ -138,7 +138,7 @@ void main() {
 
       final result = await service.getGuestRadioSettingsData();
 
-      expect(result, isA<GuestRadioSettings>());
+      expect(result, isA<GuestRadioSettingsData>());
       expect(result?.radios.first.guestSSID, 'Linksys03041-guest');
     });
 

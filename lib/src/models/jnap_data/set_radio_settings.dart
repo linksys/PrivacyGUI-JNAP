@@ -5,18 +5,18 @@ import 'dart:convert';
 import '../jsonable.dart';
 import 'package:jnap/src/models/jnap_data/radio_info.dart';
 
-class SetRadioSettings extends Jsonable {
+class SetRadioSettingsData extends Jsonable {
   final List<NewRadioSettings> radios;
 
-  const SetRadioSettings({
+  const SetRadioSettingsData({
     required this.radios,
   });
 
   @override
-  SetRadioSettings copyWith({
+  SetRadioSettingsData copyWith({
     List<NewRadioSettings>? radios,
   }) {
-    return SetRadioSettings(
+    return SetRadioSettingsData(
       radios: radios ?? this.radios,
     );
   }
@@ -28,8 +28,8 @@ class SetRadioSettings extends Jsonable {
     };
   }
 
-  factory SetRadioSettings.fromMap(Map<String, dynamic> map) {
-    return SetRadioSettings(
+  factory SetRadioSettingsData.fromMap(Map<String, dynamic> map) {
+    return SetRadioSettingsData(
       radios: List<NewRadioSettings>.from(
         (map['radios'] as List<dynamic>).map<NewRadioSettings>(
           (x) => NewRadioSettings.fromMap(x as Map<String, dynamic>),
@@ -38,8 +38,8 @@ class SetRadioSettings extends Jsonable {
     );
   }
 
-  factory SetRadioSettings.fromJson(String source) =>
-      SetRadioSettings.fromMap(jsonDecode(source));
+  factory SetRadioSettingsData.fromJson(String source) =>
+      SetRadioSettingsData.fromMap(jsonDecode(source));
 
   @override
   List<Object> get props => [radios];

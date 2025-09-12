@@ -8,12 +8,12 @@ import 'dyn_dns_settings.dart';
 import 'no_ip_settings.dart';
 import 'tzo_settings.dart';
 
-class DDNSSettings extends Jsonable {
+class DDNSSettingsData extends Jsonable {
   final String ddnsProvider;
-  final DynDNSSettings? dynDNSSettings;
-  final TZOSettings? tzoSettings;
-  final NoIPSettings? noIPSettings;
-  const DDNSSettings({
+  final DynDNSSettingsData? dynDNSSettings;
+  final TZOSettingsData? tzoSettings;
+  final NoIPSettingsData? noIPSettings;
+  const DDNSSettingsData({
     required this.ddnsProvider,
     this.dynDNSSettings,
     this.tzoSettings,
@@ -21,13 +21,13 @@ class DDNSSettings extends Jsonable {
   });
 
   @override
-  DDNSSettings copyWith({
+  DDNSSettingsData copyWith({
     String? ddnsProvider,
-    ValueGetter<DynDNSSettings?>? dynDNSSettings,
-    ValueGetter<TZOSettings?>? tzoSettings,
-    ValueGetter<NoIPSettings?>? noIPSettings,
+    ValueGetter<DynDNSSettingsData?>? dynDNSSettings,
+    ValueGetter<TZOSettingsData?>? tzoSettings,
+    ValueGetter<NoIPSettingsData?>? noIPSettings,
   }) {
-    return DDNSSettings(
+    return DDNSSettingsData(
       ddnsProvider: ddnsProvider ?? this.ddnsProvider,
       dynDNSSettings: dynDNSSettings != null ? dynDNSSettings() : this.dynDNSSettings,
       tzoSettings: tzoSettings != null ? tzoSettings() : this.tzoSettings,
@@ -45,24 +45,24 @@ class DDNSSettings extends Jsonable {
     };
   }
 
-  factory DDNSSettings.fromMap(Map<String, dynamic> map) {
-    return DDNSSettings(
+  factory DDNSSettingsData.fromMap(Map<String, dynamic> map) {
+    return DDNSSettingsData(
       ddnsProvider: map['ddnsProvider'] as String,
       dynDNSSettings: map['dynDNSSettings'] != null
-          ? DynDNSSettings.fromMap(
+          ? DynDNSSettingsData.fromMap(
               map['dynDNSSettings'] as Map<String, dynamic>)
           : null,
       tzoSettings: map['tzoSettings'] != null
-          ? TZOSettings.fromMap(map['tzoSettings'] as Map<String, dynamic>)
+          ? TZOSettingsData.fromMap(map['tzoSettings'] as Map<String, dynamic>)
           : null,
       noIPSettings: map['noipSettings'] != null
-          ? NoIPSettings.fromMap(map['noipSettings'] as Map<String, dynamic>)
+          ? NoIPSettingsData.fromMap(map['noipSettings'] as Map<String, dynamic>)
           : null,
     );
   }
 
-  factory DDNSSettings.fromJson(String source) =>
-      DDNSSettings.fromMap(jsonDecode(source));
+  factory DDNSSettingsData.fromJson(String source) =>
+      DDNSSettingsData.fromMap(jsonDecode(source));
 
   @override
   List<Object?> get props =>

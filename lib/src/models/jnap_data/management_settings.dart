@@ -4,13 +4,13 @@ import 'dart:convert';
 
 import '../jsonable.dart';
 
-class ManagementSettings extends Jsonable {
+class ManagementSettingsData extends Jsonable {
   final bool canManageUsingHTTP;
   final bool canManageUsingHTTPS;
   final bool isManageWirelesslySupported;
   final bool? canManageWirelessly;
   final bool canManageRemotely;
-  const ManagementSettings({
+  const ManagementSettingsData({
     required this.canManageUsingHTTP,
     required this.canManageUsingHTTPS,
     required this.isManageWirelesslySupported,
@@ -19,14 +19,14 @@ class ManagementSettings extends Jsonable {
   });
 
   @override
-  ManagementSettings copyWith({
+  ManagementSettingsData copyWith({
     bool? canManageUsingHTTP,
     bool? canManageUsingHTTPS,
     bool? isManageWirelesslySupported,
     bool? canManageWirelessly,
     bool? canManageRemotely,
   }) {
-    return ManagementSettings(
+    return ManagementSettingsData(
       canManageUsingHTTP: canManageUsingHTTP ?? this.canManageUsingHTTP,
       canManageUsingHTTPS: canManageUsingHTTPS ?? this.canManageUsingHTTPS,
       isManageWirelesslySupported:
@@ -47,8 +47,8 @@ class ManagementSettings extends Jsonable {
     };
   }
 
-  factory ManagementSettings.fromMap(Map<String, dynamic> map) {
-    return ManagementSettings(
+  factory ManagementSettingsData.fromMap(Map<String, dynamic> map) {
+    return ManagementSettingsData(
       canManageUsingHTTP: map['canManageUsingHTTP'] as bool,
       canManageUsingHTTPS: map['canManageUsingHTTPS'] as bool,
       isManageWirelesslySupported: map['isManageWirelesslySupported'] as bool,
@@ -79,6 +79,6 @@ class ManagementSettings extends Jsonable {
     };
   }
 
-  factory ManagementSettings.fromJson(String source) =>
-      ManagementSettings.fromMap(jsonDecode(source));
+  factory ManagementSettingsData.fromJson(String source) =>
+      ManagementSettingsData.fromMap(jsonDecode(source));
 }

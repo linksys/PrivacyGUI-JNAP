@@ -23,33 +23,33 @@ class NetworkConnectionsService {
         .send(action: GetNodesWirelessNetworkConnections.instance);
   }
 
-  Future<List<Layer2Connection>> getNetworkConnectionsList() async {
+  Future<List<Layer2ConnectionData>> getNetworkConnectionsList() async {
     final getNetworkConnectionsData = (await getNetworkConnections()).output;
     final getNodesWirelessNetworkConnectionsData =
         (await getNodesWirelessNetworkConnections()).output;
-    List<Layer2Connection> connectionsList = [];
+    List<Layer2ConnectionData> connectionsList = [];
     if (getNodesWirelessNetworkConnectionsData.isNotEmpty) {
       final nodeWirelessConnections = List.from(
           getNodesWirelessNetworkConnectionsData['nodeWirelessConnections'] ??
               []);
-      connectionsList = nodeWirelessConnections.fold<List<Layer2Connection>>([],
-          (previousValue, element) {
-        final nodeWirelessConnection = NodeWirelessConnections.fromMap(element);
+      connectionsList = nodeWirelessConnections.fold<List<Layer2ConnectionData>>(
+          [], (previousValue, element) {
+        final nodeWirelessConnection = NodeWirelessConnectionsData.fromMap(element);
 
         previousValue.addAll(nodeWirelessConnection.connections);
         return previousValue;
       });
     } else {
       connectionsList = List.from(getNetworkConnectionsData['connections'] ?? [])
-          .map((e) => Layer2Connection.fromMap(e))
+          .map((e) => Layer2ConnectionData.fromMap(e))
           .toList();
     }
     return connectionsList;
   }
 
-  Map<String, WirelessConnection> getWirelessConnectionsMap(
-      {List<Layer2Connection>? connectionsList}) {
-    var connectionsMap = <String, WirelessConnection>{};
+  Map<String, WirelessConnectionData> getWirelessConnectionsMap(
+      {List<Layer2ConnectionData>? connectionsList}) {
+    var connectionsMap = <String, WirelessConnectionData>{};
     if (connectionsList != null) {
       final connections = connectionsList;
       for (final connectionData in connections) {
@@ -63,8 +63,8 @@ class NetworkConnectionsService {
     return connectionsMap;
   }
 
-  Map<String, WirelessConnection> updateWirelessConnectionsWithBackhaulInfo({
-    required Map<String, WirelessConnection> wirelessConnections,
+  Map<String, WirelessConnectionData> updateWirelessConnectionsWithBackhaulInfo({
+    required Map<String, WirelessConnectionData> wirelessConnections,
     required List<BackHaulInfoData> backhaulInfoList,
   }) {
     final _wirelessConnections = wirelessConnections;
@@ -78,7 +78,7 @@ class NetworkConnectionsService {
       final band = element.wirelessConnectionInfo?.radioID;
       final bssid = element.wirelessConnectionInfo?.apBSSID;
       if (mac != null && rssi != null) {
-        _wirelessConnections[mac] = WirelessConnection(
+        _wirelessConnections[mac] = WirelessConnectionData(
           bssid: bssid ?? '',
           isGuest: false,
           radioID: 'RADIO_${band}z',

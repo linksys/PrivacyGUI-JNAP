@@ -51,7 +51,7 @@ void main() {
     });
   });
 
-  group('IPv6FirewallRule', () {
+  group('IPv6FirewallRuleData', () {
     const portRange1 = PortRange(
       protocol: 'TCP',
       firstPort: 80,
@@ -63,7 +63,7 @@ void main() {
       lastPort: 53,
     );
 
-    const ipv6FirewallRule = IPv6FirewallRule(
+    const ipv6FirewallRule = IPv6FirewallRuleData(
       description: 'Allow HTTP/S',
       ipv6Address: '2001:db8::1',
       isEnabled: true,
@@ -82,7 +82,7 @@ void main() {
     });
 
     test('fromMap creates a valid object', () {
-      expect(IPv6FirewallRule.fromMap(ipv6FirewallRuleMap), ipv6FirewallRule);
+      expect(IPv6FirewallRuleData.fromMap(ipv6FirewallRuleMap), ipv6FirewallRule);
     });
 
     test('toJson returns a valid JSON string', () {
@@ -90,7 +90,7 @@ void main() {
     });
 
     test('fromJson creates a valid object from JSON string', () {
-      expect(IPv6FirewallRule.fromJson(json.encode(ipv6FirewallRuleMap)), ipv6FirewallRule);
+      expect(IPv6FirewallRuleData.fromJson(json.encode(ipv6FirewallRuleMap)), ipv6FirewallRule);
     });
 
     test('copyWith returns a new object with updated values', () {
@@ -104,9 +104,9 @@ void main() {
     });
 
     test('props are correct', () {
-      final rule1 = IPv6FirewallRule(description: 'd1', ipv6Address: 'ip1', isEnabled: true, portRanges: [portRange1]);
-      final rule2 = IPv6FirewallRule(description: 'd1', ipv6Address: 'ip1', isEnabled: true, portRanges: [portRange1]);
-      final rule3 = IPv6FirewallRule(description: 'd2', ipv6Address: 'ip2', isEnabled: false, portRanges: [portRange2]);
+      final rule1 = IPv6FirewallRuleData(description: 'd1', ipv6Address: 'ip1', isEnabled: true, portRanges: [portRange1]);
+      final rule2 = IPv6FirewallRuleData(description: 'd1', ipv6Address: 'ip1', isEnabled: true, portRanges: [portRange1]);
+      final rule3 = IPv6FirewallRuleData(description: 'd2', ipv6Address: 'ip2', isEnabled: false, portRanges: [portRange2]);
       expect(rule1, rule2);
       expect(rule1.props, rule2.props);
       expect(rule1 == rule3, false);

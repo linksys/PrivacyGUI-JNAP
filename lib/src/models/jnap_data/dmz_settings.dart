@@ -5,32 +5,17 @@ import 'dart:convert';
 import '../jsonable.dart';
 import 'package:jnap/src/models/types.dart';
 
-class DMZSettings extends Jsonable {
+class DMZSettingsData extends Jsonable {
   final bool isDMZEnabled;
   final DMZSourceRestriction? sourceRestriction;
   final String? destinationIPAddress;
   final String? destinationMACAddress;
-  const DMZSettings({
+  const DMZSettingsData({
     required this.isDMZEnabled,
     this.sourceRestriction,
     this.destinationIPAddress,
     this.destinationMACAddress,
   });
-
-  // DMZSettings copyWith({
-  //   bool? isDMZEnabled,
-  //   DMZSourceRestriction? sourceRestriction,
-  //   String? destinationIPAddress,
-  //   String? destinationMACAddress,
-  // }) {
-  //   return DMZSettings(
-  //     isDMZEnabled: isDMZEnabled ?? this.isDMZEnabled,
-  //     sourceRestriction: sourceRestriction ?? this.sourceRestriction,
-  //     destinationIPAddress: destinationIPAddress ?? this.destinationIPAddress,
-  //     destinationMACAddress:
-  //         destinationMACAddress ?? this.destinationMACAddress,
-  //   );
-  // }
 
   @override
   Map<String, dynamic> toMap() {
@@ -42,8 +27,8 @@ class DMZSettings extends Jsonable {
     };
   }
 
-  factory DMZSettings.fromMap(Map<String, dynamic> map) {
-    return DMZSettings(
+  factory DMZSettingsData.fromMap(Map<String, dynamic> map) {
+    return DMZSettingsData(
       isDMZEnabled: map['isDMZEnabled'] as bool,
       sourceRestriction: map['sourceRestriction'] != null
           ? DMZSourceRestriction.fromMap(
@@ -67,13 +52,13 @@ class DMZSettings extends Jsonable {
       ];
 
   @override
-  DMZSettings copyWith({
+  DMZSettingsData copyWith({
     bool? isDMZEnabled,
     ValueGetter<DMZSourceRestriction?>? sourceRestriction,
     ValueGetter<String?>? destinationIPAddress,
     ValueGetter<String?>? destinationMACAddress,
   }) {
-    return DMZSettings(
+    return DMZSettingsData(
       isDMZEnabled: isDMZEnabled ?? this.isDMZEnabled,
       sourceRestriction: sourceRestriction != null
           ? sourceRestriction()
@@ -87,8 +72,8 @@ class DMZSettings extends Jsonable {
     );
   }
 
-  factory DMZSettings.fromJson(String source) =>
-      DMZSettings.fromMap(jsonDecode(source));
+  factory DMZSettingsData.fromJson(String source) =>
+      DMZSettingsData.fromMap(jsonDecode(source));
 }
 
 class DMZSourceRestriction extends Jsonable {

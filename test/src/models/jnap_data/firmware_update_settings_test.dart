@@ -55,19 +55,19 @@ void main() {
     });
   });
 
-  group('FirmwareUpdateSettings', () {
+  group('FirmwareUpdateSettingsData', () {
     const firmwareAutoUpdateWindow = FirmwareAutoUpdateWindow(
       startMinute: 60,
       durationMinutes: 120,
     );
 
-    const firmwareUpdateSettings = FirmwareUpdateSettings(
-      updatePolicy: FirmwareUpdateSettings.firmwareUpdatePolicyAuto,
+    const firmwareUpdateSettings = FirmwareUpdateSettingsData(
+      updatePolicy: FirmwareUpdateSettingsData.firmwareUpdatePolicyAuto,
       autoUpdateWindow: firmwareAutoUpdateWindow,
     );
 
     final Map<String, dynamic> firmwareUpdateSettingsMap = {
-      'updatePolicy': FirmwareUpdateSettings.firmwareUpdatePolicyAuto,
+      'updatePolicy': FirmwareUpdateSettingsData.firmwareUpdatePolicyAuto,
       'autoUpdateWindow': firmwareAutoUpdateWindow.toMap(),
     };
 
@@ -76,7 +76,7 @@ void main() {
     });
 
     test('fromMap creates a valid object', () {
-      expect(FirmwareUpdateSettings.fromMap(firmwareUpdateSettingsMap), firmwareUpdateSettings);
+      expect(FirmwareUpdateSettingsData.fromMap(firmwareUpdateSettingsMap), firmwareUpdateSettings);
     });
 
     test('toJson returns a valid JSON string', () {
@@ -84,28 +84,28 @@ void main() {
     });
 
     test('fromJson creates a valid object from JSON string', () {
-      expect(FirmwareUpdateSettings.fromJson(json.encode(firmwareUpdateSettingsMap)), firmwareUpdateSettings);
+      expect(FirmwareUpdateSettingsData.fromJson(json.encode(firmwareUpdateSettingsMap)), firmwareUpdateSettings);
     });
 
     test('copyWith returns a new object with updated values', () {
       final updatedSettings = firmwareUpdateSettings.copyWith(
-        updatePolicy: FirmwareUpdateSettings.firmwareUpdatePolicyManual,
+        updatePolicy: FirmwareUpdateSettingsData.firmwareUpdatePolicyManual,
       );
-      expect(updatedSettings.updatePolicy, FirmwareUpdateSettings.firmwareUpdatePolicyManual);
+      expect(updatedSettings.updatePolicy, FirmwareUpdateSettingsData.firmwareUpdatePolicyManual);
       expect(updatedSettings.autoUpdateWindow, firmwareUpdateSettings.autoUpdateWindow);
     });
 
     test('props are correct', () {
-      final settings1 = FirmwareUpdateSettings(
-        updatePolicy: FirmwareUpdateSettings.firmwareUpdatePolicyAuto,
+      final settings1 = FirmwareUpdateSettingsData(
+        updatePolicy: FirmwareUpdateSettingsData.firmwareUpdatePolicyAuto,
         autoUpdateWindow: firmwareAutoUpdateWindow,
       );
-      final settings2 = FirmwareUpdateSettings(
-        updatePolicy: FirmwareUpdateSettings.firmwareUpdatePolicyAuto,
+      final settings2 = FirmwareUpdateSettingsData(
+        updatePolicy: FirmwareUpdateSettingsData.firmwareUpdatePolicyAuto,
         autoUpdateWindow: firmwareAutoUpdateWindow,
       );
-      final settings3 = FirmwareUpdateSettings(
-        updatePolicy: FirmwareUpdateSettings.firmwareUpdatePolicyManual,
+      final settings3 = FirmwareUpdateSettingsData(
+        updatePolicy: FirmwareUpdateSettingsData.firmwareUpdatePolicyManual,
         autoUpdateWindow: FirmwareAutoUpdateWindow.simple(),
       );
 

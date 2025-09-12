@@ -6,8 +6,8 @@ import 'package:jnap/src/models/jnap_data/tzo_settings.dart';
 import 'package:jnap/src/models/jnap_data/no_ip_settings.dart';
 
 void main() {
-  group('DDNSSettings', () {
-    const dynDNSSettings = DynDNSSettings(
+  group('DDNSSettingsData', () {
+    const dynDNSSettings = DynDNSSettingsData(
       username: 'dynuser',
       password: 'dynpass',
       hostName: 'dynhost.com',
@@ -16,19 +16,19 @@ void main() {
       isMailExchangeEnabled: false,
     );
 
-    const tzoSettings = TZOSettings(
+    const tzoSettings = TZOSettingsData(
       username: 'tzouser',
       password: 'tzopass',
       hostName: 'tzohost.com',
     );
 
-    const noIPSettings = NoIPSettings(
+    const noIPSettings = NoIPSettingsData(
       username: 'noipuser',
       password: 'noippass',
       hostName: 'noiphost.com',
     );
 
-    const ddnsSettings = DDNSSettings(
+    const ddnsSettings = DDNSSettingsData(
       ddnsProvider: 'DynDNS',
       dynDNSSettings: dynDNSSettings,
       tzoSettings: tzoSettings,
@@ -47,7 +47,7 @@ void main() {
     });
 
     test('fromMap creates a valid object', () {
-      expect(DDNSSettings.fromMap(ddnsSettingsMap), ddnsSettings);
+      expect(DDNSSettingsData.fromMap(ddnsSettingsMap), ddnsSettings);
     });
 
     test('toJson returns a valid JSON string', () {
@@ -55,7 +55,7 @@ void main() {
     });
 
     test('fromJson creates a valid object from JSON string', () {
-      expect(DDNSSettings.fromJson(json.encode(ddnsSettingsMap)), ddnsSettings);
+      expect(DDNSSettingsData.fromJson(json.encode(ddnsSettingsMap)), ddnsSettings);
     });
 
     test('copyWith returns a new object with updated values', () {
@@ -69,19 +69,19 @@ void main() {
     });
 
     test('props are correct', () {
-      final settings1 = DDNSSettings(
+      final settings1 = DDNSSettingsData(
         ddnsProvider: 'DynDNS',
         dynDNSSettings: dynDNSSettings,
         tzoSettings: tzoSettings,
         noIPSettings: noIPSettings,
       );
-      final settings2 = DDNSSettings(
+      final settings2 = DDNSSettingsData(
         ddnsProvider: 'DynDNS',
         dynDNSSettings: dynDNSSettings,
         tzoSettings: tzoSettings,
         noIPSettings: noIPSettings,
       );
-      final settings3 = DDNSSettings(
+      final settings3 = DDNSSettingsData(
         ddnsProvider: 'NoIP',
         dynDNSSettings: null,
         tzoSettings: tzoSettings,

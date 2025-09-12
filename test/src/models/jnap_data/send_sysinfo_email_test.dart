@@ -3,8 +3,8 @@ import 'package:test/test.dart';
 import 'package:jnap/src/models/jnap_data/send_sysinfo_email.dart';
 
 void main() {
-  group('SendSysinfoEmail', () {
-    const sendSysinfoEmail = SendSysinfoEmail(
+  group('SendSysinfoEmailData', () {
+    const sendSysinfoEmail = SendSysinfoEmailData(
       addressList: ['test1@example.com', 'test2@example.com'],
     );
 
@@ -17,7 +17,7 @@ void main() {
     });
 
     test('fromMap creates a valid object', () {
-      expect(SendSysinfoEmail.fromMap(sendSysinfoEmailMap), sendSysinfoEmail);
+      expect(SendSysinfoEmailData.fromMap(sendSysinfoEmailMap), sendSysinfoEmail);
     });
 
     test('toJson returns a valid JSON string', () {
@@ -25,7 +25,7 @@ void main() {
     });
 
     test('fromJson creates a valid object from JSON string', () {
-      expect(SendSysinfoEmail.fromJson(json.encode(sendSysinfoEmailMap)), sendSysinfoEmail);
+      expect(SendSysinfoEmailData.fromJson(json.encode(sendSysinfoEmailMap)), sendSysinfoEmail);
     });
 
     test('copyWith returns a new object with updated values', () {
@@ -36,9 +36,9 @@ void main() {
     });
 
     test('props are correct', () {
-      final email1 = SendSysinfoEmail(addressList: ['a1']);
-      final email2 = SendSysinfoEmail(addressList: ['a1']);
-      final email3 = SendSysinfoEmail(addressList: ['a2']);
+      final email1 = SendSysinfoEmailData(addressList: ['a1']);
+      final email2 = SendSysinfoEmailData(addressList: ['a1']);
+      final email3 = SendSysinfoEmailData(addressList: ['a2']);
       expect(email1, email2);
       expect(email1.props, email2.props);
       expect(email1 == email3, false);

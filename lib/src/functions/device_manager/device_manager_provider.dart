@@ -45,11 +45,11 @@ class DeviceManagerNotifier extends Notifier<DeviceManagerState> {
     List<BackHaulInfoData> backhaulInfoList =
         await backhaulInfoService.getBackhaulInfoList();
     // WAN Status
-    RouterWANStatus wanStatus = await wanStatusService.getWANStatusData();
+    RouterWANStatusData wanStatus = await wanStatusService.getWANStatusData();
     // Wireless Connections
-    final List<Layer2Connection> connectionsList =
+    final List<Layer2ConnectionData> connectionsList =
         await networkConnectionsService.getNetworkConnectionsList();
-    Map<String, WirelessConnection> wirelessConnections =
+    Map<String, WirelessConnectionData> wirelessConnections =
         networkConnectionsService.getWirelessConnectionsMap(
             connectionsList: connectionsList);
     wirelessConnections =

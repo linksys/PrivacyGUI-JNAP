@@ -4,23 +4,23 @@ import 'dart:convert';
 
 import '../jsonable.dart';
 
-class UPnPSettings extends Jsonable {
+class UPnPSettingsData extends Jsonable {
   final bool isUPnPEnabled;
   final bool canUsersConfigure;
   final bool canUsersDisableWANAccess;
-  const UPnPSettings({
+  const UPnPSettingsData({
     required this.isUPnPEnabled,
     required this.canUsersConfigure,
     required this.canUsersDisableWANAccess,
   });
 
   @override
-  UPnPSettings copyWith({
+  UPnPSettingsData copyWith({
     bool? isUPnPEnabled,
     bool? canUsersConfigure,
     bool? canUsersDisableWANAccess,
   }) {
-    return UPnPSettings(
+    return UPnPSettingsData(
       isUPnPEnabled: isUPnPEnabled ?? this.isUPnPEnabled,
       canUsersConfigure: canUsersConfigure ?? this.canUsersConfigure,
       canUsersDisableWANAccess:
@@ -37,8 +37,8 @@ class UPnPSettings extends Jsonable {
     };
   }
 
-  factory UPnPSettings.fromMap(Map<String, dynamic> map) {
-    return UPnPSettings(
+  factory UPnPSettingsData.fromMap(Map<String, dynamic> map) {
+    return UPnPSettingsData(
       isUPnPEnabled: map['isUPnPEnabled'] as bool,
       canUsersConfigure: map['canUsersConfigure'] as bool,
       canUsersDisableWANAccess: map['canUsersDisableWANAccess'] as bool,
@@ -49,6 +49,6 @@ class UPnPSettings extends Jsonable {
   List<Object> get props =>
       [isUPnPEnabled, canUsersConfigure, canUsersDisableWANAccess];
 
-  factory UPnPSettings.fromJson(String source) =>
-      UPnPSettings.fromMap(jsonDecode(source));
+  factory UPnPSettingsData.fromJson(String source) =>
+      UPnPSettingsData.fromMap(jsonDecode(source));
 }

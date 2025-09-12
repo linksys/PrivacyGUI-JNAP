@@ -9,8 +9,8 @@ import '../jsonable.dart';
 /// internalPort : 3074
 /// description : "XBox Live (TM)"
 
-class AdvancedRoutingRule extends Jsonable {
-  const AdvancedRoutingRule({
+class AdvancedRoutingRuleData extends Jsonable {
+  const AdvancedRoutingRuleData({
     required this.isEnabled,
     required this.externalPort,
     required this.protocol,
@@ -37,7 +37,7 @@ class AdvancedRoutingRule extends Jsonable {
       ];
 
   @override
-  AdvancedRoutingRule copyWith({
+  AdvancedRoutingRuleData copyWith({
     bool? isEnabled,
     int? externalPort,
     String? protocol,
@@ -45,7 +45,7 @@ class AdvancedRoutingRule extends Jsonable {
     int? internalPort,
     String? description,
   }) {
-    return AdvancedRoutingRule(
+    return AdvancedRoutingRuleData(
       isEnabled: isEnabled ?? this.isEnabled,
       externalPort: externalPort ?? this.externalPort,
       protocol: protocol ?? this.protocol,
@@ -68,8 +68,8 @@ class AdvancedRoutingRule extends Jsonable {
     };
   }
 
-  factory AdvancedRoutingRule.fromMap(Map<String, dynamic> map) {
-    return AdvancedRoutingRule(
+  factory AdvancedRoutingRuleData.fromMap(Map<String, dynamic> map) {
+    return AdvancedRoutingRuleData(
       isEnabled: map['isEnabled'],
       externalPort: map['externalPort'],
       protocol: map['protocol'],
@@ -78,6 +78,6 @@ class AdvancedRoutingRule extends Jsonable {
       description: map['description'],
     );
   }
-  factory AdvancedRoutingRule.fromJson(String source) =>
-      AdvancedRoutingRule.fromMap(jsonDecode(source));
+  factory AdvancedRoutingRuleData.fromJson(String source) =>
+      AdvancedRoutingRuleData.fromMap(jsonDecode(source));
 }

@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import '../jsonable.dart';
 
-class BTDiscoveryData extends Jsonable {
+class BTDiscoveryDataData extends Jsonable {
   final String name;
   final String macAddress;
   final int rssi;
@@ -11,7 +11,7 @@ class BTDiscoveryData extends Jsonable {
   @override
   List<Object?> get props => [name, macAddress, rssi, modeLimit];
 
-  const BTDiscoveryData({
+  const BTDiscoveryDataData({
     required this.name,
     required this.macAddress,
     required this.rssi,
@@ -19,13 +19,13 @@ class BTDiscoveryData extends Jsonable {
   });
 
   @override
-  BTDiscoveryData copyWith({
+  BTDiscoveryDataData copyWith({
     String? name,
     String? macAddress,
     int? rssi,
     String? modeLimit,
   }) {
-    return BTDiscoveryData(
+    return BTDiscoveryDataData(
       name: name ?? this.name,
       macAddress: macAddress ?? this.macAddress,
       rssi: rssi ?? this.rssi,
@@ -43,14 +43,14 @@ class BTDiscoveryData extends Jsonable {
     }..removeWhere((key, value) => value == null);
   }
 
-  factory BTDiscoveryData.fromMap(Map<String, dynamic> map) {
-    return BTDiscoveryData(
+  factory BTDiscoveryDataData.fromMap(Map<String, dynamic> map) {
+    return BTDiscoveryDataData(
       name: map['name'],
       macAddress: map['macAddress'],
       rssi: map['rssi'],
       modeLimit: map['modeLimit'],
     );
   }
-  factory BTDiscoveryData.fromJson(String source) =>
-      BTDiscoveryData.fromMap(jsonDecode(source));
+  factory BTDiscoveryDataData.fromJson(String source) =>
+      BTDiscoveryDataData.fromMap(jsonDecode(source));
 }

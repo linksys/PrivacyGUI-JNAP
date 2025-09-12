@@ -53,7 +53,7 @@ void main() {
     });
   });
 
-  group('IPv6AutomaticSettings', () {
+  group('IPv6AutomaticSettingsData', () {
     const ipv6rdTunnelSettings = IPv6rdTunnelSettings(
       prefix: '2001:db8::/32',
       prefixLength: 32,
@@ -61,7 +61,7 @@ void main() {
       borderRelayPrefixLength: 24,
     );
 
-    const ipv6AutomaticSettings = IPv6AutomaticSettings(
+    const ipv6AutomaticSettings = IPv6AutomaticSettingsData(
       isIPv6AutomaticEnabled: true,
       ipv6rdTunnelMode: '6rd',
       ipv6rdTunnelSettings: ipv6rdTunnelSettings,
@@ -78,7 +78,7 @@ void main() {
     });
 
     test('fromMap creates a valid object', () {
-      expect(IPv6AutomaticSettings.fromMap(ipv6AutomaticSettingsMap), ipv6AutomaticSettings);
+      expect(IPv6AutomaticSettingsData.fromMap(ipv6AutomaticSettingsMap), ipv6AutomaticSettings);
     });
 
     test('toJson returns a valid JSON string', () {
@@ -86,7 +86,7 @@ void main() {
     });
 
     test('fromJson creates a valid object from JSON string', () {
-      expect(IPv6AutomaticSettings.fromJson(json.encode(ipv6AutomaticSettingsMap)), ipv6AutomaticSettings);
+      expect(IPv6AutomaticSettingsData.fromJson(json.encode(ipv6AutomaticSettingsMap)), ipv6AutomaticSettings);
     });
 
     test('copyWith returns a new object with updated values', () {
@@ -98,9 +98,9 @@ void main() {
     });
 
     test('props are correct', () {
-      final settings1 = IPv6AutomaticSettings(isIPv6AutomaticEnabled: true);
-      final settings2 = IPv6AutomaticSettings(isIPv6AutomaticEnabled: true);
-      final settings3 = IPv6AutomaticSettings(isIPv6AutomaticEnabled: false);
+      final settings1 = IPv6AutomaticSettingsData(isIPv6AutomaticEnabled: true);
+      final settings2 = IPv6AutomaticSettingsData(isIPv6AutomaticEnabled: true);
+      final settings3 = IPv6AutomaticSettingsData(isIPv6AutomaticEnabled: false);
       expect(settings1, settings2);
       expect(settings1.props, settings2.props);
       expect(settings1 == settings3, false);

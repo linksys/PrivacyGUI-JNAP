@@ -1,4 +1,3 @@
-// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:convert';
 import 'package:collection/collection.dart';
 import 'package:equatable/equatable.dart';
@@ -170,11 +169,11 @@ class LinksysDevice extends RawDevice {
 
 class DeviceManagerState extends Equatable {
   // Collected data for a specific network with its own devices shared to overall screens
-  final Map<String, WirelessConnection> wirelessConnections;
+  final Map<String, WirelessConnectionData> wirelessConnections;
   final Map<String, RouterRadio> radioInfos;
-  final GuestRadioSettings? guestRadioSettings;
+  final GuestRadioSettingsData? guestRadioSettings;
   final List<LinksysDevice> deviceList;
-  final RouterWANStatus? wanStatus;
+  final RouterWANStatusData? wanStatus;
   final List<BackHaulInfoData> backhaulInfoData;
   final int lastUpdateTime;
 
@@ -214,11 +213,11 @@ class DeviceManagerState extends Equatable {
   });
 
   DeviceManagerState copyWith({
-    Map<String, WirelessConnection>? wirelessConnections,
+    Map<String, WirelessConnectionData>? wirelessConnections,
     Map<String, RouterRadio>? radioInfos,
     List<LinksysDevice>? deviceList,
-    GuestRadioSettings? guestRadioSettings,
-    RouterWANStatus? wanStatus,
+    GuestRadioSettingsData? guestRadioSettings,
+    RouterWANStatusData? wanStatus,
     List<BackHaulInfoData>? backhaulInfoData,
     int? lastUpdateTime,
   }) {
@@ -251,11 +250,11 @@ class DeviceManagerState extends Equatable {
 
   factory DeviceManagerState.fromMap(Map<String, dynamic> map) {
     return DeviceManagerState(
-      wirelessConnections: Map<String, WirelessConnection>.fromEntries(
+      wirelessConnections: Map<String, WirelessConnectionData>.fromEntries(
         (map['wirelessConnections'] as Map).entries.map(
               (e) => MapEntry(
                 e.key,
-                WirelessConnection.fromMap(e.value),
+                WirelessConnectionData.fromMap(e.value),
               ),
             ),
       ),
@@ -267,7 +266,7 @@ class DeviceManagerState extends Equatable {
                 ),
               )),
       guestRadioSettings: map['guestRadioSettings'] != null
-          ? GuestRadioSettings.fromMap(map['guestRadioSettings'])
+          ? GuestRadioSettingsData.fromMap(map['guestRadioSettings'])
           : null,
       deviceList: List<LinksysDevice>.from(
         map['deviceList'].map<LinksysDevice>(
@@ -275,7 +274,7 @@ class DeviceManagerState extends Equatable {
         ),
       ),
       wanStatus: map['wanStatus'] != null
-          ? RouterWANStatus.fromMap(map['wanStatus'] as Map<String, dynamic>)
+          ? RouterWANStatusData.fromMap(map['wanStatus'] as Map<String, dynamic>)
           : null,
       backhaulInfoData: List<BackHaulInfoData>.from(
         map['backhaulInfoData'].map<BackHaulInfoData>(

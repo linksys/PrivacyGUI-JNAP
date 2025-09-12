@@ -4,8 +4,8 @@ import 'package:jnap/src/models/jnap_data/layer2_connection.dart';
 import 'package:jnap/src/models/jnap_data/wirless_connection.dart';
 
 void main() {
-  group('Layer2Connection', () {
-    const wirelessConnection = WirelessConnection(
+  group('Layer2ConnectionData', () {
+    const wirelessConnection = WirelessConnectionData(
       bssid: '00:11:22:33:44:55',
       isGuest: false,
       radioID: 'radio1',
@@ -16,7 +16,7 @@ void main() {
       isMLOCapable: true,
     );
 
-    const layer2Connection = Layer2Connection(
+    const layer2Connection = Layer2ConnectionData(
       macAddress: 'AA:BB:CC:DD:EE:FF',
       negotiatedMbps: 1000,
       wireless: wirelessConnection,
@@ -33,7 +33,7 @@ void main() {
     });
 
     test('fromMap creates a valid object', () {
-      expect(Layer2Connection.fromMap(layer2ConnectionMap), layer2Connection);
+      expect(Layer2ConnectionData.fromMap(layer2ConnectionMap), layer2Connection);
     });
 
     test('toJson returns a valid JSON string', () {
@@ -41,7 +41,7 @@ void main() {
     });
 
     test('fromJson creates a valid object from JSON string', () {
-      expect(Layer2Connection.fromJson(json.encode(layer2ConnectionMap)), layer2Connection);
+      expect(Layer2ConnectionData.fromJson(json.encode(layer2ConnectionMap)), layer2Connection);
     });
 
     test('copyWith returns a new object with updated values', () {
@@ -53,9 +53,9 @@ void main() {
     });
 
     test('props are correct', () {
-      final conn1 = Layer2Connection(macAddress: 'm1', negotiatedMbps: 1, wireless: wirelessConnection);
-      final conn2 = Layer2Connection(macAddress: 'm1', negotiatedMbps: 1, wireless: wirelessConnection);
-      final conn3 = Layer2Connection(macAddress: 'm2', negotiatedMbps: 2, wireless: null);
+      final conn1 = Layer2ConnectionData(macAddress: 'm1', negotiatedMbps: 1, wireless: wirelessConnection);
+      final conn2 = Layer2ConnectionData(macAddress: 'm1', negotiatedMbps: 1, wireless: wirelessConnection);
+      final conn3 = Layer2ConnectionData(macAddress: 'm2', negotiatedMbps: 2, wireless: null);
       expect(conn1, conn2);
       expect(conn1.props, conn2.props);
       expect(conn1 == conn3, false);
@@ -63,8 +63,8 @@ void main() {
     });
   });
 
-  group('NodeWirelessLayer2Connections', () {
-    const wirelessConnection = WirelessConnection(
+  group('NodeWirelessLayer2ConnectionsData', () {
+    const wirelessConnection = WirelessConnectionData(
       bssid: '00:11:22:33:44:55',
       isGuest: false,
       radioID: 'radio1',
@@ -75,7 +75,7 @@ void main() {
       isMLOCapable: true,
     );
 
-    const nodeWirelessLayer2Connections = NodeWirelessLayer2Connections(
+    const nodeWirelessLayer2Connections = NodeWirelessLayer2ConnectionsData(
       macAddress: 'AA:BB:CC:DD:EE:FF',
       negotiatedMbps: 1000,
       timestamp: '2023-01-01T12:00:00Z',
@@ -94,7 +94,7 @@ void main() {
     });
 
     test('fromMap creates a valid object', () {
-      expect(NodeWirelessLayer2Connections.fromMap(nodeWirelessLayer2ConnectionsMap), nodeWirelessLayer2Connections);
+      expect(NodeWirelessLayer2ConnectionsData.fromMap(nodeWirelessLayer2ConnectionsMap), nodeWirelessLayer2Connections);
     });
 
     test('toJson returns a valid JSON string', () {
@@ -102,7 +102,7 @@ void main() {
     });
 
     test('fromJson creates a valid object from JSON string', () {
-      expect(NodeWirelessLayer2Connections.fromJson(json.encode(nodeWirelessLayer2ConnectionsMap)), nodeWirelessLayer2Connections);
+      expect(NodeWirelessLayer2ConnectionsData.fromJson(json.encode(nodeWirelessLayer2ConnectionsMap)), nodeWirelessLayer2Connections);
     });
 
     test('copyWith returns a new object with updated values', () {
@@ -116,9 +116,9 @@ void main() {
     });
 
     test('props are correct', () {
-      final conn1 = NodeWirelessLayer2Connections(macAddress: 'm1', negotiatedMbps: 1, timestamp: 't1', wireless: wirelessConnection);
-      final conn2 = NodeWirelessLayer2Connections(macAddress: 'm1', negotiatedMbps: 1, timestamp: 't1', wireless: wirelessConnection);
-      final conn3 = NodeWirelessLayer2Connections(macAddress: 'm2', negotiatedMbps: 2, timestamp: 't2', wireless: null);
+      final conn1 = NodeWirelessLayer2ConnectionsData(macAddress: 'm1', negotiatedMbps: 1, timestamp: 't1', wireless: wirelessConnection);
+      final conn2 = NodeWirelessLayer2ConnectionsData(macAddress: 'm1', negotiatedMbps: 1, timestamp: 't1', wireless: wirelessConnection);
+      final conn3 = NodeWirelessLayer2ConnectionsData(macAddress: 'm2', negotiatedMbps: 2, timestamp: 't2', wireless: null);
       expect(conn1, conn2);
       expect(conn1.props, conn2.props);
       expect(conn1 == conn3, false);

@@ -4,23 +4,23 @@ import 'dart:convert';
 
 import '../jsonable.dart';
 
-class NoIPSettings extends Jsonable {
+class NoIPSettingsData extends Jsonable {
   final String username;
   final String password;
   final String hostName;
-  const NoIPSettings({
+  const NoIPSettingsData({
     required this.username,
     required this.password,
     required this.hostName,
   });
 
   @override
-  NoIPSettings copyWith({
+  NoIPSettingsData copyWith({
     String? username,
     String? password,
     String? hostName,
   }) {
-    return NoIPSettings(
+    return NoIPSettingsData(
       username: username ?? this.username,
       password: password ?? this.password,
       hostName: hostName ?? this.hostName,
@@ -36,8 +36,8 @@ class NoIPSettings extends Jsonable {
     }..removeWhere((key, value) => value == null);
   }
 
-  factory NoIPSettings.fromMap(Map<String, dynamic> map) {
-    return NoIPSettings(
+  factory NoIPSettingsData.fromMap(Map<String, dynamic> map) {
+    return NoIPSettingsData(
       username: map['username'] as String,
       password: map['password'] as String,
       hostName: map['hostName'] as String,
@@ -47,6 +47,6 @@ class NoIPSettings extends Jsonable {
   @override
   List<Object> get props => [username, password, hostName];
 
-  factory NoIPSettings.fromJson(String source) =>
-      NoIPSettings.fromMap(jsonDecode(source));
+  factory NoIPSettingsData.fromJson(String source) =>
+      NoIPSettingsData.fromMap(jsonDecode(source));
 }

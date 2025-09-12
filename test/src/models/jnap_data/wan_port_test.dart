@@ -3,8 +3,8 @@ import 'package:test/test.dart';
 import 'package:jnap/src/models/jnap_data/wan_port.dart';
 
 void main() {
-  group('WANPort', () {
-    const wanPort = WANPort(
+  group('WANPortData', () {
+    const wanPort = WANPortData(
       portId: 1,
     );
 
@@ -17,7 +17,7 @@ void main() {
     });
 
     test('fromMap creates a valid object', () {
-      expect(WANPort.fromMap(wanPortMap), wanPort);
+      expect(WANPortData.fromMap(wanPortMap), wanPort);
     });
 
     test('toJson returns a valid JSON string', () {
@@ -25,7 +25,7 @@ void main() {
     });
 
     test('fromJson creates a valid object from JSON string', () {
-      expect(WANPort.fromJson(json.encode(wanPortMap)), wanPort);
+      expect(WANPortData.fromJson(json.encode(wanPortMap)), wanPort);
     });
 
     test('copyWith returns a new object with updated values', () {
@@ -36,9 +36,9 @@ void main() {
     });
 
     test('props are correct', () {
-      final port1 = WANPort(portId: 1);
-      final port2 = WANPort(portId: 1);
-      final port3 = WANPort(portId: 2);
+      final port1 = WANPortData(portId: 1);
+      final port2 = WANPortData(portId: 1);
+      final port3 = WANPortData(portId: 2);
       expect(port1, port2);
       expect(port1.props, port2.props);
       expect(port1 == port3, false);

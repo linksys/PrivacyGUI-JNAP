@@ -5,12 +5,12 @@ import 'dart:convert';
 import '../jsonable.dart';
 import 'package:jnap/src/models/types.dart';
 
-class FirmwareUpdateStatus extends Jsonable {
+class FirmwareUpdateStatusData extends Jsonable {
   final String lastSuccessfulCheckTime;
   final FirmwareUpdateData? availableUpdate;
   final FirmwareUpdateOperationStatus? pendingOperation;
   final String? lastOperationFailure;
-  const FirmwareUpdateStatus({
+  const FirmwareUpdateStatusData({
     required this.lastSuccessfulCheckTime,
     this.availableUpdate,
     this.pendingOperation,
@@ -18,13 +18,13 @@ class FirmwareUpdateStatus extends Jsonable {
   });
 
   @override
-  FirmwareUpdateStatus copyWith({
+  FirmwareUpdateStatusData copyWith({
     String? lastSuccessfulCheckTime,
     ValueGetter<FirmwareUpdateData?>? availableUpdate,
     ValueGetter<FirmwareUpdateOperationStatus?>? pendingOperation,
     ValueGetter<String?>? lastOperationFailure,
   }) {
-    return FirmwareUpdateStatus(
+    return FirmwareUpdateStatusData(
       lastSuccessfulCheckTime:
           lastSuccessfulCheckTime ?? this.lastSuccessfulCheckTime,
       availableUpdate:
@@ -47,8 +47,8 @@ class FirmwareUpdateStatus extends Jsonable {
     };
   }
 
-  factory FirmwareUpdateStatus.fromMap(Map<String, dynamic> map) {
-    return FirmwareUpdateStatus(
+  factory FirmwareUpdateStatusData.fromMap(Map<String, dynamic> map) {
+    return FirmwareUpdateStatusData(
       lastSuccessfulCheckTime: map['lastSuccessfulCheckTime'] as String,
       availableUpdate: map['availableUpdate'] != null
           ? FirmwareUpdateData.fromMap(
@@ -64,8 +64,8 @@ class FirmwareUpdateStatus extends Jsonable {
     );
   }
 
-  factory FirmwareUpdateStatus.fromJson(String source) =>
-      FirmwareUpdateStatus.fromMap(jsonDecode(source));
+  factory FirmwareUpdateStatusData.fromJson(String source) =>
+      FirmwareUpdateStatusData.fromMap(jsonDecode(source));
 
   @override
   List<Object?> get props => [

@@ -23,7 +23,7 @@ class DevicesService {
 
   List<LinksysDevice> getDeviceListAndLocations(
     Map<String, dynamic>? data,
-    Map<String, WirelessConnection> wirelessConnections,
+    Map<String, WirelessConnectionData> wirelessConnections,
   ) {
     var allDevices = <LinksysDevice>[];
     if (data != null) {
@@ -130,7 +130,7 @@ class DevicesService {
 
   List<LinksysDevice> updateDeviceWirelessSignalWithWirelessConnections({
     required List<LinksysDevice> deviceList,
-    required Map<String, WirelessConnection> wirelessConnections,
+    required Map<String, WirelessConnectionData> wirelessConnections,
   }) {
     return deviceList
         .map((device) => device.copyWith(
@@ -144,7 +144,7 @@ class DevicesService {
 
   int? getWirelessSignalOf({
     required RawDevice device,
-    required Map<String, WirelessConnection> wirelessConnections,
+    required Map<String, WirelessConnectionData> wirelessConnections,
   }) {
     final wirelessData = wirelessConnections[device.getMacAddress()];
     final signalDecibels = wirelessData?.signalDecibels;
@@ -215,9 +215,9 @@ class DevicesService {
 
   String? getSsidConnectedBy({
     required LinksysDevice device,
-    required Map<String, WirelessConnection> wirelessConnections,
+    required Map<String, WirelessConnectionData> wirelessConnections,
     Map<String, RouterRadio>? radioInfoMap,
-    GuestRadioSettings? guestRadioSettings,
+    GuestRadioSettingsData? guestRadioSettings,
   }) {
     // Get the SSID to the RadioID connected by the given device
     final wirelessData = wirelessConnections[device.getMacAddress()];
@@ -231,7 +231,7 @@ class DevicesService {
 
   String getBandConnectedBy({
     required LinksysDevice device,
-    required Map<String, WirelessConnection> wirelessConnections,
+    required Map<String, WirelessConnectionData> wirelessConnections,
   }) {
     final wirelessData = wirelessConnections[device.getMacAddress()];
     // If the band data is absent in (NodesWireless)NetworkConnection,

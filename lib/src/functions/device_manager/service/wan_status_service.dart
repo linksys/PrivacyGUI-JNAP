@@ -12,8 +12,8 @@ class WANStatusService {
     return await _ref.read(jnapProvider).send(action: GetWANStatus.instance);
   }
 
-  Future<RouterWANStatus> getWANStatusData() async {
+  Future<RouterWANStatusData> getWANStatusData() async {
     final getWANStatusData = (await getWANStatus()).output;
-    return RouterWANStatus.fromMap(getWANStatusData);
+    return RouterWANStatusData.fromMap(getWANStatusData);
   }
 }

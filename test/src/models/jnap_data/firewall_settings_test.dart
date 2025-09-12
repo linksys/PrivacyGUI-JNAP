@@ -3,8 +3,8 @@ import 'package:test/test.dart';
 import 'package:jnap/src/models/jnap_data/firewall_settings.dart';
 
 void main() {
-  group('FirewallSettings', () {
-    const firewallSettings = FirewallSettings(
+  group('FirewallSettingsData', () {
+    const firewallSettings = FirewallSettingsData(
       blockAnonymousRequests: true,
       blockIDENT: true,
       blockIPSec: true,
@@ -33,7 +33,7 @@ void main() {
     });
 
     test('fromMap creates a valid object', () {
-      expect(FirewallSettings.fromMap(firewallSettingsMap), firewallSettings);
+      expect(FirewallSettingsData.fromMap(firewallSettingsMap), firewallSettings);
     });
 
     test('toJson returns a valid JSON string', () {
@@ -41,7 +41,7 @@ void main() {
     });
 
     test('fromJson creates a valid object from JSON string', () {
-      expect(FirewallSettings.fromJson(json.encode(firewallSettingsMap)), firewallSettings);
+      expect(FirewallSettingsData.fromJson(json.encode(firewallSettingsMap)), firewallSettings);
     });
 
     test('copyWith returns a new object with updated values', () {
@@ -55,7 +55,7 @@ void main() {
     });
 
     test('props are correct', () {
-      final settings1 = FirewallSettings(
+      final settings1 = FirewallSettingsData(
         blockAnonymousRequests: true,
         blockIDENT: true,
         blockIPSec: true,
@@ -66,7 +66,7 @@ void main() {
         isIPv4FirewallEnabled: true,
         isIPv6FirewallEnabled: true,
       );
-      final settings2 = FirewallSettings(
+      final settings2 = FirewallSettingsData(
         blockAnonymousRequests: true,
         blockIDENT: true,
         blockIPSec: true,
@@ -77,7 +77,7 @@ void main() {
         isIPv4FirewallEnabled: true,
         isIPv6FirewallEnabled: true,
       );
-      final settings3 = FirewallSettings(
+      final settings3 = FirewallSettingsData(
         blockAnonymousRequests: false,
         blockIDENT: false,
         blockIPSec: false,

@@ -1,3 +1,8 @@
+## [1.0.13] - 2025-09-12
+
+### Changed
+- **JNAP Data Models**: Refactored all JNAP data model classes to include a `Data` suffix (e.g., `WirelessConnection` is now `WirelessConnectionData`). This improves clarity and consistency by explicitly identifying these classes as data containers.
+
 ## [1.0.12] - 2025-09-12
 
 ### Added

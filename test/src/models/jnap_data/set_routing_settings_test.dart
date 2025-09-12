@@ -4,7 +4,7 @@ import 'package:jnap/src/models/jnap_data/set_routing_settings.dart';
 import 'package:jnap/src/models/jnap_data/get_routing_settings.dart';
 
 void main() {
-  group('SetRoutingSettings', () {
+  group('SetRoutingSettingsData', () {
     const staticRouteEntry = StaticRouteEntry(
       destinationLAN: '192.168.2.0',
       gateway: '192.168.1.1',
@@ -17,7 +17,7 @@ void main() {
       settings: staticRouteEntry,
     );
 
-    const setRoutingSettings = SetRoutingSettings(
+    const setRoutingSettings = SetRoutingSettingsData(
       isNATEnabled: true,
       isDynamicRoutingEnabled: true,
       entries: [namedStaticRouteEntry],
@@ -34,7 +34,7 @@ void main() {
     });
 
     test('fromMap creates a valid object', () {
-      expect(SetRoutingSettings.fromMap(setRoutingSettingsMap), setRoutingSettings);
+      expect(SetRoutingSettingsData.fromMap(setRoutingSettingsMap), setRoutingSettings);
     });
 
     test('toJson returns a valid JSON string', () {
@@ -42,7 +42,7 @@ void main() {
     });
 
     test('fromJson creates a valid object from JSON string', () {
-      expect(SetRoutingSettings.fromJson(json.encode(setRoutingSettingsMap)), setRoutingSettings);
+      expect(SetRoutingSettingsData.fromJson(json.encode(setRoutingSettingsMap)), setRoutingSettings);
     });
 
     test('copyWith returns a new object with updated values', () {
@@ -56,17 +56,17 @@ void main() {
     });
 
     test('props are correct', () {
-      final settings1 = SetRoutingSettings(
+      final settings1 = SetRoutingSettingsData(
         isNATEnabled: true,
         isDynamicRoutingEnabled: true,
         entries: [namedStaticRouteEntry],
       );
-      final settings2 = SetRoutingSettings(
+      final settings2 = SetRoutingSettingsData(
         isNATEnabled: true,
         isDynamicRoutingEnabled: true,
         entries: [namedStaticRouteEntry],
       );
-      final settings3 = SetRoutingSettings(
+      final settings3 = SetRoutingSettingsData(
         isNATEnabled: false,
         isDynamicRoutingEnabled: false,
         entries: [],

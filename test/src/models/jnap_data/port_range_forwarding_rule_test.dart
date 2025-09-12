@@ -3,8 +3,8 @@ import 'package:test/test.dart';
 import 'package:jnap/src/models/jnap_data/port_range_forwarding_rule.dart';
 
 void main() {
-  group('PortRangeForwardingRule', () {
-    const portRangeForwardingRule = PortRangeForwardingRule(
+  group('PortRangeForwardingRuleData', () {
+    const portRangeForwardingRule = PortRangeForwardingRuleData(
       isEnabled: true,
       firstExternalPort: 3074,
       protocol: "TCP",
@@ -27,7 +27,7 @@ void main() {
     });
 
     test('fromMap creates a valid object', () {
-      expect(PortRangeForwardingRule.fromMap(portRangeForwardingRuleMap), portRangeForwardingRule);
+      expect(PortRangeForwardingRuleData.fromMap(portRangeForwardingRuleMap), portRangeForwardingRule);
     });
 
     test('toJson returns a valid JSON string', () {
@@ -35,7 +35,7 @@ void main() {
     });
 
     test('fromJson creates a valid object from JSON string', () {
-      expect(PortRangeForwardingRule.fromJson(json.encode(portRangeForwardingRuleMap)), portRangeForwardingRule);
+      expect(PortRangeForwardingRuleData.fromJson(json.encode(portRangeForwardingRuleMap)), portRangeForwardingRule);
     });
 
     test('copyWith returns a new object with updated values', () {
@@ -49,7 +49,7 @@ void main() {
     });
 
     test('props are correct', () {
-      final rule1 = PortRangeForwardingRule(
+      final rule1 = PortRangeForwardingRuleData(
         isEnabled: true,
         firstExternalPort: 1,
         protocol: 'p1',
@@ -57,7 +57,7 @@ void main() {
         lastExternalPort: 2,
         description: 'd1',
       );
-      final rule2 = PortRangeForwardingRule(
+      final rule2 = PortRangeForwardingRuleData(
         isEnabled: true,
         firstExternalPort: 1,
         protocol: 'p1',
@@ -65,7 +65,7 @@ void main() {
         lastExternalPort: 2,
         description: 'd1',
       );
-      final rule3 = PortRangeForwardingRule(
+      final rule3 = PortRangeForwardingRuleData(
         isEnabled: false,
         firstExternalPort: 3,
         protocol: 'p2',

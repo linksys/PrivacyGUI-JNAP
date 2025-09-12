@@ -3,8 +3,8 @@ import 'package:test/test.dart';
 import 'package:jnap/src/models/jnap_data/remote_setting.dart';
 
 void main() {
-  group('RemoteSetting', () {
-    const remoteSetting = RemoteSetting(
+  group('RemoteSettingData', () {
+    const remoteSetting = RemoteSettingData(
       isEnabled: true,
     );
 
@@ -17,7 +17,7 @@ void main() {
     });
 
     test('fromMap creates a valid object', () {
-      expect(RemoteSetting.fromMap(remoteSettingMap), remoteSetting);
+      expect(RemoteSettingData.fromMap(remoteSettingMap), remoteSetting);
     });
 
     test('toJson returns a valid JSON string', () {
@@ -25,7 +25,7 @@ void main() {
     });
 
     test('fromJson creates a valid object from JSON string', () {
-      expect(RemoteSetting.fromJson(json.encode(remoteSettingMap)), remoteSetting);
+      expect(RemoteSettingData.fromJson(json.encode(remoteSettingMap)), remoteSetting);
     });
 
     test('copyWith returns a new object with updated values', () {
@@ -36,9 +36,9 @@ void main() {
     });
 
     test('props are correct', () {
-      final setting1 = RemoteSetting(isEnabled: true);
-      final setting2 = RemoteSetting(isEnabled: true);
-      final setting3 = RemoteSetting(isEnabled: false);
+      final setting1 = RemoteSettingData(isEnabled: true);
+      final setting2 = RemoteSettingData(isEnabled: true);
+      final setting3 = RemoteSettingData(isEnabled: false);
       expect(setting1, setting2);
       expect(setting1.props, setting2.props);
       expect(setting1 == setting3, false);

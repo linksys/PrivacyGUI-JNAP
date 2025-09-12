@@ -3,8 +3,8 @@ import 'package:test/test.dart';
 import 'package:jnap/src/models/jnap_data/mac_address_clone_settings.dart';
 
 void main() {
-  group('MACAddressCloneSettings', () {
-    const macAddressCloneSettings = MACAddressCloneSettings(
+  group('MACAddressCloneSettingsData', () {
+    const macAddressCloneSettings = MACAddressCloneSettingsData(
       isMACAddressCloneEnabled: true,
       macAddress: '00:11:22:33:44:55',
     );
@@ -19,7 +19,7 @@ void main() {
     });
 
     test('fromMap creates a valid object', () {
-      expect(MACAddressCloneSettings.fromMap(macAddressCloneSettingsMap), macAddressCloneSettings);
+      expect(MACAddressCloneSettingsData.fromMap(macAddressCloneSettingsMap), macAddressCloneSettings);
     });
 
     test('toJson returns a valid JSON string', () {
@@ -27,7 +27,7 @@ void main() {
     });
 
     test('fromJson creates a valid object from JSON string', () {
-      expect(MACAddressCloneSettings.fromJson(json.encode(macAddressCloneSettingsMap)), macAddressCloneSettings);
+      expect(MACAddressCloneSettingsData.fromJson(json.encode(macAddressCloneSettingsMap)), macAddressCloneSettings);
     });
 
     test('copyWith returns a new object with updated values', () {
@@ -39,9 +39,9 @@ void main() {
     });
 
     test('props are correct', () {
-      final settings1 = MACAddressCloneSettings(isMACAddressCloneEnabled: true, macAddress: 'm1');
-      final settings2 = MACAddressCloneSettings(isMACAddressCloneEnabled: true, macAddress: 'm1');
-      final settings3 = MACAddressCloneSettings(isMACAddressCloneEnabled: false, macAddress: 'm2');
+      final settings1 = MACAddressCloneSettingsData(isMACAddressCloneEnabled: true, macAddress: 'm1');
+      final settings2 = MACAddressCloneSettingsData(isMACAddressCloneEnabled: true, macAddress: 'm1');
+      final settings3 = MACAddressCloneSettingsData(isMACAddressCloneEnabled: false, macAddress: 'm2');
       expect(settings1, settings2);
       expect(settings1.props, settings2.props);
       expect(settings1 == settings3, false);

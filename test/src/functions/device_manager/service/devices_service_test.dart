@@ -132,7 +132,7 @@ void main() {
         'devices': [clientDevice.toMap()]
       };
       final wirelessConnections = {
-        'AA:BB:CC:11:22:33': WirelessConnection(
+        'AA:BB:CC:11:22:33': WirelessConnectionData(
             bssid: '', isGuest: true, band: '2.4GHz', signalDecibels: -55),
       };
 
@@ -186,7 +186,7 @@ void main() {
     test('updates signal strength from wireless connections data', () {
       final device = createDevice(deviceID: 'client', mac: 'AA:BB:CC:11:22:33');
       final wirelessConnections = {
-        'AA:BB:CC:11:22:33': WirelessConnection(
+        'AA:BB:CC:11:22:33': WirelessConnectionData(
             bssid: '', isGuest: false, signalDecibels: -65, band: '2.4GHz'),
       };
 

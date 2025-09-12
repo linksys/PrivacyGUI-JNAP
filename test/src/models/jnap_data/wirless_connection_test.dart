@@ -4,7 +4,7 @@ import 'package:jnap/src/models/jnap_data/wirless_connection.dart';
 
 void main() {
   group('WirelessConnection', () {
-    const wirelessConnection = WirelessConnection(
+    const wirelessConnection = WirelessConnectionData(
       bssid: '00:11:22:33:44:55',
       isGuest: false,
       radioID: 'radio1',
@@ -31,7 +31,7 @@ void main() {
     });
 
     test('fromMap creates a valid object', () {
-      expect(WirelessConnection.fromMap(wirelessConnectionMap), wirelessConnection);
+      expect(WirelessConnectionData.fromMap(wirelessConnectionMap), wirelessConnection);
     });
 
     test('toJson returns a valid JSON string', () {
@@ -39,7 +39,7 @@ void main() {
     });
 
     test('fromJson creates a valid object from JSON string', () {
-      expect(WirelessConnection.fromJson(json.encode(wirelessConnectionMap)), wirelessConnection);
+      expect(WirelessConnectionData.fromJson(json.encode(wirelessConnectionMap)), wirelessConnection);
     });
 
     test('copyWith returns a new object with updated values', () {
@@ -53,9 +53,9 @@ void main() {
     });
 
     test('props are correct', () {
-      final wc1 = WirelessConnection(bssid: 'b1', isGuest: true, band: 'band1', signalDecibels: 1);
-      final wc2 = WirelessConnection(bssid: 'b1', isGuest: true, band: 'band1', signalDecibels: 1);
-      final wc3 = WirelessConnection(bssid: 'b2', isGuest: false, band: 'band2', signalDecibels: 2);
+      final wc1 = WirelessConnectionData(bssid: 'b1', isGuest: true, band: 'band1', signalDecibels: 1);
+      final wc2 = WirelessConnectionData(bssid: 'b1', isGuest: true, band: 'band1', signalDecibels: 1);
+      final wc3 = WirelessConnectionData(bssid: 'b2', isGuest: false, band: 'band2', signalDecibels: 2);
       expect(wc1, wc2);
       expect(wc1.props, wc2.props);
       expect(wc1 == wc3, false);

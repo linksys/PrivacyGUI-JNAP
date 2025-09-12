@@ -5,20 +5,20 @@ import 'dart:convert';
 import '../jsonable.dart';
 import 'package:jnap/src/models/types.dart';
 
-class DynDNSMailExchangeSettings extends Jsonable {
+class DynDNSMailExchangeSettingsData extends Jsonable {
   final String hostName;
   final bool isBackup;
-  const DynDNSMailExchangeSettings({
+  const DynDNSMailExchangeSettingsData({
     required this.hostName,
     required this.isBackup,
   });
 
   @override
-  DynDNSMailExchangeSettings copyWith({
+  DynDNSMailExchangeSettingsData copyWith({
     String? hostName,
     bool? isBackup,
   }) {
-    return DynDNSMailExchangeSettings(
+    return DynDNSMailExchangeSettingsData(
       hostName: hostName ?? this.hostName,
       isBackup: isBackup ?? this.isBackup,
     );
@@ -32,29 +32,29 @@ class DynDNSMailExchangeSettings extends Jsonable {
     }..removeWhere((key, value) => value == null);
   }
 
-  factory DynDNSMailExchangeSettings.fromMap(Map<String, dynamic> map) {
-    return DynDNSMailExchangeSettings(
+  factory DynDNSMailExchangeSettingsData.fromMap(Map<String, dynamic> map) {
+    return DynDNSMailExchangeSettingsData(
       hostName: map['hostName'] as String,
       isBackup: map['isBackup'] as bool,
     );
   }
 
-  factory DynDNSMailExchangeSettings.fromJson(String source) =>
-      DynDNSMailExchangeSettings.fromMap(jsonDecode(source));
+  factory DynDNSMailExchangeSettingsData.fromJson(String source) =>
+      DynDNSMailExchangeSettingsData.fromMap(jsonDecode(source));
 
   @override
   List<Object> get props => [hostName, isBackup];
 }
 
-class DynDNSSettings extends Jsonable {
+class DynDNSSettingsData extends Jsonable {
   final String username;
   final String password;
   final String hostName;
   final bool isWildcardEnabled;
   final String mode;
   final bool isMailExchangeEnabled;
-  final DynDNSMailExchangeSettings? mailExchangeSettings;
-  const DynDNSSettings({
+  final DynDNSMailExchangeSettingsData? mailExchangeSettings;
+  const DynDNSSettingsData({
     required this.username,
     required this.password,
     required this.hostName,
@@ -65,16 +65,16 @@ class DynDNSSettings extends Jsonable {
   });
 
   @override
-  DynDNSSettings copyWith({
+  DynDNSSettingsData copyWith({
     String? username,
     String? password,
     String? hostName,
     bool? isWildcardEnabled,
     String? mode,
     bool? isMailExchangeEnabled,
-    ValueGetter<DynDNSMailExchangeSettings?>? mailExchangeSettings,
+    ValueGetter<DynDNSMailExchangeSettingsData?>? mailExchangeSettings,
   }) {
-    return DynDNSSettings(
+    return DynDNSSettingsData(
       username: username ?? this.username,
       password: password ?? this.password,
       hostName: hostName ?? this.hostName,
@@ -102,8 +102,8 @@ class DynDNSSettings extends Jsonable {
     }..removeWhere((key, value) => value == null);
   }
 
-  factory DynDNSSettings.fromMap(Map<String, dynamic> map) {
-    return DynDNSSettings(
+  factory DynDNSSettingsData.fromMap(Map<String, dynamic> map) {
+    return DynDNSSettingsData(
       username: map['username'] as String,
       password: map['password'] as String,
       hostName: map['hostName'] as String,
@@ -111,14 +111,14 @@ class DynDNSSettings extends Jsonable {
       mode: map['mode'] as String,
       isMailExchangeEnabled: map['isMailExchangeEnabled'] as bool,
       mailExchangeSettings: map['mailExchangeSettings'] != null
-          ? DynDNSMailExchangeSettings.fromMap(
+          ? DynDNSMailExchangeSettingsData.fromMap(
               map['mailExchangeSettings'] as Map<String, dynamic>)
           : null,
     );
   }
 
-  factory DynDNSSettings.fromJson(String source) =>
-      DynDNSSettings.fromMap(jsonDecode(source)); 
+  factory DynDNSSettingsData.fromJson(String source) =>
+      DynDNSSettingsData.fromMap(jsonDecode(source)); 
 
   @override
   List<Object?> get props {

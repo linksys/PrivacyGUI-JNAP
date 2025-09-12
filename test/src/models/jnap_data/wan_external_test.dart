@@ -3,8 +3,8 @@ import 'package:test/test.dart';
 import 'package:jnap/src/models/jnap_data/wan_external.dart';
 
 void main() {
-  group('WanExternal', () {
-    const wanExternal = WanExternal(
+  group('WanExternalData', () {
+    const wanExternal = WanExternalData(
       publicWanIPv4: '1.1.1.1',
       publicWanIPv6: '2001:db8::1',
       privateWanIPv4: '192.168.1.1',
@@ -23,7 +23,7 @@ void main() {
     });
 
     test('fromMap creates a valid object', () {
-      expect(WanExternal.fromMap(wanExternalMap), wanExternal);
+      expect(WanExternalData.fromMap(wanExternalMap), wanExternal);
     });
 
     test('toJson returns a valid JSON string', () {
@@ -31,7 +31,7 @@ void main() {
     });
 
     test('fromJson creates a valid object from JSON string', () {
-      expect(WanExternal.fromJson(json.encode(wanExternalMap)), wanExternal);
+      expect(WanExternalData.fromJson(json.encode(wanExternalMap)), wanExternal);
     });
 
     test('copyWith returns a new object with updated values', () {
@@ -43,9 +43,9 @@ void main() {
     });
 
     test('props are correct', () {
-      final we1 = WanExternal(publicWanIPv4: 'p41', publicWanIPv6: 'p61', privateWanIPv4: 'pr41', privateWanIPv6: 'pr61');
-      final we2 = WanExternal(publicWanIPv4: 'p41', publicWanIPv6: 'p61', privateWanIPv4: 'pr41', privateWanIPv6: 'pr61');
-      final we3 = WanExternal(publicWanIPv4: 'p42', publicWanIPv6: 'p62', privateWanIPv4: 'pr42', privateWanIPv6: 'pr62');
+      final we1 = WanExternalData(publicWanIPv4: 'p41', publicWanIPv6: 'p61', privateWanIPv4: 'pr41', privateWanIPv6: 'pr61');
+      final we2 = WanExternalData(publicWanIPv4: 'p41', publicWanIPv6: 'p61', privateWanIPv4: 'pr41', privateWanIPv6: 'pr61');
+      final we3 = WanExternalData(publicWanIPv4: 'p42', publicWanIPv6: 'p62', privateWanIPv4: 'pr42', privateWanIPv6: 'pr62');
       expect(we1, we2);
       expect(we1.props, we2.props);
       expect(we1 == we3, false);

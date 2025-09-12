@@ -3,8 +3,8 @@ import 'package:test/test.dart';
 import 'package:jnap/src/models/jnap_data/single_port_forwarding_rule.dart';
 
 void main() {
-  group('SinglePortForwardingRule', () {
-    const singlePortForwardingRule = SinglePortForwardingRule(
+  group('SinglePortForwardingRuleData', () {
+    const singlePortForwardingRule = SinglePortForwardingRuleData(
       isEnabled: true,
       externalPort: 3074,
       protocol: "TCP",
@@ -27,7 +27,7 @@ void main() {
     });
 
     test('fromMap creates a valid object', () {
-      expect(SinglePortForwardingRule.fromMap(singlePortForwardingRuleMap), singlePortForwardingRule);
+      expect(SinglePortForwardingRuleData.fromMap(singlePortForwardingRuleMap), singlePortForwardingRule);
     });
 
     test('toJson returns a valid JSON string', () {
@@ -35,7 +35,7 @@ void main() {
     });
 
     test('fromJson creates a valid object from JSON string', () {
-      expect(SinglePortForwardingRule.fromJson(json.encode(singlePortForwardingRuleMap)), singlePortForwardingRule);
+      expect(SinglePortForwardingRuleData.fromJson(json.encode(singlePortForwardingRuleMap)), singlePortForwardingRule);
     });
 
     test('copyWith returns a new object with updated values', () {
@@ -49,7 +49,7 @@ void main() {
     });
 
     test('props are correct', () {
-      final rule1 = SinglePortForwardingRule(
+      final rule1 = SinglePortForwardingRuleData(
         isEnabled: true,
         externalPort: 1,
         protocol: 'p1',
@@ -57,7 +57,7 @@ void main() {
         internalPort: 2,
         description: 'd1',
       );
-      final rule2 = SinglePortForwardingRule(
+      final rule2 = SinglePortForwardingRuleData(
         isEnabled: true,
         externalPort: 1,
         protocol: 'p1',
@@ -65,7 +65,7 @@ void main() {
         internalPort: 2,
         description: 'd1',
       );
-      final rule3 = SinglePortForwardingRule(
+      final rule3 = SinglePortForwardingRuleData(
         isEnabled: false,
         externalPort: 3,
         protocol: 'p2',

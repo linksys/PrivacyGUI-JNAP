@@ -6,15 +6,15 @@ void main() {
   group('NodeLightStatus', () {
     test('getStatus returns correct status', () {
       expect(NodeLightStatus.getStatus(null), NodeLightStatus.off);
-      expect(NodeLightStatus.getStatus(const NodeLightSettings(isNightModeEnable: true, allDayOff: true)), NodeLightStatus.off);
-      expect(NodeLightStatus.getStatus(const NodeLightSettings(isNightModeEnable: true, startHour: 0, endHour: 24)), NodeLightStatus.off);
-      expect(NodeLightStatus.getStatus(const NodeLightSettings(isNightModeEnable: false)), NodeLightStatus.on);
-      expect(NodeLightStatus.getStatus(const NodeLightSettings(isNightModeEnable: true, startHour: 20, endHour: 8)), NodeLightStatus.night);
+      expect(NodeLightStatus.getStatus(const NodeLightSettingsData(isNightModeEnable: true, allDayOff: true)), NodeLightStatus.off);
+      expect(NodeLightStatus.getStatus(const NodeLightSettingsData(isNightModeEnable: true, startHour: 0, endHour: 24)), NodeLightStatus.off);
+      expect(NodeLightStatus.getStatus(const NodeLightSettingsData(isNightModeEnable: false)), NodeLightStatus.on);
+      expect(NodeLightStatus.getStatus(const NodeLightSettingsData(isNightModeEnable: true, startHour: 20, endHour: 8)), NodeLightStatus.night);
     });
   });
 
-  group('NodeLightSettings', () {
-    const nodeLightSettings = NodeLightSettings(
+  group('NodeLightSettingsData', () {
+    const nodeLightSettings = NodeLightSettingsData(
       isNightModeEnable: true,
       startHour: 20,
       endHour: 8,
@@ -33,7 +33,7 @@ void main() {
     });
 
     test('fromMap creates a valid object', () {
-      expect(NodeLightSettings.fromMap(nodeLightSettingsMap), nodeLightSettings);
+      expect(NodeLightSettingsData.fromMap(nodeLightSettingsMap), nodeLightSettings);
     });
 
     test('toJson returns a valid JSON string', () {
@@ -41,7 +41,7 @@ void main() {
     });
 
     test('fromJson creates a valid object from JSON string', () {
-      expect(NodeLightSettings.fromJson(json.encode(nodeLightSettingsMap)), nodeLightSettings);
+      expect(NodeLightSettingsData.fromJson(json.encode(nodeLightSettingsMap)), nodeLightSettings);
     });
 
     test('copyWith returns a new object with updated values', () {
@@ -55,7 +55,7 @@ void main() {
     });
 
     test('factory on creates correct settings', () {
-      final onSettings = NodeLightSettings.on();
+      final onSettings = NodeLightSettingsData.on();
       expect(onSettings.isNightModeEnable, false);
       expect(onSettings.startHour, null);
       expect(onSettings.endHour, null);
@@ -63,7 +63,7 @@ void main() {
     });
 
     test('factory off creates correct settings', () {
-      final offSettings = NodeLightSettings.off();
+      final offSettings = NodeLightSettingsData.off();
       expect(offSettings.isNightModeEnable, true);
       expect(offSettings.startHour, 0);
       expect(offSettings.endHour, 24);
@@ -71,7 +71,7 @@ void main() {
     });
 
     test('factory night creates correct settings', () {
-      final nightSettings = NodeLightSettings.night();
+      final nightSettings = NodeLightSettingsData.night();
       expect(nightSettings.isNightModeEnable, true);
       expect(nightSettings.startHour, 20);
       expect(nightSettings.endHour, 8);
@@ -79,15 +79,15 @@ void main() {
     });
 
     test('factory fromStatus creates correct settings', () {
-      expect(NodeLightSettings.fromStatus(NodeLightStatus.on), NodeLightSettings.on());
-      expect(NodeLightSettings.fromStatus(NodeLightStatus.off), NodeLightSettings.off());
-      expect(NodeLightSettings.fromStatus(NodeLightStatus.night), NodeLightSettings.night());
+      expect(NodeLightSettingsData.fromStatus(NodeLightStatus.on), NodeLightSettingsData.on());
+      expect(NodeLightSettingsData.fromStatus(NodeLightStatus.off), NodeLightSettingsData.off());
+      expect(NodeLightSettingsData.fromStatus(NodeLightStatus.night), NodeLightSettingsData.night());
     });
 
     test('props are correct', () {
-      final settings1 = NodeLightSettings(isNightModeEnable: true, startHour: 1, endHour: 2, allDayOff: true);
-      final settings2 = NodeLightSettings(isNightModeEnable: true, startHour: 1, endHour: 2, allDayOff: true);
-      final settings3 = NodeLightSettings(isNightModeEnable: false, startHour: 3, endHour: 4, allDayOff: false);
+      final settings1 = NodeLightSettingsData(isNightModeEnable: true, startHour: 1, endHour: 2, allDayOff: true);
+      final settings2 = NodeLightSettingsData(isNightModeEnable: true, startHour: 1, endHour: 2, allDayOff: true);
+      final settings3 = NodeLightSettingsData(isNightModeEnable: false, startHour: 3, endHour: 4, allDayOff: false);
       expect(settings1, settings2);
       expect(settings1.props, settings2.props);
       expect(settings1 == settings3, false);

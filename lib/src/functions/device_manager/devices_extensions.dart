@@ -146,7 +146,7 @@ extension DeviceListPipeline on List<LinksysDevice> {
   }
 
   List<LinksysDevice> updateWirelessSignal(DevicesService service,
-      Map<String, WirelessConnection> wirelessConnections) {
+      Map<String, WirelessConnectionData> wirelessConnections) {
     return service.updateDeviceWirelessSignalWithWirelessConnections(
         deviceList: this, wirelessConnections: wirelessConnections);
   }

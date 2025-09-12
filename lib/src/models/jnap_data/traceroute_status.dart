@@ -4,20 +4,20 @@ import 'dart:convert';
 
 import '../jsonable.dart';
 
-class TracerouteStatus extends Jsonable {
+class TracerouteStatusData extends Jsonable {
   final bool isRunning;
   final String tracerouteLog;
-  const TracerouteStatus({
+  const TracerouteStatusData({
     required this.isRunning,
     required this.tracerouteLog,
   });
 
   @override
-  TracerouteStatus copyWith({
+  TracerouteStatusData copyWith({
     bool? isRunning,
     String? tracerouteLog,
   }) {
-    return TracerouteStatus(
+    return TracerouteStatusData(
       isRunning: isRunning ?? this.isRunning,
       tracerouteLog: tracerouteLog ?? this.tracerouteLog,
     );
@@ -31,8 +31,8 @@ class TracerouteStatus extends Jsonable {
     };
   }
 
-  factory TracerouteStatus.fromMap(Map<String, dynamic> map) {
-    return TracerouteStatus(
+  factory TracerouteStatusData.fromMap(Map<String, dynamic> map) {
+    return TracerouteStatusData(
       isRunning: map['isRunning'] as bool,
       tracerouteLog: map['tracerouteLog'] as String,
     );
@@ -41,6 +41,6 @@ class TracerouteStatus extends Jsonable {
   @override
   List<Object> get props => [isRunning, tracerouteLog];
 
-  factory TracerouteStatus.fromJson(String source) =>
-      TracerouteStatus.fromMap(jsonDecode(source));
+  factory TracerouteStatusData.fromJson(String source) =>
+      TracerouteStatusData.fromMap(jsonDecode(source));
 }

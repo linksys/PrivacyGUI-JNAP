@@ -3,8 +3,8 @@ import 'package:test/test.dart';
 import 'package:jnap/src/models/jnap_data/traceroute_status.dart';
 
 void main() {
-  group('TracerouteStatus', () {
-    const tracerouteStatus = TracerouteStatus(
+  group('TracerouteStatusData', () {
+    const tracerouteStatus = TracerouteStatusData(
       isRunning: true,
       tracerouteLog: 'traceroute to google.com (142.250.190.142), 30 hops max, 60 byte packets',
     );
@@ -19,7 +19,7 @@ void main() {
     });
 
     test('fromMap creates a valid object', () {
-      expect(TracerouteStatus.fromMap(tracerouteStatusMap), tracerouteStatus);
+      expect(TracerouteStatusData.fromMap(tracerouteStatusMap), tracerouteStatus);
     });
 
     test('toJson returns a valid JSON string', () {
@@ -27,7 +27,7 @@ void main() {
     });
 
     test('fromJson creates a valid object from JSON string', () {
-      expect(TracerouteStatus.fromJson(json.encode(tracerouteStatusMap)), tracerouteStatus);
+      expect(TracerouteStatusData.fromJson(json.encode(tracerouteStatusMap)), tracerouteStatus);
     });
 
     test('copyWith returns a new object with updated values', () {
@@ -39,9 +39,9 @@ void main() {
     });
 
     test('props are correct', () {
-      final status1 = TracerouteStatus(isRunning: true, tracerouteLog: 'log1');
-      final status2 = TracerouteStatus(isRunning: true, tracerouteLog: 'log1');
-      final status3 = TracerouteStatus(isRunning: false, tracerouteLog: 'log2');
+      final status1 = TracerouteStatusData(isRunning: true, tracerouteLog: 'log1');
+      final status2 = TracerouteStatusData(isRunning: true, tracerouteLog: 'log1');
+      final status3 = TracerouteStatusData(isRunning: false, tracerouteLog: 'log2');
       expect(status1, status2);
       expect(status1.props, status2.props);
       expect(status1 == status3, false);

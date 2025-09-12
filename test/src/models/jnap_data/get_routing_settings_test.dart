@@ -108,7 +108,7 @@ void main() {
     });
   });
 
-  group('GetRoutingSettings', () {
+  group('GetRoutingSettingsData', () {
     const staticRouteEntry = StaticRouteEntry(
       destinationLAN: '192.168.2.0',
       gateway: '192.168.1.1',
@@ -121,7 +121,7 @@ void main() {
       settings: staticRouteEntry,
     );
 
-    const getRoutingSettings = GetRoutingSettings(
+    const getRoutingSettings = GetRoutingSettingsData(
       isNATEnabled: true,
       isDynamicRoutingEnabled: true,
       maxStaticRouteEntries: 10,
@@ -140,7 +140,7 @@ void main() {
     });
 
     test('fromMap creates a valid object', () {
-      expect(GetRoutingSettings.fromMap(getRoutingSettingsMap), getRoutingSettings);
+      expect(GetRoutingSettingsData.fromMap(getRoutingSettingsMap), getRoutingSettings);
     });
 
     test('toJson returns a valid JSON string', () {
@@ -148,7 +148,7 @@ void main() {
     });
 
     test('fromJson creates a valid object from JSON string', () {
-      expect(GetRoutingSettings.fromJson(json.encode(getRoutingSettingsMap)), getRoutingSettings);
+      expect(GetRoutingSettingsData.fromJson(json.encode(getRoutingSettingsMap)), getRoutingSettings);
     });
 
     test('copyWith returns a new object with updated values', () {
@@ -162,19 +162,19 @@ void main() {
     });
 
     test('props are correct', () {
-      final settings1 = GetRoutingSettings(
+      final settings1 = GetRoutingSettingsData(
         isNATEnabled: true,
         isDynamicRoutingEnabled: true,
         maxStaticRouteEntries: 1,
         entries: [namedStaticRouteEntry],
       );
-      final settings2 = GetRoutingSettings(
+      final settings2 = GetRoutingSettingsData(
         isNATEnabled: true,
         isDynamicRoutingEnabled: true,
         maxStaticRouteEntries: 1,
         entries: [namedStaticRouteEntry],
       );
-      final settings3 = GetRoutingSettings(
+      final settings3 = GetRoutingSettingsData(
         isNATEnabled: false,
         isDynamicRoutingEnabled: false,
         maxStaticRouteEntries: 2,

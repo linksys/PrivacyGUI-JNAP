@@ -48,23 +48,23 @@ class FirmwareAutoUpdateWindow extends Jsonable {
       FirmwareAutoUpdateWindow.fromMap(jsonDecode(source));
 }
 
-class FirmwareUpdateSettings extends Jsonable {
+class FirmwareUpdateSettingsData extends Jsonable {
   static const firmwareUpdatePolicyManual = 'Manual';
   static const firmwareUpdatePolicyAuto = 'AutomaticallyCheckAndInstall';
 
   final String updatePolicy;
   final FirmwareAutoUpdateWindow autoUpdateWindow;
-  const FirmwareUpdateSettings({
+  const FirmwareUpdateSettingsData({
     required this.updatePolicy,
     required this.autoUpdateWindow,
   });
 
   @override
-  FirmwareUpdateSettings copyWith({
+  FirmwareUpdateSettingsData copyWith({
     String? updatePolicy,
     FirmwareAutoUpdateWindow? autoUpdateWindow,
   }) {
-    return FirmwareUpdateSettings(
+    return FirmwareUpdateSettingsData(
       updatePolicy: updatePolicy ?? this.updatePolicy,
       autoUpdateWindow: autoUpdateWindow ?? this.autoUpdateWindow,
     );
@@ -78,8 +78,8 @@ class FirmwareUpdateSettings extends Jsonable {
     };
   }
 
-  factory FirmwareUpdateSettings.fromMap(Map<String, dynamic> map) {
-    return FirmwareUpdateSettings(
+  factory FirmwareUpdateSettingsData.fromMap(Map<String, dynamic> map) {
+    return FirmwareUpdateSettingsData(
       updatePolicy: map['updatePolicy'] as String,
       autoUpdateWindow: FirmwareAutoUpdateWindow.fromMap(
           map['autoUpdateWindow'] as Map<String, dynamic>),
@@ -89,6 +89,6 @@ class FirmwareUpdateSettings extends Jsonable {
   @override
   List<Object> get props => [updatePolicy, autoUpdateWindow];
 
-  factory FirmwareUpdateSettings.fromJson(String source) =>
-      FirmwareUpdateSettings.fromMap(jsonDecode(source));
+  factory FirmwareUpdateSettingsData.fromJson(String source) =>
+      FirmwareUpdateSettingsData.fromMap(jsonDecode(source));
 }

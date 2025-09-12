@@ -3,8 +3,8 @@ import 'package:test/test.dart';
 import 'package:jnap/src/models/jnap_data/port_range_triggering_rule.dart';
 
 void main() {
-  group('PortRangeTriggeringRule', () {
-    const portRangeTriggeringRule = PortRangeTriggeringRule(
+  group('PortRangeTriggeringRuleData', () {
+    const portRangeTriggeringRule = PortRangeTriggeringRuleData(
       isEnabled: true,
       firstTriggerPort: 1000,
       lastTriggerPort: 1001,
@@ -27,7 +27,7 @@ void main() {
     });
 
     test('fromMap creates a valid object', () {
-      expect(PortRangeTriggeringRule.fromMap(portRangeTriggeringRuleMap), portRangeTriggeringRule);
+      expect(PortRangeTriggeringRuleData.fromMap(portRangeTriggeringRuleMap), portRangeTriggeringRule);
     });
 
     test('toJson returns a valid JSON string', () {
@@ -35,7 +35,7 @@ void main() {
     });
 
     test('fromJson creates a valid object from JSON string', () {
-      expect(PortRangeTriggeringRule.fromJson(json.encode(portRangeTriggeringRuleMap)), portRangeTriggeringRule);
+      expect(PortRangeTriggeringRuleData.fromJson(json.encode(portRangeTriggeringRuleMap)), portRangeTriggeringRule);
     });
 
     test('copyWith returns a new object with updated values', () {
@@ -49,7 +49,7 @@ void main() {
     });
 
     test('props are correct', () {
-      final rule1 = PortRangeTriggeringRule(
+      final rule1 = PortRangeTriggeringRuleData(
         isEnabled: true,
         firstTriggerPort: 1,
         lastTriggerPort: 2,
@@ -57,7 +57,7 @@ void main() {
         lastForwardedPort: 4,
         description: 'd1',
       );
-      final rule2 = PortRangeTriggeringRule(
+      final rule2 = PortRangeTriggeringRuleData(
         isEnabled: true,
         firstTriggerPort: 1,
         lastTriggerPort: 2,
@@ -65,7 +65,7 @@ void main() {
         lastForwardedPort: 4,
         description: 'd1',
       );
-      final rule3 = PortRangeTriggeringRule(
+      final rule3 = PortRangeTriggeringRuleData(
         isEnabled: false,
         firstTriggerPort: 5,
         lastTriggerPort: 6,

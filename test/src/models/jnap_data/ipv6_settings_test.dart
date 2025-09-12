@@ -4,7 +4,7 @@ import 'package:jnap/src/models/jnap_data/ipv6_settings.dart';
 import 'package:jnap/src/models/jnap_data/ipv6_automatic_settings.dart';
 
 void main() {
-  group('GetIPv6Settings', () {
+  group('GetIPv6SettingsData', () {
     const ipv6rdTunnelSettings = IPv6rdTunnelSettings(
       prefix: '2001:db8::/32',
       prefixLength: 32,
@@ -12,13 +12,13 @@ void main() {
       borderRelayPrefixLength: 24,
     );
 
-    const ipv6AutomaticSettings = IPv6AutomaticSettings(
+    const ipv6AutomaticSettings = IPv6AutomaticSettingsData(
       isIPv6AutomaticEnabled: true,
       ipv6rdTunnelMode: '6rd',
       ipv6rdTunnelSettings: ipv6rdTunnelSettings,
     );
 
-    const getIPv6Settings = GetIPv6Settings(
+    const getIPv6Settings = GetIPv6SettingsData(
       wanType: 'Automatic',
       ipv6AutomaticSettings: ipv6AutomaticSettings,
       duid: '00:01:00:01:1A:2B:3C:4D:5E:6F',
@@ -35,7 +35,7 @@ void main() {
     });
 
     test('fromMap creates a valid object', () {
-      expect(GetIPv6Settings.fromMap(getIPv6SettingsMap), getIPv6Settings);
+      expect(GetIPv6SettingsData.fromMap(getIPv6SettingsMap), getIPv6Settings);
     });
 
     test('toJson returns a valid JSON string', () {
@@ -43,7 +43,7 @@ void main() {
     });
 
     test('fromJson creates a valid object from JSON string', () {
-      expect(GetIPv6Settings.fromJson(json.encode(getIPv6SettingsMap)), getIPv6Settings);
+      expect(GetIPv6SettingsData.fromJson(json.encode(getIPv6SettingsMap)), getIPv6Settings);
     });
 
     test('copyWith returns a new object with updated values', () {
@@ -57,9 +57,9 @@ void main() {
     });
 
     test('props are correct', () {
-      final settings1 = GetIPv6Settings(wanType: 't1', duid: 'd1');
-      final settings2 = GetIPv6Settings(wanType: 't1', duid: 'd1');
-      final settings3 = GetIPv6Settings(wanType: 't2', duid: 'd2');
+      final settings1 = GetIPv6SettingsData(wanType: 't1', duid: 'd1');
+      final settings2 = GetIPv6SettingsData(wanType: 't1', duid: 'd1');
+      final settings3 = GetIPv6SettingsData(wanType: 't2', duid: 'd2');
       expect(settings1, settings2);
       expect(settings1.props, settings2.props);
       expect(settings1 == settings3, false);
@@ -67,7 +67,7 @@ void main() {
     });
   });
 
-  group('SetIPv6Settings', () {
+  group('SetIPv6SettingsData', () {
     const ipv6rdTunnelSettings = IPv6rdTunnelSettings(
       prefix: '2001:db8::/32',
       prefixLength: 32,
@@ -75,13 +75,13 @@ void main() {
       borderRelayPrefixLength: 24,
     );
 
-    const ipv6AutomaticSettings = IPv6AutomaticSettings(
+    const ipv6AutomaticSettings = IPv6AutomaticSettingsData(
       isIPv6AutomaticEnabled: true,
       ipv6rdTunnelMode: '6rd',
       ipv6rdTunnelSettings: ipv6rdTunnelSettings,
     );
 
-    const setIPv6Settings = SetIPv6Settings(
+    const setIPv6Settings = SetIPv6SettingsData(
       wanType: 'Automatic',
       ipv6AutomaticSettings: ipv6AutomaticSettings,
     );
@@ -96,7 +96,7 @@ void main() {
     });
 
     test('fromMap creates a valid object', () {
-      expect(SetIPv6Settings.fromMap(setIPv6SettingsMap), setIPv6Settings);
+      expect(SetIPv6SettingsData.fromMap(setIPv6SettingsMap), setIPv6Settings);
     });
 
     test('toJson returns a valid JSON string', () {
@@ -104,7 +104,7 @@ void main() {
     });
 
     test('fromJson creates a valid object from JSON string', () {
-      expect(SetIPv6Settings.fromJson(json.encode(setIPv6SettingsMap)), setIPv6Settings);
+      expect(SetIPv6SettingsData.fromJson(json.encode(setIPv6SettingsMap)), setIPv6Settings);
     });
 
     test('copyWith returns a new object with updated values', () {
@@ -116,9 +116,9 @@ void main() {
     });
 
     test('props are correct', () {
-      final settings1 = SetIPv6Settings(wanType: 't1');
-      final settings2 = SetIPv6Settings(wanType: 't1');
-      final settings3 = SetIPv6Settings(wanType: 't2');
+      final settings1 = SetIPv6SettingsData(wanType: 't1');
+      final settings2 = SetIPv6SettingsData(wanType: 't1');
+      final settings3 = SetIPv6SettingsData(wanType: 't2');
       expect(settings1, settings2);
       expect(settings1.props, settings2.props);
       expect(settings1 == settings3, false);

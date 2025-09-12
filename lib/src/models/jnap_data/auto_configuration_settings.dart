@@ -34,24 +34,24 @@ enum AutoConfigurationMethod {
 ///    "userAcknowledgedAutoConfiguration": false
 ///  }
 ///
-class AutoConfigurationSettings extends Jsonable {
+class AutoConfigurationSettingsData extends Jsonable {
   final bool? isAutoConfigurationSupported;
   final AutoConfigurationMethod? autoConfigurationMethod;
   final bool? userAcknowledgedAutoConfiguration;
 
-  const AutoConfigurationSettings({
+  const AutoConfigurationSettingsData({
     this.isAutoConfigurationSupported,
     this.autoConfigurationMethod = AutoConfigurationMethod.preConfigured,
     this.userAcknowledgedAutoConfiguration,
   });
 
   @override
-  AutoConfigurationSettings copyWith({
+  AutoConfigurationSettingsData copyWith({
     ValueGetter<bool?>? isAutoConfigurationSupported,
     ValueGetter<AutoConfigurationMethod?>? autoConfigurationMethod,
     ValueGetter<bool?>? userAcknowledgedAutoConfiguration,
   }) {
-    return AutoConfigurationSettings(
+    return AutoConfigurationSettingsData(
       isAutoConfigurationSupported: isAutoConfigurationSupported != null
           ? isAutoConfigurationSupported()
           : this.isAutoConfigurationSupported,
@@ -65,8 +65,8 @@ class AutoConfigurationSettings extends Jsonable {
     );
   }
 
-  factory AutoConfigurationSettings.fromMap(Map<String, dynamic> map) {
-    return AutoConfigurationSettings(
+  factory AutoConfigurationSettingsData.fromMap(Map<String, dynamic> map) {
+    return AutoConfigurationSettingsData(
       isAutoConfigurationSupported:
           map['isAutoConfigurationSupported'] as bool?,
       autoConfigurationMethod: AutoConfigurationMethod.fromValue(
@@ -76,8 +76,8 @@ class AutoConfigurationSettings extends Jsonable {
     );
   }
 
-  factory AutoConfigurationSettings.fromJson(String source) =>
-      AutoConfigurationSettings.fromMap(jsonDecode(source));
+  factory AutoConfigurationSettingsData.fromJson(String source) =>
+      AutoConfigurationSettingsData.fromMap(jsonDecode(source));
 
   @override
   Map<String, dynamic> toMap() {
@@ -90,7 +90,7 @@ class AutoConfigurationSettings extends Jsonable {
 
   @override
   String toString() {
-    return 'AutoConfigurationSettings(isAutoConfigurationSupported: $isAutoConfigurationSupported, autoConfigurationMethod: $autoConfigurationMethod, userAcknowledgedAutoConfiguration: $userAcknowledgedAutoConfiguration)';
+    return 'AutoConfigurationSettingsData(isAutoConfigurationSupported: $isAutoConfigurationSupported, autoConfigurationMethod: $autoConfigurationMethod, userAcknowledgedAutoConfiguration: $userAcknowledgedAutoConfiguration)';
   }
 
   @override

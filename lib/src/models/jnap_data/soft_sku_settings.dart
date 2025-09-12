@@ -4,17 +4,17 @@ import 'dart:convert';
 
 import '../jsonable.dart';
 
-class SoftSKUSettings extends Jsonable {
+class SoftSKUSettingsData extends Jsonable {
   final String modelNumber;
-  const SoftSKUSettings({
+  const SoftSKUSettingsData({
     required this.modelNumber,
   });
 
   @override
-  SoftSKUSettings copyWith({
+  SoftSKUSettingsData copyWith({
     String? modelNumber,
   }) {
-    return SoftSKUSettings(
+    return SoftSKUSettingsData(
       modelNumber: modelNumber ?? this.modelNumber,
     );
   }
@@ -27,8 +27,8 @@ class SoftSKUSettings extends Jsonable {
   }
 
   @override
-  factory SoftSKUSettings.fromMap(Map<String, dynamic> map) {
-    return SoftSKUSettings(
+  factory SoftSKUSettingsData.fromMap(Map<String, dynamic> map) {
+    return SoftSKUSettingsData(
       modelNumber: map['modelNumber'] as String,
     );
   }
@@ -36,6 +36,6 @@ class SoftSKUSettings extends Jsonable {
   @override
   List<Object> get props => [modelNumber];
 
-  factory SoftSKUSettings.fromJson(String source) =>
-      SoftSKUSettings.fromMap(jsonDecode(source));
+  factory SoftSKUSettingsData.fromJson(String source) =>
+      SoftSKUSettingsData.fromMap(jsonDecode(source));
 }

@@ -97,7 +97,7 @@ void main() {
     });
   });
 
-  group('FirmwareUpdateStatus', () {
+  group('FirmwareUpdateStatusData', () {
     const firmwareUpdateData = FirmwareUpdateData(
       firmwareVersion: '1.0.0',
       firmwareDate: '2023-01-01',
@@ -109,7 +109,7 @@ void main() {
       progressPercent: 50,
     );
 
-    const firmwareUpdateStatus = FirmwareUpdateStatus(
+    const firmwareUpdateStatus = FirmwareUpdateStatusData(
       lastSuccessfulCheckTime: '2023-01-01T10:00:00Z',
       availableUpdate: firmwareUpdateData,
       pendingOperation: firmwareUpdateOperationStatus,
@@ -128,7 +128,7 @@ void main() {
     });
 
     test('fromMap creates a valid object', () {
-      expect(FirmwareUpdateStatus.fromMap(firmwareUpdateStatusMap), firmwareUpdateStatus);
+      expect(FirmwareUpdateStatusData.fromMap(firmwareUpdateStatusMap), firmwareUpdateStatus);
     });
 
     test('toJson returns a valid JSON string', () {
@@ -136,7 +136,7 @@ void main() {
     });
 
     test('fromJson creates a valid object from JSON string', () {
-      expect(FirmwareUpdateStatus.fromJson(json.encode(firmwareUpdateStatusMap)), firmwareUpdateStatus);
+      expect(FirmwareUpdateStatusData.fromJson(json.encode(firmwareUpdateStatusMap)), firmwareUpdateStatus);
     });
 
     test('copyWith returns a new object with updated values', () {
@@ -150,19 +150,19 @@ void main() {
     });
 
     test('props are correct', () {
-      final status1 = FirmwareUpdateStatus(
+      final status1 = FirmwareUpdateStatusData(
         lastSuccessfulCheckTime: 'time1',
         availableUpdate: firmwareUpdateData,
         pendingOperation: firmwareUpdateOperationStatus,
         lastOperationFailure: 'fail1',
       );
-      final status2 = FirmwareUpdateStatus(
+      final status2 = FirmwareUpdateStatusData(
         lastSuccessfulCheckTime: 'time1',
         availableUpdate: firmwareUpdateData,
         pendingOperation: firmwareUpdateOperationStatus,
         lastOperationFailure: 'fail1',
       );
-      final status3 = FirmwareUpdateStatus(
+      final status3 = FirmwareUpdateStatusData(
         lastSuccessfulCheckTime: 'time2',
         availableUpdate: null,
         pendingOperation: null,

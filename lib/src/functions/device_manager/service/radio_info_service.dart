@@ -27,8 +27,8 @@ class RadioInfoService {
     return radioMap;
   }
 
-  Future<GuestRadioSettings?> getGuestRadioSettingsData() async {
+  Future<GuestRadioSettingsData?> getGuestRadioSettingsData() async {
     final getGuestRadioSettingsData = (await getGuestRadioSettings()).output;
-    return getGuestRadioSettingsData.isEmpty ? null : GuestRadioSettings.fromMap(getGuestRadioSettingsData);
+    return getGuestRadioSettingsData.isEmpty ? null : GuestRadioSettingsData.fromMap(getGuestRadioSettingsData);
   }
 }

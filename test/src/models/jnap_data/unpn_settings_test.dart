@@ -3,8 +3,8 @@ import 'package:test/test.dart';
 import 'package:jnap/src/models/jnap_data/unpn_settings.dart';
 
 void main() {
-  group('UPnPSettings', () {
-    const upnpSettings = UPnPSettings(
+  group('UPnPSettingsData', () {
+    const upnpSettings = UPnPSettingsData(
       isUPnPEnabled: true,
       canUsersConfigure: true,
       canUsersDisableWANAccess: true,
@@ -21,7 +21,7 @@ void main() {
     });
 
     test('fromMap creates a valid object', () {
-      expect(UPnPSettings.fromMap(upnpSettingsMap), upnpSettings);
+      expect(UPnPSettingsData.fromMap(upnpSettingsMap), upnpSettings);
     });
 
     test('toJson returns a valid JSON string', () {
@@ -29,7 +29,7 @@ void main() {
     });
 
     test('fromJson creates a valid object from JSON string', () {
-      expect(UPnPSettings.fromJson(json.encode(upnpSettingsMap)), upnpSettings);
+      expect(UPnPSettingsData.fromJson(json.encode(upnpSettingsMap)), upnpSettings);
     });
 
     test('copyWith returns a new object with updated values', () {
@@ -41,9 +41,9 @@ void main() {
     });
 
     test('props are correct', () {
-      final settings1 = UPnPSettings(isUPnPEnabled: true, canUsersConfigure: true, canUsersDisableWANAccess: true);
-      final settings2 = UPnPSettings(isUPnPEnabled: true, canUsersConfigure: true, canUsersDisableWANAccess: true);
-      final settings3 = UPnPSettings(isUPnPEnabled: false, canUsersConfigure: false, canUsersDisableWANAccess: false);
+      final settings1 = UPnPSettingsData(isUPnPEnabled: true, canUsersConfigure: true, canUsersDisableWANAccess: true);
+      final settings2 = UPnPSettingsData(isUPnPEnabled: true, canUsersConfigure: true, canUsersDisableWANAccess: true);
+      final settings3 = UPnPSettingsData(isUPnPEnabled: false, canUsersConfigure: false, canUsersDisableWANAccess: false);
       expect(settings1, settings2);
       expect(settings1.props, settings2.props);
       expect(settings1 == settings3, false);

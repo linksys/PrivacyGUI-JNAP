@@ -5,20 +5,20 @@ import 'dart:convert';
 import '../jsonable.dart';
 import 'package:jnap/src/models/jnap_data/layer2_connection.dart';
 
-class NodeWirelessConnections extends Jsonable {
+class NodeWirelessConnectionsData extends Jsonable {
   final String deviceID;
-  final List<NodeWirelessLayer2Connections> connections;
-  const NodeWirelessConnections({
+  final List<NodeWirelessLayer2ConnectionsData> connections;
+  const NodeWirelessConnectionsData({
     required this.deviceID,
     required this.connections,
   });
 
   @override
-  NodeWirelessConnections copyWith({
+  NodeWirelessConnectionsData copyWith({
     String? deviceID,
-    List<NodeWirelessLayer2Connections>? connections,
+    List<NodeWirelessLayer2ConnectionsData>? connections,
   }) {
-    return NodeWirelessConnections(
+    return NodeWirelessConnectionsData(
       deviceID: deviceID ?? this.deviceID,
       connections: connections ?? this.connections,
     );
@@ -32,19 +32,19 @@ class NodeWirelessConnections extends Jsonable {
     };
   }
 
-  factory NodeWirelessConnections.fromMap(Map<String, dynamic> map) {
-    return NodeWirelessConnections(
+  factory NodeWirelessConnectionsData.fromMap(Map<String, dynamic> map) {
+    return NodeWirelessConnectionsData(
       deviceID: map['deviceID'] as String,
       connections: List.from(
         (map['connections']).map(
-          (x) => NodeWirelessLayer2Connections.fromMap(x),
+          (x) => NodeWirelessLayer2ConnectionsData.fromMap(x),
         ),
       ),
     );
   }
 
-  factory NodeWirelessConnections.fromJson(String source) =>
-      NodeWirelessConnections.fromMap(jsonDecode(source));
+  factory NodeWirelessConnectionsData.fromJson(String source) =>
+      NodeWirelessConnectionsData.fromMap(jsonDecode(source));
 
   @override
   List<Object> get props => [deviceID, connections];

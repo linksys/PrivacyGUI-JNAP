@@ -101,12 +101,12 @@ void main() {
 
     test('getWirelessConnectionsMap creates map correctly', () {
       final connectionsList = [
-        Layer2Connection(
+        Layer2ConnectionData(
             macAddress: 'MAC1',
-            wireless: WirelessConnection(
+            wireless: WirelessConnectionData(
                 bssid: '', isGuest: false, signalDecibels: -50, band: '2.4GHz'),
             negotiatedMbps: 100),
-        Layer2Connection(
+        Layer2ConnectionData(
             macAddress: 'MAC2', negotiatedMbps: 150, wireless: null),
       ];
 
@@ -121,7 +121,7 @@ void main() {
 
     test('updateWirelessConnectionsWithBackhaulInfo updates correctly', () {
       final wirelessConnections = {
-        'AA:BB:CC:DD:EE:FF': WirelessConnection(
+        'AA:BB:CC:DD:EE:FF': WirelessConnectionData(
             bssid: '', isGuest: false, signalDecibels: -50, band: '2.4GHz')
       };
       final backhaulInfoList = [

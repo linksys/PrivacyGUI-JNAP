@@ -59,7 +59,7 @@ void main() {
     });
   });
 
-  group('HealthCheckResult', () {
+  group('HealthCheckResultData', () {
     const speedTestResult = SpeedTestResult(
       resultID: 1,
       exitCode: 'Success',
@@ -69,7 +69,7 @@ void main() {
       downloadBandwidth: 200,
     );
 
-    const healthCheckResult = HealthCheckResult(
+    const healthCheckResult = HealthCheckResultData(
       resultID: 100,
       timestamp: '2023-01-01T12:00:00Z',
       healthCheckModulesRequested: ['SpeedTest', 'Connectivity'],
@@ -88,7 +88,7 @@ void main() {
     });
 
     test('fromMap creates a valid object', () {
-      expect(HealthCheckResult.fromMap(healthCheckResultMap), healthCheckResult);
+      expect(HealthCheckResultData.fromMap(healthCheckResultMap), healthCheckResult);
     });
 
     test('toJson returns a valid JSON string', () {
@@ -96,7 +96,7 @@ void main() {
     });
 
     test('fromJson creates a valid object from JSON string', () {
-      expect(HealthCheckResult.fromJson(json.encode(healthCheckResultMap)), healthCheckResult);
+      expect(HealthCheckResultData.fromJson(json.encode(healthCheckResultMap)), healthCheckResult);
     });
 
     test('copyWith returns a new object with updated values', () {
@@ -110,17 +110,17 @@ void main() {
     });
 
     test('props are correct', () {
-      final result1 = HealthCheckResult(
+      final result1 = HealthCheckResultData(
         resultID: 1,
         timestamp: 't1',
         healthCheckModulesRequested: ['m1'],
       );
-      final result2 = HealthCheckResult(
+      final result2 = HealthCheckResultData(
         resultID: 1,
         timestamp: 't1',
         healthCheckModulesRequested: ['m1'],
       );
-      final result3 = HealthCheckResult(
+      final result3 = HealthCheckResultData(
         resultID: 2,
         timestamp: 't2',
         healthCheckModulesRequested: ['m2'],

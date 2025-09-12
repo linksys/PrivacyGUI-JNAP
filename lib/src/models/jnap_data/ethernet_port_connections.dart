@@ -4,20 +4,20 @@ import 'dart:convert';
 
 import '../jsonable.dart';
 
-class RouterEthernetPortConnections extends Jsonable {
+class RouterEthernetPortConnectionsData extends Jsonable {
   final String wanPortConnection;
   final List<String> lanPortConnections;
-  const RouterEthernetPortConnections({
+  const RouterEthernetPortConnectionsData({
     required this.wanPortConnection,
     required this.lanPortConnections,
   });
 
   @override
-  RouterEthernetPortConnections copyWith({
+  RouterEthernetPortConnectionsData copyWith({
     String? wanPortConnection,
     List<String>? lanPortConnections,
   }) {
-    return RouterEthernetPortConnections(
+    return RouterEthernetPortConnectionsData(
       wanPortConnection: wanPortConnection ?? this.wanPortConnection,
       lanPortConnections: lanPortConnections ?? this.lanPortConnections,
     );
@@ -31,8 +31,8 @@ class RouterEthernetPortConnections extends Jsonable {
     };
   }
 
-  factory RouterEthernetPortConnections.fromMap(Map<String, dynamic> map) {
-    return RouterEthernetPortConnections(
+  factory RouterEthernetPortConnectionsData.fromMap(Map<String, dynamic> map) {
+    return RouterEthernetPortConnectionsData(
       wanPortConnection: map['wanPortConnection'] as String,
       lanPortConnections: List<String>.from(
         (map['lanPortConnections'] as List).map((x) => x as String),
@@ -43,6 +43,6 @@ class RouterEthernetPortConnections extends Jsonable {
   @override
   List<Object> get props => [wanPortConnection, lanPortConnections];
 
-  factory RouterEthernetPortConnections.fromJson(String source) =>
-      RouterEthernetPortConnections.fromMap(jsonDecode(source));
+  factory RouterEthernetPortConnectionsData.fromJson(String source) =>
+      RouterEthernetPortConnectionsData.fromMap(jsonDecode(source));
 }

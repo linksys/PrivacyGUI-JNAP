@@ -3,8 +3,8 @@ import 'package:test/test.dart';
 import 'package:jnap/src/models/jnap_data/advanced_routing_rule.dart';
 
 void main() {
-  group('AdvancedRoutingRule', () {
-    const advancedRoutingRule = AdvancedRoutingRule(
+  group('AdvancedRoutingRuleData', () {
+    const advancedRoutingRule = AdvancedRoutingRuleData(
       isEnabled: true,
       externalPort: 3074,
       protocol: "TCP",
@@ -27,7 +27,7 @@ void main() {
     });
 
     test('fromMap creates a valid object', () {
-      expect(AdvancedRoutingRule.fromMap(advancedRoutingRuleMap), advancedRoutingRule);
+      expect(AdvancedRoutingRuleData.fromMap(advancedRoutingRuleMap), advancedRoutingRule);
     });
 
     test('toJson returns a valid JSON string', () {
@@ -35,7 +35,7 @@ void main() {
     });
 
     test('fromJson creates a valid object from JSON string', () {
-      expect(AdvancedRoutingRule.fromJson(json.encode(advancedRoutingRuleMap)), advancedRoutingRule);
+      expect(AdvancedRoutingRuleData.fromJson(json.encode(advancedRoutingRuleMap)), advancedRoutingRule);
     });
 
     test('copyWith returns a new object with updated values', () {
@@ -49,7 +49,7 @@ void main() {
     });
 
     test('props are correct', () {
-      final rule1 = AdvancedRoutingRule(
+      final rule1 = AdvancedRoutingRuleData(
         isEnabled: true,
         externalPort: 3074,
         protocol: "TCP",
@@ -57,7 +57,7 @@ void main() {
         internalPort: 3074,
         description: "XBox Live (TM)",
       );
-      final rule2 = AdvancedRoutingRule(
+      final rule2 = AdvancedRoutingRuleData(
         isEnabled: true,
         externalPort: 3074,
         protocol: "TCP",
@@ -65,7 +65,7 @@ void main() {
         internalPort: 3074,
         description: "XBox Live (TM)",
       );
-      final rule3 = AdvancedRoutingRule(
+      final rule3 = AdvancedRoutingRuleData(
         isEnabled: false,
         externalPort: 3074,
         protocol: "TCP",

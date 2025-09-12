@@ -4,7 +4,7 @@ import 'package:jnap/src/models/jnap_data/set_lan_settings.dart';
 import 'package:jnap/src/models/jnap_data/lan_settings.dart';
 
 void main() {
-  group('SetRouterLANSettings', () {
+  group('SetRouterLANSettingsData', () {
     const dhcpReservation = DHCPReservation(
       macAddress: '00:11:22:33:44:55',
       ipAddress: '192.168.1.100',
@@ -18,7 +18,7 @@ void main() {
       firstClientIPAddress: '192.168.1.10',
     );
 
-    const setRouterLANSettings = SetRouterLANSettings(
+    const setRouterLANSettings = SetRouterLANSettingsData(
       ipAddress: '192.0.2.1',
       networkPrefixLength: 24,
       hostName: 'myrouter',
@@ -39,7 +39,7 @@ void main() {
     });
 
     test('fromMap creates a valid object', () {
-      expect(SetRouterLANSettings.fromMap(setRouterLANSettingsMap), setRouterLANSettings);
+      expect(SetRouterLANSettingsData.fromMap(setRouterLANSettingsMap), setRouterLANSettings);
     });
 
     test('toJson returns a valid JSON string', () {
@@ -47,7 +47,7 @@ void main() {
     });
 
     test('fromJson creates a valid object from JSON string', () {
-      expect(SetRouterLANSettings.fromJson(json.encode(setRouterLANSettingsMap)), setRouterLANSettings);
+      expect(SetRouterLANSettingsData.fromJson(json.encode(setRouterLANSettingsMap)), setRouterLANSettings);
     });
 
     test('copyWith returns a new object with updated values', () {
@@ -61,21 +61,21 @@ void main() {
     });
 
     test('props are correct', () {
-      final settings1 = SetRouterLANSettings(
+      final settings1 = SetRouterLANSettingsData(
         ipAddress: 'ip1',
         networkPrefixLength: 1,
         hostName: 'h1',
         isDHCPEnabled: true,
         dhcpSettings: dhcpSettings,
       );
-      final settings2 = SetRouterLANSettings(
+      final settings2 = SetRouterLANSettingsData(
         ipAddress: 'ip1',
         networkPrefixLength: 1,
         hostName: 'h1',
         isDHCPEnabled: true,
         dhcpSettings: dhcpSettings,
       );
-      final settings3 = SetRouterLANSettings(
+      final settings3 = SetRouterLANSettingsData(
         ipAddress: 'ip2',
         networkPrefixLength: 2,
         hostName: 'h2',

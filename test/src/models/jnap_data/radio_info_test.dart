@@ -437,7 +437,7 @@ void main() {
     });
   });
 
-  group('GetRadioInfo', () {
+  group('GetRadioInfoData', () {
     const supportedChannels = SupportedChannelsForChannelWidths(
       channelWidth: '20MHz',
       channels: [1, 6, 11],

@@ -160,7 +160,7 @@ void main() {
     });
   });
 
-  group('GuestRadioSettings', () {
+  group('GuestRadioSettingsData', () {
     const guestRadioInfo = GuestRadioInfo(
       radioID: 'radio1',
       isEnabled: true,
@@ -177,7 +177,7 @@ void main() {
       allowedCharacters: [unicodeRange],
     );
 
-    const guestRadioSettings = GuestRadioSettings(
+    const guestRadioSettings = GuestRadioSettingsData(
       isGuestNetworkACaptivePortal: true,
       isGuestNetworkEnabled: true,
       radios: [guestRadioInfo],
@@ -200,7 +200,7 @@ void main() {
     });
 
     test('fromMap creates a valid object', () {
-      expect(GuestRadioSettings.fromMap(guestRadioSettingsMap), guestRadioSettings);
+      expect(GuestRadioSettingsData.fromMap(guestRadioSettingsMap), guestRadioSettings);
     });
 
     test('toJson returns a valid JSON string', () {
@@ -208,7 +208,7 @@ void main() {
     });
 
     test('fromJson creates a valid object from JSON string', () {
-      expect(GuestRadioSettings.fromJson(json.encode(guestRadioSettingsMap)), guestRadioSettings);
+      expect(GuestRadioSettingsData.fromJson(json.encode(guestRadioSettingsMap)), guestRadioSettings);
     });
 
     test('copyWith returns a new object with updated values', () {
@@ -222,17 +222,17 @@ void main() {
     });
 
     test('props are correct', () {
-      final settings1 = GuestRadioSettings(
+      final settings1 = GuestRadioSettingsData(
         isGuestNetworkACaptivePortal: true,
         isGuestNetworkEnabled: true,
         radios: [guestRadioInfo],
       );
-      final settings2 = GuestRadioSettings(
+      final settings2 = GuestRadioSettingsData(
         isGuestNetworkACaptivePortal: true,
         isGuestNetworkEnabled: true,
         radios: [guestRadioInfo],
       );
-      final settings3 = GuestRadioSettings(
+      final settings3 = GuestRadioSettingsData(
         isGuestNetworkACaptivePortal: false,
         isGuestNetworkEnabled: false,
         radios: [],
@@ -245,7 +245,7 @@ void main() {
     });
   });
 
-  group('SetGuestRadioSettings', () {
+  group('SetGuestRadioSettingsData', () {
     const guestRadioInfo = GuestRadioInfo(
       radioID: 'radio1',
       isEnabled: true,
@@ -253,7 +253,7 @@ void main() {
       guestSSID: 'GuestWiFi',
     );
 
-    const setGuestRadioSettings = SetGuestRadioSettings(
+    const setGuestRadioSettings = SetGuestRadioSettingsData(
       isGuestNetworkEnabled: true,
       radios: [guestRadioInfo],
       maxSimultaneousGuests: 10,
@@ -270,7 +270,7 @@ void main() {
     });
 
     test('fromMap creates a valid object', () {
-      expect(SetGuestRadioSettings.fromMap(setGuestRadioSettingsMap), setGuestRadioSettings);
+      expect(SetGuestRadioSettingsData.fromMap(setGuestRadioSettingsMap), setGuestRadioSettings);
     });
 
     test('toJson returns a valid JSON string', () {
@@ -278,7 +278,7 @@ void main() {
     });
 
     test('fromJson creates a valid object from JSON string', () {
-      expect(SetGuestRadioSettings.fromJson(json.encode(setGuestRadioSettingsMap)), setGuestRadioSettings);
+      expect(SetGuestRadioSettingsData.fromJson(json.encode(setGuestRadioSettingsMap)), setGuestRadioSettings);
     });
 
     test('copyWith returns a new object with updated values', () {
@@ -292,28 +292,28 @@ void main() {
     });
 
     test('fromGuestRadioSettings creates a valid object', () {
-      const guestRadioSettings = GuestRadioSettings(
+      const guestRadioSettings = GuestRadioSettingsData(
         isGuestNetworkACaptivePortal: true,
         isGuestNetworkEnabled: true,
         radios: [guestRadioInfo],
         maxSimultaneousGuests: 10,
       );
-      final convertedSettings = SetGuestRadioSettings.fromGuestRadioSettings(guestRadioSettings);
+      final convertedSettings = SetGuestRadioSettingsData.fromGuestRadioSettings(guestRadioSettings);
       expect(convertedSettings.isGuestNetworkEnabled, guestRadioSettings.isGuestNetworkEnabled);
       expect(convertedSettings.radios, guestRadioSettings.radios);
       expect(convertedSettings.maxSimultaneousGuests, guestRadioSettings.maxSimultaneousGuests);
     });
 
     test('props are correct', () {
-      final settings1 = SetGuestRadioSettings(
+      final settings1 = SetGuestRadioSettingsData(
         isGuestNetworkEnabled: true,
         radios: [guestRadioInfo],
       );
-      final settings2 = SetGuestRadioSettings(
+      final settings2 = SetGuestRadioSettingsData(
         isGuestNetworkEnabled: true,
         radios: [guestRadioInfo],
       );
-      final settings3 = SetGuestRadioSettings(
+      final settings3 = SetGuestRadioSettingsData(
         isGuestNetworkEnabled: false,
         radios: [],
       );

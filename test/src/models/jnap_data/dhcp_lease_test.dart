@@ -3,8 +3,8 @@ import 'package:test/test.dart';
 import 'package:jnap/src/models/jnap_data/dhcp_lease.dart';
 
 void main() {
-  group('DhcpLease', () {
-    const dhcpLease = DhcpLease(
+  group('DhcpLeaseData', () {
+    const dhcpLease = DhcpLeaseData(
       macAddress: '00:11:22:33:44:55',
       ipAddress: '192.168.1.100',
       expiration: '2023-01-01T12:00:00Z',
@@ -25,7 +25,7 @@ void main() {
     });
 
     test('fromMap creates a valid object', () {
-      expect(DhcpLease.fromMap(dhcpLeaseMap), dhcpLease);
+      expect(DhcpLeaseData.fromMap(dhcpLeaseMap), dhcpLease);
     });
 
     test('toJson returns a valid JSON string', () {
@@ -33,7 +33,7 @@ void main() {
     });
 
     test('fromJson creates a valid object from JSON string', () {
-      expect(DhcpLease.fromJson(json.encode(dhcpLeaseMap)), dhcpLease);
+      expect(DhcpLeaseData.fromJson(json.encode(dhcpLeaseMap)), dhcpLease);
     });
 
     test('copyWith returns a new object with updated values', () {
@@ -47,19 +47,19 @@ void main() {
     });
 
     test('props are correct', () {
-      final lease1 = DhcpLease(
+      final lease1 = DhcpLeaseData(
         macAddress: 'mac1',
         ipAddress: 'ip1',
         expiration: 'exp1',
         clientID: 'client1',
       );
-      final lease2 = DhcpLease(
+      final lease2 = DhcpLeaseData(
         macAddress: 'mac1',
         ipAddress: 'ip1',
         expiration: 'exp1',
         clientID: 'client1',
       );
-      final lease3 = DhcpLease(
+      final lease3 = DhcpLeaseData(
         macAddress: 'mac2',
         ipAddress: 'ip2',
         expiration: 'exp2',
