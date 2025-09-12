@@ -4,6 +4,7 @@ import 'package:jnap/src/functions/polling/interfaces.dart';
 import 'package:jnap/src/functions/polling/interfaces_impl.dart';
 import 'package:jnap/src/functions/polling/polling_provider.dart';
 import 'package:jnap/src/functions/polling/providers.dart';
+import 'package:jnap/src/functions/provider.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:riverpod/riverpod.dart';
 import 'package:test/test.dart';
@@ -66,7 +67,7 @@ void main() {
         pollingAdditionalTasksProvider.overrideWithValue(mockAdditionalTasks),
         pollingCompletedNotifierProvider
             .overrideWithValue(mockCompletedNotifier),
-        cacheManagerProvider.overrideWithValue(PollingCacheManagerImpl()),
+        pollingCacheManagerProvider.overrideWithValue(PollingCacheManagerImpl()),
       ],
     );
 

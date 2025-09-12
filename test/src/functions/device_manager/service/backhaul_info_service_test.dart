@@ -1,83 +1,101 @@
 import 'package:jnap/jnap.dart';
-import 'package:jnap/src/cache/data_cache_manager.dart';
 import 'package:jnap/src/functions/device_manager/service/backhaul_info_service.dart';
-import 'package:jnap/src/functions/polling/interfaces.dart';
-import 'package:jnap/src/functions/polling/providers.dart';
+import 'package:jnap/src/functions/provider.dart';
 import 'package:jnap/src/models/jnap_data/back_haul_info.dart';
-import 'package:mocktail/mocktail.dart';
 import 'package:riverpod/riverpod.dart';
 import 'package:test/test.dart';
+import 'package:mocktail/mocktail.dart';
 
-class MockDataCacheManager extends Mock implements PollingCacheManager {}
+class MockJnap extends Mock implements Jnap {}
+
+class FakeJnapAction extends Fake implements JNAPAction {}
 
 void main() {
+  setUpAll(() {
+    registerFallbackValue(FakeJnapAction());
+  });
+
   group('BackhaulInfoService', () {
-    late MockDataCacheManager mockCacheManager;
     late ProviderContainer container;
+    late MockJnap mockJnap;
 
     setUp(() {
-      mockCacheManager = MockDataCacheManager();
-      container = ProviderContainer(overrides: [
-        cacheManagerProvider.overrideWithValue(mockCacheManager),
-      ]);
+      mockJnap = MockJnap();
+      container = ProviderContainer(
+        overrides: [
+          jnapProvider.overrideWithValue(mockJnap),
+        ],
+      );
     });
 
-    test('getBackhaulInfoFromCache returns correct data', () {
+    test('getBackhaulInfo sends correct action', () async {
       final ref = container.read(Provider((ref) => ref));
       final service = BackhaulInfoService(ref);
-      final mockData = {
-        'backhaulDevices': [
-          {'deviceUUID': '1', 'ipAddress': '192.168.1.1'}
-        ]
-      };
-      final mockCache = {
-        GetBackhaulInfo.instance.command: {
-          'data': JNAPSuccess(result: 'OK', output: mockData).toJson(),
-        }
-      };
+      when(() => mockJnap.send(action: any(named: 'action'))).thenAnswer(
+          (_) async =>
+              JNAPSuccess(result: 'OK', output: {'backhaulDevices': []}));
 
-      when(() => mockCacheManager.fetchCacheData()).thenReturn(mockCache);
+      await service.getBackhaulInfo();
 
-      final result = service.getBackhaulInfoFromCache();
-
-      expect(result, equals(mockData));
+      verify(() => mockJnap.send(action: GetBackhaulInfo.instance)).called(1);
     });
 
-    test('getBackhaulInfoList returns list of BackHaulInfoData', () {
+    test('getBackhaulInfoList parses response correctly', () async {
       final ref = container.read(Provider((ref) => ref));
       final service = BackhaulInfoService(ref);
-      final mockData = {
-        'backhaulDevices': [
+      final mockResponse = {
+        "backhaulDevices": [
           {
-            'deviceUUID': 'uuid1',
-            'parentIPAddress': '192.168.1.1',
-            'ipAddress': '192.168.1.10',
-            'connectionType': 'Ethernet',
-            'speedMbps': 1000,
+            "deviceUUID": "0217b8a4-1082-4532-8345-80691abb4694",
+            "ipAddress": "10.138.1.166",
+            "parentIPAddress": "10.138.1.1",
+            "connectionType": "Wireless",
+            "wirelessConnectionInfo": {
+              "radioID": "5GL",
+              "channel": 40,
+              "apRSSI": -67,
+              "stationRSSI": -18,
+              "apBSSID": "80:69:1A:BB:46:CE",
+              "stationBSSID": "86:69:1A:BB:46:96",
+              "txRate": 2168673,
+              "rxRate": 2494972,
+              "isMultiLinkOperation": false
+            },
+            "speedMbps": "176.239",
+            "timestamp": "2024-12-25T07:14:06Z"
           }
-        ]
+        ],
       };
-      final mockCache = {
-        GetBackhaulInfo.instance.command: {
-          'data': JNAPSuccess(result: 'OK', output: mockData).toJson(),
-        }
-      };
+      when(() => mockJnap.send(action: any(named: 'action'))).thenAnswer(
+          (_) async => JNAPSuccess(result: 'OK', output: mockResponse));
 
-      when(() => mockCacheManager.fetchCacheData()).thenReturn(mockCache);
-
-      final result = service.getBackhaulInfoList();
+      final result = await service.getBackhaulInfoList();
 
       expect(result, isA<List<BackHaulInfoData>>());
       expect(result.length, 1);
-      expect(result.first.deviceUUID, 'uuid1');
+      expect(result.first.deviceUUID, '0217b8a4-1082-4532-8345-80691abb4694');
+      expect(result.first.connectionType, 'Wireless');
     });
 
-    test('getBackhaulInfoList returns empty list when cache is empty', () {
+    test('getBackhaulInfoList handles empty response', () async {
       final ref = container.read(Provider((ref) => ref));
       final service = BackhaulInfoService(ref);
-      when(() => mockCacheManager.fetchCacheData()).thenReturn({});
+      when(() => mockJnap.send(action: any(named: 'action'))).thenAnswer(
+          (_) async =>
+              JNAPSuccess(result: 'OK', output: {'backhaulDevices': []}));
 
-      final result = service.getBackhaulInfoList();
+      final result = await service.getBackhaulInfoList();
+
+      expect(result, isEmpty);
+    });
+
+    test('getBackhaulInfoList handles null response', () async {
+      final ref = container.read(Provider((ref) => ref));
+      final service = BackhaulInfoService(ref);
+      when(() => mockJnap.send(action: any(named: 'action')))
+          .thenAnswer((_) async => JNAPSuccess(result: 'OK', output: {}));
+
+      final result = await service.getBackhaulInfoList();
 
       expect(result, isEmpty);
     });

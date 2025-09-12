@@ -1,21 +1,25 @@
 import 'package:jnap/jnap.dart';
-import 'package:jnap/src/functions/base_service.dart';
+import 'package:jnap/src/functions/provider.dart';
 import 'package:jnap/src/models/jnap_data/guest_radio_settings.dart';
 import 'package:jnap/src/models/jnap_data/radio_info.dart';
 import 'package:riverpod/riverpod.dart';
 
-class RadioInfoService extends BaseService {
+class RadioInfoService {
   final Ref _ref;
 
-  RadioInfoService(this._ref) : super(_ref, [
-    MapEntry(GetRadioInfo.instance, {}),
-    MapEntry(GetGuestRadioSettings.instance, {}),
-  ]);
+  RadioInfoService(this._ref);
 
-  Map<String, RouterRadio> getRadioInfoMapFromCache() {
-    final cache = fetchCacheData();
-    final getRadioInfo = (cache?[GetRadioInfo.instance])?.output;
-    final radioList = List.from(getRadioInfo?['radios'] ?? [])
+  Future<JNAPSuccess> getRadioInfo() async {
+    return await _ref.read(jnapProvider).send(action: GetRadioInfo.instance);
+  }
+
+  Future<JNAPSuccess> getGuestRadioSettings() async {
+    return await _ref.read(jnapProvider).send(action: GetGuestRadioSettings.instance);
+  }
+
+  Future<Map<String, RouterRadio>> getRadioInfoMap() async {;
+    final getRadioInfoData = (await getRadioInfo()).output;
+    final radioList = List.from(getRadioInfoData['radios'] ?? [])
         .map((e) => RouterRadio.fromMap(e))
         .toList();
     final radioMap =
@@ -23,9 +27,8 @@ class RadioInfoService extends BaseService {
     return radioMap;
   }
 
-  GuestRadioSettings? getGuestRadioSettingsFromCache() {
-    final cache = fetchCacheData();
-    final getGuestRadioSettings = (cache?[GetGuestRadioSettings.instance])?.output;
-    return getGuestRadioSettings == null ? null : GuestRadioSettings.fromMap(getGuestRadioSettings);
+  Future<GuestRadioSettings?> getGuestRadioSettingsData() async {
+    final getGuestRadioSettingsData = (await getGuestRadioSettings()).output;
+    return getGuestRadioSettingsData.isEmpty ? null : GuestRadioSettings.fromMap(getGuestRadioSettingsData);
   }
 }

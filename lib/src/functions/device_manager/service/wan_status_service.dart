@@ -1,24 +1,19 @@
 import 'package:jnap/jnap.dart';
-import 'package:jnap/src/functions/base_service.dart';
+import 'package:jnap/src/functions/provider.dart';
 import 'package:jnap/src/models/jnap_data/wan_status.dart';
 import 'package:riverpod/riverpod.dart';
 
-class WANStatusService extends BaseService {
+class WANStatusService {
   final Ref _ref;
 
-  WANStatusService(this._ref) : super(_ref, [
-    MapEntry(GetWANStatus.instance, {}),
-  ]);
+  WANStatusService(this._ref);
 
-  Map<String, dynamic>? getWANStatusFromCache() {
-    final cache = fetchCacheData();
-    final getWANStatus = (cache?[GetWANStatus.instance])?.output;
-    return getWANStatus;
+  Future<JNAPSuccess> getWANStatus() async {
+    return await _ref.read(jnapProvider).send(action: GetWANStatus.instance);
   }
 
-  RouterWANStatus? getWANStatusModel(
-    Map<String, dynamic>? data,
-  ) {
-    return data != null ? RouterWANStatus.fromMap(data) : null;
+  Future<RouterWANStatus> getWANStatusData() async {
+    final getWANStatusData = (await getWANStatus()).output;
+    return RouterWANStatus.fromMap(getWANStatusData);
   }
 }

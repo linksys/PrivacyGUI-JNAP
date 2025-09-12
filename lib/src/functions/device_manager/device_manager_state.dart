@@ -2,6 +2,7 @@
 import 'dart:convert';
 import 'package:collection/collection.dart';
 import 'package:equatable/equatable.dart';
+import 'package:jnap/src/functions/device_manager/devices_extensions.dart';
 import 'package:jnap/src/models/jnap_data/back_haul_info.dart';
 import 'package:jnap/src/models/jnap_data/device.dart';
 import 'package:jnap/src/models/jnap_data/guest_radio_settings.dart';
@@ -156,7 +157,7 @@ class LinksysDevice extends RawDevice {
           ? WirelessConnectionInfo.fromMap(map['wirelessConnectionInfo'])
           : null,
       speedMbps: map['speedMbps'] ?? '--',
-      mloList: map['mloList'] ?? [],
+      mloList: map['mloList'] != null ? <String>[...map['mloList']] : [],
     );
   }
 
@@ -179,42 +180,27 @@ class DeviceManagerState extends Equatable {
 
   // Calculated properties
   List<LinksysDevice> get nodeDevices {
-    return deviceList
-        .where(
-          // Note: NodeType is null but isAuthority is true in factory settings
-          // To avoid errors caused by empty node device list while entering
-          // the dashboard on an unconfigured router, isAuthority is also checked
-          (device) => device.nodeType != null || device.isAuthority == true,
-        )
-        .toList();
+    return deviceList.where((device) => device.isNodeDevice).toList();
   }
 
   List<LinksysDevice> get externalDevices {
-    return deviceList.where((device) => device.nodeType == null).toList();
+    return deviceList.where((device) => device.isExternalDevice).toList();
   }
 
   List<LinksysDevice> get mainWifiDevices {
-    return deviceList
-        .where((device) => device.connectedWifiType == WifiConnectionType.main)
-        .toList();
+    return deviceList.where((device) => device.isMainWifiDevice).toList();
   }
 
   List<LinksysDevice> get guestWifiDevices {
-    return deviceList
-        .where((device) => device.connectedWifiType == WifiConnectionType.guest)
-        .toList();
+    return deviceList.where((device) => device.isGuestWifiDevice).toList();
   }
 
   LinksysDevice get masterDevice {
-    return nodeDevices.firstWhere(
-        (device) => device.isAuthority == true || device.nodeType == 'Master');
+    return nodeDevices.firstWhere((device) => device.isMasterDevice);
   }
 
   List<LinksysDevice> get slaveDevices {
-    return nodeDevices
-        .where((device) =>
-            device.isAuthority == false && device.nodeType == 'Slave')
-        .toList();
+    return nodeDevices.where((device) => device.isSlaveDevice).toList();
   }
 
   const DeviceManagerState({
