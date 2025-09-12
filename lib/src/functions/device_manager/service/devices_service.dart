@@ -1,10 +1,9 @@
 import 'package:collection/collection.dart';
 import 'package:jnap/jnap.dart';
 import 'package:jnap/logger.dart';
-import 'package:jnap/src/functions/base_service.dart';
 import 'package:jnap/src/functions/device_manager/device_manager_state.dart';
 import 'package:jnap/src/functions/device_manager/devices_extensions.dart';
-import 'package:jnap/src/functions/polling/providers.dart';
+import 'package:jnap/src/functions/provider.dart';
 import 'package:jnap/src/models/jnap_data/back_haul_info.dart';
 import 'package:jnap/src/models/jnap_data/device.dart';
 import 'package:jnap/src/models/jnap_data/guest_radio_settings.dart';
@@ -13,18 +12,13 @@ import 'package:jnap/src/models/jnap_data/wirless_connection.dart';
 import 'package:jnap/src/utilties/nodes/icon_device_category.dart';
 import 'package:riverpod/riverpod.dart';
 
-class DevicesService extends BaseService {
+class DevicesService {
   final Ref _ref;
 
-  DevicesService(this._ref)
-      : super(_ref, [
-          MapEntry(GetDevices.instance, {}),
-        ]);
+  DevicesService(this._ref);
 
-  Map<String, dynamic>? getDevicesFromCache() {
-    final cache = fetchCacheData();
-    final getDevices = (cache?[GetDevices.instance])?.output;
-    return getDevices;
+  Future<JNAPSuccess> getDevices() async {
+    return await _ref.read(jnapProvider).send(action: GetDevices.instance);
   }
 
   List<LinksysDevice> getDeviceListAndLocations(

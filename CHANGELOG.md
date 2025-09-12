@@ -1,3 +1,12 @@
+## [1.0.12] - 2025-09-12
+
+### Added
+- **Device Manager**: Introduced a new module for network device management, including `DeviceManagerNotifier` and `DeviceManagerState` to build and maintain the state of all network devices based on polling results.
+- **Device Manager Tests**: Added unit tests for the new `DeviceManager` services (`BackhaulInfoService`, `DevicesService`, `NetworkConnectionsService`, `RadioInfoService`, `WANStatusService`) to ensure data is correctly fetched and parsed from the cache.
+
+### Changed
+- **Device Manager**: Refactored the initial `DeviceManagerService` into five smaller, more focused services to improve modularity and separation of concerns. Introduced a `BaseService` to provide common cache-fetching functionality.
+
 ## [1.0.11] - 2025-09-05
 
 ### Added

@@ -1,6 +1,9 @@
 import 'package:collection/collection.dart';
 import 'package:jnap/src/functions/device_manager/device_manager_state.dart';
+import 'package:jnap/src/functions/device_manager/service/devices_service.dart';
+import 'package:jnap/src/models/jnap_data/back_haul_info.dart';
 import 'package:jnap/src/models/jnap_data/device.dart';
+import 'package:jnap/src/models/jnap_data/wirless_connection.dart';
 
 extension DeviceUtil on RawDevice {
   String getDeviceLocation() {
@@ -63,7 +66,7 @@ extension DeviceUtil on RawDevice {
     if (knownInterfaces != null) {
       final knownInterface = knownInterfaces!.firstWhereOrNull((element) =>
           element.band != null || element.interfaceType != 'Unknown');
-      macAddress = (knownInterface ?? knownInterfaces!.first).macAddress ?? '';
+      macAddress = (knownInterface ?? knownInterfaces!.first).macAddress;
     } else if (knownMACAddresses != null) {
       // This case is only for a part of old routers that does not support 'GetDevices3' action
       macAddress = knownMACAddresses!.firstOrNull ?? '';
@@ -117,6 +120,43 @@ extension LinksysDeviceExt on LinksysDevice {
     //                 element.interfaceType == 'Wireless') ==
     //             true;
     return connections.isNotEmpty;
+  }
+
+  // Note: NodeType is null but isAuthority is true in factory settings
+  // To avoid errors caused by empty node device list while entering
+  // the dashboard on an unconfigured router, isAuthority is also checked
+  bool get isNodeDevice => nodeType != null || isAuthority == true;
+
+  bool get isExternalDevice => nodeType == null;
+
+  bool get isMasterDevice => isAuthority == true || nodeType == 'Master';
+
+  bool get isSlaveDevice => isAuthority == false && nodeType == 'Slave';
+
+  bool get isMainWifiDevice => connectedWifiType == WifiConnectionType.main;
+
+  bool get isGuestWifiDevice => connectedWifiType == WifiConnectionType.guest;
+}
+
+extension DeviceListPipeline on List<LinksysDevice> {
+  List<LinksysDevice> updateIpWithBackhaulInfo(
+      DevicesService service, List<BackHaulInfoData> backhaulInfoList) {
+    return service.updateDeviceIpWithBackhaulInfo(
+        deviceList: this, backhaulInfoList: backhaulInfoList);
+  }
+
+  List<LinksysDevice> updateWirelessSignal(DevicesService service,
+      Map<String, WirelessConnection> wirelessConnections) {
+    return service.updateDeviceWirelessSignalWithWirelessConnections(
+        deviceList: this, wirelessConnections: wirelessConnections);
+  }
+
+  List<LinksysDevice> updateUpstream(DevicesService service,
+      LinksysDevice masterDevice, List<BackHaulInfoData> backhaulInfoList) {
+    return service.updateDeviceUpstream(
+        deviceList: this,
+        masterDevice: masterDevice,
+        backhaulInfoList: backhaulInfoList);
   }
 }
 

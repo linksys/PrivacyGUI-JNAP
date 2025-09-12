@@ -1,5 +1,6 @@
 import 'package:jnap/logger.dart';
 import 'package:jnap/src/cache/data_cache_manager.dart';
+import 'package:jnap/src/functions/device_manager/device_manager_provider.dart';
 import 'package:jnap/src/functions/polling/interfaces.dart';
 import 'package:riverpod/riverpod.dart';
 
@@ -31,9 +32,9 @@ class PollingCacheManagerImpl implements PollingCacheManager {
   }
 }
 
-class PollingAdditionalTasksRefBased implements PollingAdditionalTasks {
+class PollingRefBasedAdditionalTasks implements PollingAdditionalTasks {
   final Ref ref;
-  PollingAdditionalTasksRefBased(this.ref);
+  PollingRefBasedAdditionalTasks(this.ref);
 
   @override
   Future<void> additionalPolling() async {
@@ -41,7 +42,10 @@ class PollingAdditionalTasksRefBased implements PollingAdditionalTasks {
   }
 }
 
-class PollingCompletedNotifierImpl implements PollingCompletedNotifier {
+class PollingRefBasedCompletedNotifier implements PollingCompletedNotifier {
+  final Ref ref;
+  PollingRefBasedCompletedNotifier(this.ref);
+
   @override
   void onPollingFailed() {
     logger.d('polling failed');
@@ -50,5 +54,7 @@ class PollingCompletedNotifierImpl implements PollingCompletedNotifier {
   @override
   void onPollingSuccess() {
     logger.d('polling success');
+
+    ref.read(deviceManagerProvider.notifier).fetch();
   }
 }

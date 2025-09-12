@@ -21,7 +21,7 @@ class PollingService {
         _pollingTransactions = pollingTransactions;
 
   Map<JNAPAction, JNAPSuccess>? fetchCacheData() {
-    final cache = _ref.read(cacheManagerProvider).fetchCacheData();
+    final cache = _ref.read(pollingCacheManagerProvider).fetchCacheData();
     final commands = pollingTransactions;
     final checkCacheDataList =
         commands.where((command) => cache.keys.contains(command.key.command));

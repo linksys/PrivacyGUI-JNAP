@@ -41,7 +41,7 @@ void main() {
     mockJnap = MockJnap();
     mockPollingCacheManager = MockPollingCacheManager();
     container = ProviderContainer(overrides: [
-      cacheManagerProvider.overrideWithValue(mockPollingCacheManager),
+      pollingCacheManagerProvider.overrideWithValue(mockPollingCacheManager),
     ]);
     JNAPServiceList(mockServiceList);
   });

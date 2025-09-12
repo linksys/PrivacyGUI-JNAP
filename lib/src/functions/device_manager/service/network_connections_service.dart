@@ -1,36 +1,38 @@
 import 'package:jnap/jnap.dart';
-import 'package:jnap/src/functions/base_service.dart';
+import 'package:jnap/src/functions/provider.dart';
 import 'package:jnap/src/models/jnap_data/back_haul_info.dart';
 import 'package:jnap/src/models/jnap_data/layer2_connection.dart';
 import 'package:jnap/src/models/jnap_data/node_wireless_connection.dart';
 import 'package:jnap/src/models/jnap_data/wirless_connection.dart';
 import 'package:riverpod/riverpod.dart';
 
-class NetworkConnectionsService extends BaseService {
+class NetworkConnectionsService {
   final Ref _ref;
 
-  NetworkConnectionsService(this._ref)
-      : super(_ref, [
-          MapEntry(GetNetworkConnections.instance, {}),
-          MapEntry(GetNodesWirelessNetworkConnections.instance, {}),
-        ]);
+  NetworkConnectionsService(this._ref);
 
-  List<Layer2Connection> getNetworkConnectionsFromCache() {
-    final cache = fetchCacheData();
-    Map<String, dynamic>? getNetworkConnectionsData;
-    Map<String, dynamic>? getNodesWirelessNetworkConnectionsData;
-    if (cache != null) {
-      getNetworkConnectionsData =
-          (cache[GetNetworkConnections.instance])?.output;
-      getNodesWirelessNetworkConnectionsData =
-          (cache[GetNodesWirelessNetworkConnections.instance])?.output;
-    }
-    List<Layer2Connection> connectionData = [];
-    if (getNodesWirelessNetworkConnectionsData != null) {
+  Future<JNAPSuccess> getNetworkConnections() async {
+    return await _ref
+        .read(jnapProvider)
+        .send(action: GetNetworkConnections.instance);
+  }
+
+  Future<JNAPSuccess> getNodesWirelessNetworkConnections() async {
+    return await _ref
+        .read(jnapProvider)
+        .send(action: GetNodesWirelessNetworkConnections.instance);
+  }
+
+  Future<List<Layer2Connection>> getNetworkConnectionsList() async {
+    final getNetworkConnectionsData = (await getNetworkConnections()).output;
+    final getNodesWirelessNetworkConnectionsData =
+        (await getNodesWirelessNetworkConnections()).output;
+    List<Layer2Connection> connectionsList = [];
+    if (getNodesWirelessNetworkConnectionsData.isNotEmpty) {
       final nodeWirelessConnections = List.from(
           getNodesWirelessNetworkConnectionsData['nodeWirelessConnections'] ??
               []);
-      connectionData = nodeWirelessConnections.fold<List<Layer2Connection>>([],
+      connectionsList = nodeWirelessConnections.fold<List<Layer2Connection>>([],
           (previousValue, element) {
         final nodeWirelessConnection = NodeWirelessConnections.fromMap(element);
 
@@ -38,20 +40,18 @@ class NetworkConnectionsService extends BaseService {
         return previousValue;
       });
     } else {
-      connectionData =
-          List.from(getNetworkConnectionsData?['connections'] ?? [])
-              .map((e) => Layer2Connection.fromMap(e))
-              .toList();
+      connectionsList = List.from(getNetworkConnectionsData['connections'] ?? [])
+          .map((e) => Layer2Connection.fromMap(e))
+          .toList();
     }
-    return connectionData;
+    return connectionsList;
   }
 
-  Map<String, WirelessConnection> getWirelessConnections(
-    List<Layer2Connection>? data,
-  ) {
+  Map<String, WirelessConnection> getWirelessConnectionsMap(
+      {List<Layer2Connection>? connectionsList}) {
     var connectionsMap = <String, WirelessConnection>{};
-    if (data != null) {
-      final connections = data;
+    if (connectionsList != null) {
+      final connections = connectionsList;
       for (final connectionData in connections) {
         final macAddress = connectionData.macAddress;
         final wirelessData = connectionData.wireless;
