@@ -3,8 +3,8 @@ import 'package:test/test.dart';
 import 'package:jnap/src/models/jnap_data/unconfigured_node.dart';
 
 void main() {
-  group('BTDiscoveryData', () {
-    const btDiscoveryData = BTDiscoveryData(
+  group('BTDiscoveryDataData', () {
+    const btDiscoveryData = BTDiscoveryDataData(
       name: 'My Bluetooth Device',
       macAddress: '00:11:22:33:44:55',
       rssi: -70,
@@ -23,7 +23,7 @@ void main() {
     });
 
     test('fromMap creates a valid object', () {
-      expect(BTDiscoveryData.fromMap(btDiscoveryDataMap), btDiscoveryData);
+      expect(BTDiscoveryDataData.fromMap(btDiscoveryDataMap), btDiscoveryData);
     });
 
     test('toJson returns a valid JSON string', () {
@@ -31,7 +31,7 @@ void main() {
     });
 
     test('fromJson creates a valid object from JSON string', () {
-      expect(BTDiscoveryData.fromJson(json.encode(btDiscoveryDataMap)), btDiscoveryData);
+      expect(BTDiscoveryDataData.fromJson(json.encode(btDiscoveryDataMap)), btDiscoveryData);
     });
 
     test('copyWith returns a new object with updated values', () {
@@ -45,9 +45,9 @@ void main() {
     });
 
     test('props are correct', () {
-      final data1 = BTDiscoveryData(name: 'n1', macAddress: 'm1', rssi: 1);
-      final data2 = BTDiscoveryData(name: 'n1', macAddress: 'm1', rssi: 1);
-      final data3 = BTDiscoveryData(name: 'n2', macAddress: 'm2', rssi: 2);
+      final data1 = BTDiscoveryDataData(name: 'n1', macAddress: 'm1', rssi: 1);
+      final data2 = BTDiscoveryDataData(name: 'n1', macAddress: 'm1', rssi: 1);
+      final data3 = BTDiscoveryDataData(name: 'n2', macAddress: 'm2', rssi: 2);
       expect(data1, data2);
       expect(data1.props, data2.props);
       expect(data1 == data3, false);

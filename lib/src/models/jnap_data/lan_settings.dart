@@ -4,28 +4,7 @@ import 'dart:convert';
 
 import '../jsonable.dart';
 
-///
-/// {
-///   "minNetworkPrefixLength": 16,
-///   "maxNetworkPrefixLength": 30,
-///   "minAllowedDHCPLeaseMinutes": 1,
-///   "dhcpSettings": {
-///     "lastClientIPAddress": "10.135.1.254",
-///     "leaseMinutes": 1440,
-///     "reservations": [
-///
-///     ],
-///     "firstClientIPAddress": "10.135.1.10"
-///   },
-///   "hostName": "Linksys00005",
-///   "maxDHCPReservationDescriptionLength": 63,
-///   "isDHCPEnabled": true,
-///   "networkPrefixLength": 24,
-///   "ipAddress": "10.135.1.1",
-///   "maxAllowedDHCPLeaseMinutes": 525600
-/// }
-///
-class RouterLANSettings extends Jsonable {
+class RouterLANSettingsData extends Jsonable {
   final int minNetworkPrefixLength;
   final int maxNetworkPrefixLength;
   final int minAllowedDHCPLeaseMinutes;
@@ -53,7 +32,7 @@ class RouterLANSettings extends Jsonable {
     ];
   }
 
-  const RouterLANSettings({
+  const RouterLANSettingsData({
     required this.minNetworkPrefixLength,
     required this.maxNetworkPrefixLength,
     required this.minAllowedDHCPLeaseMinutes,
@@ -67,7 +46,7 @@ class RouterLANSettings extends Jsonable {
   });
 
   @override
-  RouterLANSettings copyWith({
+  RouterLANSettingsData copyWith({
     int? minNetworkPrefixLength,
     int? maxNetworkPrefixLength,
     int? minAllowedDHCPLeaseMinutes,
@@ -79,7 +58,7 @@ class RouterLANSettings extends Jsonable {
     String? ipAddress,
     int? maxAllowedDHCPLeaseMinutes,
   }) {
-    return RouterLANSettings(
+    return RouterLANSettingsData(
       minNetworkPrefixLength:
           minNetworkPrefixLength ?? this.minNetworkPrefixLength,
       maxNetworkPrefixLength:
@@ -116,8 +95,8 @@ class RouterLANSettings extends Jsonable {
     }..removeWhere((key, value) => value == null);
   }
 
-  factory RouterLANSettings.fromMap(Map<String, dynamic> map) {
-    return RouterLANSettings(
+  factory RouterLANSettingsData.fromMap(Map<String, dynamic> map) {
+    return RouterLANSettingsData(
       minNetworkPrefixLength: map['minNetworkPrefixLength'] as int,
       maxNetworkPrefixLength: map['maxNetworkPrefixLength'] as int,
       minAllowedDHCPLeaseMinutes: map['minAllowedDHCPLeaseMinutes'] as int,
@@ -135,8 +114,8 @@ class RouterLANSettings extends Jsonable {
     );
   }
 
-  factory RouterLANSettings.fromJson(String source) =>
-      RouterLANSettings.fromMap(jsonDecode(source));
+  factory RouterLANSettingsData.fromJson(String source) =>
+      RouterLANSettingsData.fromMap(jsonDecode(source));
 }
 
 class DHCPSettings extends Jsonable {

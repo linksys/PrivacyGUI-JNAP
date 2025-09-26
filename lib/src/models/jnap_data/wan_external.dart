@@ -3,13 +3,13 @@ import 'dart:convert';
 
 import '../jsonable.dart';
 
-class WanExternal extends Jsonable {
+class WanExternalData extends Jsonable {
   final String? publicWanIPv4;
   final String? publicWanIPv6;
   final String? privateWanIPv4;
   final String? privateWanIPv6;
 
-  const WanExternal({
+  const WanExternalData({
     this.publicWanIPv4,
     this.publicWanIPv6,
     this.privateWanIPv4,
@@ -17,13 +17,13 @@ class WanExternal extends Jsonable {
   });
 
   @override
-  WanExternal copyWith({
+  WanExternalData copyWith({
     String? publicWanIPv4,
     String? publicWanIPv6,
     String? privateWanIPv4,
     String? privateWanIPv6,
   }) {
-    return WanExternal(
+    return WanExternalData(
       publicWanIPv4: publicWanIPv4 ?? this.publicWanIPv4,
       publicWanIPv6: publicWanIPv6 ?? this.publicWanIPv6,
       privateWanIPv4: privateWanIPv4 ?? this.privateWanIPv4,
@@ -41,8 +41,8 @@ class WanExternal extends Jsonable {
     };
   }
 
-  factory WanExternal.fromMap(Map<String, dynamic> map) {
-    return WanExternal(
+  factory WanExternalData.fromMap(Map<String, dynamic> map) {
+    return WanExternalData(
       publicWanIPv4:
           map['PublicWanIPv4'] != null ? map['PublicWanIPv4'] as String : null,
       publicWanIPv6:
@@ -56,8 +56,8 @@ class WanExternal extends Jsonable {
     );
   }
 
-  factory WanExternal.fromJson(String source) =>
-      WanExternal.fromMap(jsonDecode(source));
+  factory WanExternalData.fromJson(String source) =>
+      WanExternalData.fromMap(jsonDecode(source));
 
   @override
   List<Object?> get props => [

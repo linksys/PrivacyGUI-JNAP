@@ -5,7 +5,7 @@ import 'dart:convert';
 import '../jsonable.dart';
 
 // Only for 'GetGuestRadioSettings2'
-class GuestRadioSettings extends Jsonable {
+class GuestRadioSettingsData extends Jsonable {
   final bool isGuestNetworkACaptivePortal;
   final bool isGuestNetworkEnabled;
   final List<GuestRadioInfo> radios;
@@ -25,7 +25,7 @@ class GuestRadioSettings extends Jsonable {
     ];
   }
 
-  const GuestRadioSettings({
+  const GuestRadioSettingsData({
     required this.isGuestNetworkACaptivePortal,
     required this.isGuestNetworkEnabled,
     required this.radios,
@@ -35,7 +35,7 @@ class GuestRadioSettings extends Jsonable {
   });
 
   @override
-  GuestRadioSettings copyWith({
+  GuestRadioSettingsData copyWith({
     bool? isGuestNetworkACaptivePortal,
     bool? isGuestNetworkEnabled,
     List<GuestRadioInfo>? radios,
@@ -43,7 +43,7 @@ class GuestRadioSettings extends Jsonable {
     GuestPasswordRestriction? guestPasswordRestrictions,
     int? maxSimultaneousGuestsLimit,
   }) {
-    return GuestRadioSettings(
+    return GuestRadioSettingsData(
       isGuestNetworkACaptivePortal:
           isGuestNetworkACaptivePortal ?? this.isGuestNetworkACaptivePortal,
       isGuestNetworkEnabled:
@@ -70,8 +70,8 @@ class GuestRadioSettings extends Jsonable {
     }..removeWhere((key, value) => value == null);
   }
 
-  factory GuestRadioSettings.fromMap(Map<String, dynamic> map) {
-    return GuestRadioSettings(
+  factory GuestRadioSettingsData.fromMap(Map<String, dynamic> map) {
+    return GuestRadioSettingsData(
       isGuestNetworkACaptivePortal: map['isGuestNetworkACaptivePortal'] as bool,
       isGuestNetworkEnabled: map['isGuestNetworkEnabled'] as bool,
       radios: List<GuestRadioInfo>.from(
@@ -92,24 +92,24 @@ class GuestRadioSettings extends Jsonable {
     );
   }
 
-  factory GuestRadioSettings.fromJson(String source) =>
-      GuestRadioSettings.fromMap(jsonDecode(source));
+  factory GuestRadioSettingsData.fromJson(String source) =>
+      GuestRadioSettingsData.fromMap(jsonDecode(source));
 }
 
-class SetGuestRadioSettings extends Jsonable {
+class SetGuestRadioSettingsData extends Jsonable {
   final bool isGuestNetworkEnabled;
   final List<GuestRadioInfo> radios;
   final int? maxSimultaneousGuests;
 
-  const SetGuestRadioSettings({
+  const SetGuestRadioSettingsData({
     required this.isGuestNetworkEnabled,
     required this.radios,
     this.maxSimultaneousGuests,
   });
 
-  factory SetGuestRadioSettings.fromGuestRadioSettings(
-      GuestRadioSettings settings) {
-    return SetGuestRadioSettings(
+  factory SetGuestRadioSettingsData.fromGuestRadioSettings(
+      GuestRadioSettingsData settings) {
+    return SetGuestRadioSettingsData(
       isGuestNetworkEnabled: settings.isGuestNetworkEnabled,
       radios: settings.radios,
       maxSimultaneousGuests: settings.maxSimultaneousGuests,
@@ -124,12 +124,12 @@ class SetGuestRadioSettings extends Jsonable {
       ];
 
   @override
-  SetGuestRadioSettings copyWith({
+  SetGuestRadioSettingsData copyWith({
     bool? isGuestNetworkEnabled,
     List<GuestRadioInfo>? radios,
     int? maxSimultaneousGuests,
   }) {
-    return SetGuestRadioSettings(
+    return SetGuestRadioSettingsData(
       isGuestNetworkEnabled:
           isGuestNetworkEnabled ?? this.isGuestNetworkEnabled,
       radios: radios ?? this.radios,
@@ -147,8 +147,8 @@ class SetGuestRadioSettings extends Jsonable {
     }..removeWhere((key, value) => value == null);
   }
 
-  factory SetGuestRadioSettings.fromMap(Map<String, dynamic> map) {
-    return SetGuestRadioSettings(
+  factory SetGuestRadioSettingsData.fromMap(Map<String, dynamic> map) {
+    return SetGuestRadioSettingsData(
       isGuestNetworkEnabled: map['isGuestNetworkEnabled'] as bool,
       radios: List<GuestRadioInfo>.from(
         (map['radios'] as List).map<GuestRadioInfo>(
@@ -161,8 +161,8 @@ class SetGuestRadioSettings extends Jsonable {
     );
   }
 
-  factory SetGuestRadioSettings.fromJson(String source) =>
-      SetGuestRadioSettings.fromMap(jsonDecode(source));
+  factory SetGuestRadioSettingsData.fromJson(String source) =>
+      SetGuestRadioSettingsData.fromMap(jsonDecode(source));
 }
 
 class GuestRadioInfo extends Jsonable {

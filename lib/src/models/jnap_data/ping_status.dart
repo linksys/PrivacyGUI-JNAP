@@ -4,20 +4,20 @@ import 'dart:convert';
 
 import '../jsonable.dart';
 
-class PingStatus extends Jsonable {
+class PingStatusData extends Jsonable {
   final bool isRunning;
   final String pingLog;
-  const PingStatus({
+  const PingStatusData({
     required this.isRunning,
     required this.pingLog,
   });
 
   @override
-  PingStatus copyWith({
+  PingStatusData copyWith({
     bool? isRunning,
     String? pingLog,
   }) {
-    return PingStatus(
+    return PingStatusData(
       isRunning: isRunning ?? this.isRunning,
       pingLog: pingLog ?? this.pingLog,
     );
@@ -31,8 +31,8 @@ class PingStatus extends Jsonable {
     };
   }
 
-  factory PingStatus.fromMap(Map<String, dynamic> map) {
-    return PingStatus(
+  factory PingStatusData.fromMap(Map<String, dynamic> map) {
+    return PingStatusData(
       isRunning: map['isRunning'] as bool,
       pingLog: map['pingLog'] as String,
     );
@@ -41,6 +41,6 @@ class PingStatus extends Jsonable {
   @override
   List<Object> get props => [isRunning, pingLog];
 
-  factory PingStatus.fromJson(String source) =>
-      PingStatus.fromMap(jsonDecode(source));
+  factory PingStatusData.fromJson(String source) =>
+      PingStatusData.fromMap(jsonDecode(source));
 }

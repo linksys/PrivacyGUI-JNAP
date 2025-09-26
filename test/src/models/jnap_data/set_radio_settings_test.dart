@@ -60,7 +60,7 @@ void main() {
     });
   });
 
-  group('SetRadioSettings', () {
+  group('SetRadioSettingsData', () {
     const routerRadioSettings = RouterRadioSettings(
       isEnabled: true,
       mode: 'Mixed',
@@ -76,7 +76,7 @@ void main() {
       settings: routerRadioSettings,
     );
 
-    const setRadioSettings = SetRadioSettings(
+    const setRadioSettings = SetRadioSettingsData(
       radios: [newRadioSettings],
     );
 
@@ -89,7 +89,7 @@ void main() {
     });
 
     test('fromMap creates a valid object', () {
-      expect(SetRadioSettings.fromMap(setRadioSettingsMap), setRadioSettings);
+      expect(SetRadioSettingsData.fromMap(setRadioSettingsMap), setRadioSettings);
     });
 
     test('toJson returns a valid JSON string', () {
@@ -97,7 +97,7 @@ void main() {
     });
 
     test('fromJson creates a valid object from JSON string', () {
-      expect(SetRadioSettings.fromJson(json.encode(setRadioSettingsMap)), setRadioSettings);
+      expect(SetRadioSettingsData.fromJson(json.encode(setRadioSettingsMap)), setRadioSettings);
     });
 
     test('copyWith returns a new object with updated values', () {
@@ -108,9 +108,9 @@ void main() {
     });
 
     test('props are correct', () {
-      final srs1 = SetRadioSettings(radios: [newRadioSettings]);
-      final srs2 = SetRadioSettings(radios: [newRadioSettings]);
-      final srs3 = SetRadioSettings(radios: []);
+      final srs1 = SetRadioSettingsData(radios: [newRadioSettings]);
+      final srs2 = SetRadioSettingsData(radios: [newRadioSettings]);
+      final srs3 = SetRadioSettingsData(radios: []);
       expect(srs1, srs2);
       expect(srs1.props, srs2.props);
       expect(srs1 == srs3, false);

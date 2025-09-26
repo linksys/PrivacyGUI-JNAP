@@ -675,7 +675,7 @@ void main() {
       vlanTaggingSettings: portTaggingSettings,
     );
 
-    const routerWANSettings = RouterWANSettings(
+    const routerWANSettings = RouterWANSettingsData(
       wanType: 'DHCP',
       mtu: 1500,
       pppoeSettings: pppoeSettings,
@@ -709,7 +709,7 @@ void main() {
 
     test('fromMap creates a valid object', () {
       expect(
-          RouterWANSettings.fromMap(routerWANSettingsMap), routerWANSettings);
+          RouterWANSettingsData.fromMap(routerWANSettingsMap), routerWANSettings);
     });
 
     test('toJson returns a valid JSON string', () {
@@ -717,7 +717,7 @@ void main() {
     });
 
     test('fromJson creates a valid object from JSON string', () {
-      expect(RouterWANSettings.fromJson(json.encode(routerWANSettingsMap)),
+      expect(RouterWANSettingsData.fromJson(json.encode(routerWANSettingsMap)),
           routerWANSettings);
     });
 
@@ -732,13 +732,13 @@ void main() {
     });
 
     test('factory dhcp creates correct settings', () {
-      final dhcpSettings = RouterWANSettings.dhcp(mtu: 1500);
+      final dhcpSettings = RouterWANSettingsData.dhcp(mtu: 1500);
       expect(dhcpSettings.wanType, 'DHCP');
       expect(dhcpSettings.mtu, 1500);
     });
 
     test('factory pppoe creates correct settings', () {
-      final pppoe = RouterWANSettings.pppoe(
+      final pppoe = RouterWANSettingsData.pppoe(
           mtu: 1492,
           pppoeSettings: pppoeSettings,
           wanTaggingSettings: wanTaggingSettings);
@@ -748,7 +748,7 @@ void main() {
     });
 
     test('factory pptp creates correct settings', () {
-      final pptp = RouterWANSettings.pptp(
+      final pptp = RouterWANSettingsData.pptp(
           mtu: 1400,
           tpSettings: tpSettings,
           wanTaggingSettings: wanTaggingSettings);
@@ -758,14 +758,14 @@ void main() {
     });
 
     test('factory l2tp creates correct settings', () {
-      final l2tp = RouterWANSettings.l2tp(mtu: 1400, tpSettings: tpSettings);
+      final l2tp = RouterWANSettingsData.l2tp(mtu: 1400, tpSettings: tpSettings);
       expect(l2tp.wanType, 'L2TP');
       expect(l2tp.mtu, 1400);
       expect(l2tp.tpSettings, tpSettings);
     });
 
     test('factory static creates correct settings', () {
-      final staticWan = RouterWANSettings.static(
+      final staticWan = RouterWANSettingsData.static(
           mtu: 1500,
           staticSettings: staticSettings,
           wanTaggingSettings: wanTaggingSettings);
@@ -775,16 +775,16 @@ void main() {
     });
 
     test('factory bridge creates correct settings', () {
-      final bridge = RouterWANSettings.bridge(bridgeSettings: bridgeSettings);
+      final bridge = RouterWANSettingsData.bridge(bridgeSettings: bridgeSettings);
       expect(bridge.wanType, 'Bridge');
       expect(bridge.mtu, 0);
       expect(bridge.bridgeSettings, bridgeSettings);
     });
 
     test('props are correct', () {
-      final rws1 = RouterWANSettings(wanType: 't1', mtu: 1);
-      final rws2 = RouterWANSettings(wanType: 't1', mtu: 1);
-      final rws3 = RouterWANSettings(wanType: 't2', mtu: 2);
+      final rws1 = RouterWANSettingsData(wanType: 't1', mtu: 1);
+      final rws2 = RouterWANSettingsData(wanType: 't1', mtu: 1);
+      final rws3 = RouterWANSettingsData(wanType: 't2', mtu: 2);
       expect(rws1, rws2);
       expect(rws1.props, rws2.props);
       expect(rws1 == rws3, false);

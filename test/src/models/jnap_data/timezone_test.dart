@@ -3,8 +3,8 @@ import 'package:test/test.dart';
 import 'package:jnap/src/models/jnap_data/timezone.dart';
 
 void main() {
-  group('SupportedTimezone', () {
-    const supportedTimezone = SupportedTimezone(
+  group('SupportedTimezoneData', () {
+    const supportedTimezone = SupportedTimezoneData(
       observesDST: true,
       timeZoneID: 'America/Los_Angeles',
       description: 'Pacific Time',
@@ -23,7 +23,7 @@ void main() {
     });
 
     test('fromMap creates a valid object', () {
-      expect(SupportedTimezone.fromMap(supportedTimezoneMap), supportedTimezone);
+      expect(SupportedTimezoneData.fromMap(supportedTimezoneMap), supportedTimezone);
     });
 
     test('toJson returns a valid JSON string', () {
@@ -31,7 +31,7 @@ void main() {
     });
 
     test('fromJson creates a valid object from JSON string', () {
-      expect(SupportedTimezone.fromJson(json.encode(supportedTimezoneMap)), supportedTimezone);
+      expect(SupportedTimezoneData.fromJson(json.encode(supportedTimezoneMap)), supportedTimezone);
     });
 
     test('copyWith returns a new object with updated values', () {
@@ -45,9 +45,9 @@ void main() {
     });
 
     test('props are correct', () {
-      final tz1 = SupportedTimezone(observesDST: true, timeZoneID: 'tz1', description: 'd1', utcOffsetMinutes: 1);
-      final tz2 = SupportedTimezone(observesDST: true, timeZoneID: 'tz1', description: 'd1', utcOffsetMinutes: 1);
-      final tz3 = SupportedTimezone(observesDST: false, timeZoneID: 'tz2', description: 'd2', utcOffsetMinutes: 2);
+      final tz1 = SupportedTimezoneData(observesDST: true, timeZoneID: 'tz1', description: 'd1', utcOffsetMinutes: 1);
+      final tz2 = SupportedTimezoneData(observesDST: true, timeZoneID: 'tz1', description: 'd1', utcOffsetMinutes: 1);
+      final tz3 = SupportedTimezoneData(observesDST: false, timeZoneID: 'tz2', description: 'd2', utcOffsetMinutes: 2);
       expect(tz1, tz2);
       expect(tz1.props, tz2.props);
       expect(tz1 == tz3, false);

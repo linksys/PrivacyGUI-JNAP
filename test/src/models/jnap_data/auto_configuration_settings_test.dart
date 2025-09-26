@@ -17,8 +17,8 @@ void main() {
     });
   });
 
-  group('AutoConfigurationSettings', () {
-    const autoConfigurationSettings = AutoConfigurationSettings(
+  group('AutoConfigurationSettingsData', () {
+    const autoConfigurationSettings = AutoConfigurationSettingsData(
       isAutoConfigurationSupported: true,
       autoConfigurationMethod: AutoConfigurationMethod.preConfigured,
       userAcknowledgedAutoConfiguration: false,
@@ -35,7 +35,7 @@ void main() {
     });
 
     test('fromMap creates a valid object', () {
-      expect(AutoConfigurationSettings.fromMap(autoConfigurationSettingsMap), autoConfigurationSettings);
+      expect(AutoConfigurationSettingsData.fromMap(autoConfigurationSettingsMap), autoConfigurationSettings);
     });
 
     test('toJson returns a valid JSON string', () {
@@ -43,7 +43,7 @@ void main() {
     });
 
     test('fromJson creates a valid object from JSON string', () {
-      expect(AutoConfigurationSettings.fromJson(json.encode(autoConfigurationSettingsMap)), autoConfigurationSettings);
+      expect(AutoConfigurationSettingsData.fromJson(json.encode(autoConfigurationSettingsMap)), autoConfigurationSettings);
     });
 
     test('copyWith returns a new object with updated values', () {
@@ -57,17 +57,17 @@ void main() {
     });
 
     test('props are correct', () {
-      final settings1 = AutoConfigurationSettings(
+      final settings1 = AutoConfigurationSettingsData(
         isAutoConfigurationSupported: true,
         autoConfigurationMethod: AutoConfigurationMethod.preConfigured,
         userAcknowledgedAutoConfiguration: false,
       );
-      final settings2 = AutoConfigurationSettings(
+      final settings2 = AutoConfigurationSettingsData(
         isAutoConfigurationSupported: true,
         autoConfigurationMethod: AutoConfigurationMethod.preConfigured,
         userAcknowledgedAutoConfiguration: false,
       );
-      final settings3 = AutoConfigurationSettings(
+      final settings3 = AutoConfigurationSettingsData(
         isAutoConfigurationSupported: false,
         autoConfigurationMethod: AutoConfigurationMethod.autoParent,
         userAcknowledgedAutoConfiguration: true,

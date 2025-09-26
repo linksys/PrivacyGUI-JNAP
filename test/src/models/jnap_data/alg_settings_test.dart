@@ -3,8 +3,8 @@ import 'package:test/test.dart';
 import 'package:jnap/src/models/jnap_data/alg_settings.dart';
 
 void main() {
-  group('ALGSettings', () {
-    const algSettings = ALGSettings(
+  group('ALGSettingsData', () {
+    const algSettings = ALGSettingsData(
       isSIPEnabled: true,
     );
 
@@ -17,7 +17,7 @@ void main() {
     });
 
     test('fromMap creates a valid object', () {
-      expect(ALGSettings.fromMap(algSettingsMap), algSettings);
+      expect(ALGSettingsData.fromMap(algSettingsMap), algSettings);
     });
 
     test('toJson returns a valid JSON string', () {
@@ -25,7 +25,7 @@ void main() {
     });
 
     test('fromJson creates a valid object from JSON string', () {
-      expect(ALGSettings.fromJson(json.encode(algSettingsMap)), algSettings);
+      expect(ALGSettingsData.fromJson(json.encode(algSettingsMap)), algSettings);
     });
 
     test('copyWith returns a new object with updated values', () {
@@ -37,9 +37,9 @@ void main() {
     });
 
     test('props are correct', () {
-      final settings1 = ALGSettings(isSIPEnabled: true);
-      final settings2 = ALGSettings(isSIPEnabled: true);
-      final settings3 = ALGSettings(isSIPEnabled: false);
+      final settings1 = ALGSettingsData(isSIPEnabled: true);
+      final settings2 = ALGSettingsData(isSIPEnabled: true);
+      final settings3 = ALGSettingsData(isSIPEnabled: false);
 
       expect(settings1, settings2);
       expect(settings1.props, settings2.props);

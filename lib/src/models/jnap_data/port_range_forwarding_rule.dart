@@ -2,15 +2,8 @@ import 'dart:convert';
 
 import 'package:jnap/src/models/jsonable.dart';
 
-/// isEnabled : true
-/// externalPort : 3074
-/// protocol : "TCP"
-/// internalServerIPAddress : "192.168.1.150"
-/// lastExternalPort : 3074
-/// description : "XBox Live (TM)"
-
-class PortRangeForwardingRule extends Jsonable {
-  const PortRangeForwardingRule({
+class PortRangeForwardingRuleData extends Jsonable {
+  const PortRangeForwardingRuleData({
     required this.isEnabled,
     required this.firstExternalPort,
     required this.protocol,
@@ -37,7 +30,7 @@ class PortRangeForwardingRule extends Jsonable {
       ];
 
   @override
-  PortRangeForwardingRule copyWith({
+  PortRangeForwardingRuleData copyWith({
     bool? isEnabled,
     int? firstExternalPort,
     String? protocol,
@@ -45,7 +38,7 @@ class PortRangeForwardingRule extends Jsonable {
     int? lastExternalPort,
     String? description,
   }) {
-    return PortRangeForwardingRule(
+    return PortRangeForwardingRuleData(
       isEnabled: isEnabled ?? this.isEnabled,
       firstExternalPort: firstExternalPort ?? this.firstExternalPort,
       protocol: protocol ?? this.protocol,
@@ -69,8 +62,8 @@ class PortRangeForwardingRule extends Jsonable {
   }
 
   @override
-  factory PortRangeForwardingRule.fromMap(Map<String, dynamic> json) {
-    return PortRangeForwardingRule(
+  factory PortRangeForwardingRuleData.fromMap(Map<String, dynamic> json) {
+    return PortRangeForwardingRuleData(
       isEnabled: json['isEnabled'],
       firstExternalPort: json['firstExternalPort'],
       protocol: json['protocol'],
@@ -80,6 +73,6 @@ class PortRangeForwardingRule extends Jsonable {
     );
   }
 
-  factory PortRangeForwardingRule.fromJson(String source) =>
-      PortRangeForwardingRule.fromMap(jsonDecode(source));
+  factory PortRangeForwardingRuleData.fromJson(String source) =>
+      PortRangeForwardingRuleData.fromMap(jsonDecode(source));
 }

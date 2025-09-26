@@ -4,20 +4,20 @@ import 'dart:convert';
 
 import '../jsonable.dart';
 
-class ExpressForwardingSettings extends Jsonable {
+class ExpressForwardingSettingsData extends Jsonable {
   final bool isExpressForwardingSupported;
   final bool? isExpressForwardingEnabled;
-  const ExpressForwardingSettings({
+  const ExpressForwardingSettingsData({
     required this.isExpressForwardingSupported,
     this.isExpressForwardingEnabled,
   });
 
   @override
-  ExpressForwardingSettings copyWith({
+  ExpressForwardingSettingsData copyWith({
     bool? isExpressForwardingSupported,
     bool? isExpressForwardingEnabled,
   }) {
-    return ExpressForwardingSettings(
+    return ExpressForwardingSettingsData(
       isExpressForwardingSupported:
           isExpressForwardingSupported ?? this.isExpressForwardingSupported,
       isExpressForwardingEnabled:
@@ -33,8 +33,8 @@ class ExpressForwardingSettings extends Jsonable {
     };
   }
 
-  factory ExpressForwardingSettings.fromMap(Map<String, dynamic> map) {
-    return ExpressForwardingSettings(
+  factory ExpressForwardingSettingsData.fromMap(Map<String, dynamic> map) {
+    return ExpressForwardingSettingsData(
       isExpressForwardingSupported: map['isExpressForwardingSupported'] as bool,
       isExpressForwardingEnabled: map['isExpressForwardingEnabled'] != null
           ? map['isExpressForwardingEnabled'] as bool
@@ -42,8 +42,8 @@ class ExpressForwardingSettings extends Jsonable {
     );
   }
 
-  factory ExpressForwardingSettings.fromJson(String source) =>
-      ExpressForwardingSettings.fromMap(jsonDecode(source));
+  factory ExpressForwardingSettingsData.fromJson(String source) =>
+      ExpressForwardingSettingsData.fromMap(jsonDecode(source));
 
   @override
   List<Object?> get props =>

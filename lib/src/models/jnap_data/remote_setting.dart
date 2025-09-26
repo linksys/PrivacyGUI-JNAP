@@ -4,17 +4,17 @@ import 'dart:convert';
 
 import 'package:jnap/src/models/jsonable.dart';
 
-class RemoteSetting extends Jsonable {
+class RemoteSettingData extends Jsonable {
   final bool isEnabled;
-  const RemoteSetting({
+  const RemoteSettingData({
     required this.isEnabled,
   });
 
   @override
-  RemoteSetting copyWith({
+  RemoteSettingData copyWith({
     bool? isEnabled,
   }) {
-    return RemoteSetting(
+    return RemoteSettingData(
       isEnabled: isEnabled ?? this.isEnabled,
     );
   }
@@ -27,14 +27,14 @@ class RemoteSetting extends Jsonable {
   }
 
   @override
-  factory RemoteSetting.fromMap(Map<String, dynamic> map) {
-    return RemoteSetting(
+  factory RemoteSettingData.fromMap(Map<String, dynamic> map) {
+    return RemoteSettingData(
       isEnabled: map['isEnabled'] as bool,
     );
   }
 
-  factory RemoteSetting.fromJson(String source) =>
-      RemoteSetting.fromMap(jsonDecode(source));
+  factory RemoteSettingData.fromJson(String source) =>
+      RemoteSettingData.fromMap(jsonDecode(source));
 
   @override
   List<Object?> get props => [isEnabled];

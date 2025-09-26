@@ -5,24 +5,24 @@ import 'dart:convert';
 import '../jsonable.dart';
 import 'package:jnap/src/models/jnap_data/wirless_connection.dart';
 
-class Layer2Connection extends Jsonable {
+class Layer2ConnectionData extends Jsonable {
   final String macAddress;
   final int negotiatedMbps;
-  final WirelessConnection? wireless;
+  final WirelessConnectionData? wireless;
 
-  const Layer2Connection({
+  const Layer2ConnectionData({
     required this.macAddress,
     required this.negotiatedMbps,
     required this.wireless,
   });
 
   @override
-  Layer2Connection copyWith({
+  Layer2ConnectionData copyWith({
     String? macAddress,
     int? negotiatedMbps,
-    WirelessConnection? wireless,
+    WirelessConnectionData? wireless,
   }) {
-    return Layer2Connection(
+    return Layer2ConnectionData(
       macAddress: macAddress ?? this.macAddress,
       negotiatedMbps: negotiatedMbps ?? this.negotiatedMbps,
       wireless: wireless ?? this.wireless,
@@ -38,27 +38,27 @@ class Layer2Connection extends Jsonable {
     }..removeWhere((key, value) => value == null);
   }
 
-  factory Layer2Connection.fromMap(Map<String, dynamic> map) {
-    return Layer2Connection(
+  factory Layer2ConnectionData.fromMap(Map<String, dynamic> map) {
+    return Layer2ConnectionData(
       macAddress: map['macAddress'] as String,
       negotiatedMbps: map['negotiatedMbps'],
       wireless: map['wireless'] != null
-          ? WirelessConnection.fromMap(map['wireless'] as Map<String, dynamic>)
+          ? WirelessConnectionData.fromMap(map['wireless'] as Map<String, dynamic>)
           : null,
     );
   }
 
-  factory Layer2Connection.fromJson(String source) =>
-      Layer2Connection.fromMap(jsonDecode(source));
+  factory Layer2ConnectionData.fromJson(String source) =>
+      Layer2ConnectionData.fromMap(jsonDecode(source));
 
   @override
   List<Object?> get props => [macAddress, negotiatedMbps, wireless];
 }
 
-class NodeWirelessLayer2Connections extends Layer2Connection {
+class NodeWirelessLayer2ConnectionsData extends Layer2ConnectionData {
   final String timestamp;
 
-  const NodeWirelessLayer2Connections({
+  const NodeWirelessLayer2ConnectionsData({
     required super.macAddress,
     required super.negotiatedMbps,
     required this.timestamp,
@@ -66,13 +66,13 @@ class NodeWirelessLayer2Connections extends Layer2Connection {
   });
 
   @override
-  NodeWirelessLayer2Connections copyWith({
+  NodeWirelessLayer2ConnectionsData copyWith({
     String? macAddress,
     int? negotiatedMbps,
     String? timestamp,
-    WirelessConnection? wireless,
+    WirelessConnectionData? wireless,
   }) {
-    return NodeWirelessLayer2Connections(
+    return NodeWirelessLayer2ConnectionsData(
       macAddress: macAddress ?? this.macAddress,
       negotiatedMbps: negotiatedMbps ?? this.negotiatedMbps,
       timestamp: timestamp ?? this.timestamp,
@@ -90,18 +90,18 @@ class NodeWirelessLayer2Connections extends Layer2Connection {
     }..removeWhere((key, value) => value == null);
   }
 
-  factory NodeWirelessLayer2Connections.fromMap(Map<String, dynamic> map) {
-    return NodeWirelessLayer2Connections(
+  factory NodeWirelessLayer2ConnectionsData.fromMap(Map<String, dynamic> map) {
+    return NodeWirelessLayer2ConnectionsData(
       macAddress: map['macAddress'] as String,
       negotiatedMbps: map['negotiatedMbps'],
       timestamp: map['timestamp'] as String,
       wireless:
-          WirelessConnection.fromMap(map['wireless'] as Map<String, dynamic>),
+          WirelessConnectionData.fromMap(map['wireless'] as Map<String, dynamic>),
     );
   }
 
-  factory NodeWirelessLayer2Connections.fromJson(String source) =>
-      NodeWirelessLayer2Connections.fromMap(jsonDecode(source));
+  factory NodeWirelessLayer2ConnectionsData.fromJson(String source) =>
+      NodeWirelessLayer2ConnectionsData.fromMap(jsonDecode(source));
 
   @override
   List<Object?> get props => [macAddress, negotiatedMbps, timestamp, wireless];

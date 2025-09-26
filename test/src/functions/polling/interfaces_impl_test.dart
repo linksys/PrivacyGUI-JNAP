@@ -42,19 +42,23 @@ void main() {
     test('additionalPolling completes', () async {
       final container = ProviderContainer();
       final ref = container.read(Provider((ref) => ref));
-      final tasks = PollingAdditionalTasksRefBased(ref);
+      final tasks = PollingRefBasedAdditionalTasks(ref);
       await expectLater(tasks.additionalPolling(), completes);
     });
   });
 
   group('PollingCompletedNotifierImpl', () {
     test('onPollingFailed runs without error', () {
-      final notifier = PollingCompletedNotifierImpl();
+      final container = ProviderContainer();
+      final ref = container.read(Provider((ref) => ref));
+      final notifier = PollingRefBasedCompletedNotifier(ref);
       expect(() => notifier.onPollingFailed(), returnsNormally);
     });
 
     test('onPollingSuccess runs without error', () {
-      final notifier = PollingCompletedNotifierImpl();
+      final container = ProviderContainer();
+      final ref = container.read(Provider((ref) => ref));
+      final notifier = PollingRefBasedCompletedNotifier(ref);
       expect(() => notifier.onPollingSuccess(), returnsNormally);
     });
   });

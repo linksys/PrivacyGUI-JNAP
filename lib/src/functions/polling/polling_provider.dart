@@ -4,6 +4,7 @@ import 'package:jnap/jnap.dart';
 import 'package:jnap/logger.dart';
 import 'package:jnap/src/functions/polling/polling_service.dart';
 import 'package:jnap/src/functions/polling/providers.dart';
+import 'package:jnap/src/functions/provider.dart';
 import 'package:jnap/src/utilties/bench_mark.dart';
 import 'package:meta/meta.dart';
 import 'package:riverpod/riverpod.dart';

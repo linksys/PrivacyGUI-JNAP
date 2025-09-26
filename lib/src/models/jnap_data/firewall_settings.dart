@@ -4,7 +4,7 @@ import 'dart:convert';
 
 import '../jsonable.dart';
 
-class FirewallSettings extends Jsonable {
+class FirewallSettingsData extends Jsonable {
   final bool blockAnonymousRequests;
   final bool blockIDENT;
   final bool blockIPSec;
@@ -14,7 +14,7 @@ class FirewallSettings extends Jsonable {
   final bool blockPPTP;
   final bool isIPv4FirewallEnabled;
   final bool isIPv6FirewallEnabled;
-  const FirewallSettings({
+  const FirewallSettingsData({
     required this.blockAnonymousRequests,
     required this.blockIDENT,
     required this.blockIPSec,
@@ -27,7 +27,7 @@ class FirewallSettings extends Jsonable {
   });
 
   @override
-  FirewallSettings copyWith({
+  FirewallSettingsData copyWith({
     bool? blockAnonymousRequests,
     bool? blockIDENT,
     bool? blockIPSec,
@@ -38,7 +38,7 @@ class FirewallSettings extends Jsonable {
     bool? isIPv4FirewallEnabled,
     bool? isIPv6FirewallEnabled,
   }) {
-    return FirewallSettings(
+    return FirewallSettingsData(
       blockAnonymousRequests:
           blockAnonymousRequests ?? this.blockAnonymousRequests,
       blockIDENT: blockIDENT ?? this.blockIDENT,
@@ -69,8 +69,8 @@ class FirewallSettings extends Jsonable {
     };
   }
 
-  factory FirewallSettings.fromMap(Map<String, dynamic> map) {
-    return FirewallSettings(
+  factory FirewallSettingsData.fromMap(Map<String, dynamic> map) {
+    return FirewallSettingsData(
       blockAnonymousRequests: map['blockAnonymousRequests'] as bool,
       blockIDENT: map['blockIDENT'] as bool,
       blockIPSec: map['blockIPSec'] as bool,
@@ -83,8 +83,8 @@ class FirewallSettings extends Jsonable {
     );
   }
 
-  factory FirewallSettings.fromJson(String source) =>
-      FirewallSettings.fromMap(jsonDecode(source));
+  factory FirewallSettingsData.fromJson(String source) =>
+      FirewallSettingsData.fromMap(jsonDecode(source));
 
   @override
   List<Object> get props {

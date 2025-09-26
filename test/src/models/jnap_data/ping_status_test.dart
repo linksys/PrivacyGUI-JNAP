@@ -3,8 +3,8 @@ import 'package:test/test.dart';
 import 'package:jnap/src/models/jnap_data/ping_status.dart';
 
 void main() {
-  group('PingStatus', () {
-    const pingStatus = PingStatus(
+  group('PingStatusData', () {
+    const pingStatus = PingStatusData(
       isRunning: true,
       pingLog: 'Pinging 8.8.8.8 with 32 bytes of data:\nReply from 8.8.8.8: bytes=32 time=10ms TTL=117',
     );
@@ -19,7 +19,7 @@ void main() {
     });
 
     test('fromMap creates a valid object', () {
-      expect(PingStatus.fromMap(pingStatusMap), pingStatus);
+      expect(PingStatusData.fromMap(pingStatusMap), pingStatus);
     });
 
     test('toJson returns a valid JSON string', () {
@@ -27,7 +27,7 @@ void main() {
     });
 
     test('fromJson creates a valid object from JSON string', () {
-      expect(PingStatus.fromJson(json.encode(pingStatusMap)), pingStatus);
+      expect(PingStatusData.fromJson(json.encode(pingStatusMap)), pingStatus);
     });
 
     test('copyWith returns a new object with updated values', () {
@@ -39,9 +39,9 @@ void main() {
     });
 
     test('props are correct', () {
-      final status1 = PingStatus(isRunning: true, pingLog: 'log1');
-      final status2 = PingStatus(isRunning: true, pingLog: 'log1');
-      final status3 = PingStatus(isRunning: false, pingLog: 'log2');
+      final status1 = PingStatusData(isRunning: true, pingLog: 'log1');
+      final status2 = PingStatusData(isRunning: true, pingLog: 'log1');
+      final status3 = PingStatusData(isRunning: false, pingLog: 'log2');
       expect(status1, status2);
       expect(status1.props, status2.props);
       expect(status1 == status3, false);

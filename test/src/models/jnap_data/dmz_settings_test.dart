@@ -49,13 +49,13 @@ void main() {
     });
   });
 
-  group('DMZSettings', () {
+  group('DMZSettingsData', () {
     const dmzSourceRestriction = DMZSourceRestriction(
       firstIPAddress: '192.168.1.100',
       lastIPAddress: '192.168.1.200',
     );
 
-    const dmzSettings = DMZSettings(
+    const dmzSettings = DMZSettingsData(
       isDMZEnabled: true,
       sourceRestriction: dmzSourceRestriction,
       destinationIPAddress: '192.168.1.50',
@@ -74,7 +74,7 @@ void main() {
     });
 
     test('fromMap creates a valid object', () {
-      expect(DMZSettings.fromMap(dmzSettingsMap), dmzSettings);
+      expect(DMZSettingsData.fromMap(dmzSettingsMap), dmzSettings);
     });
 
     test('toJson returns a valid JSON string', () {
@@ -82,7 +82,7 @@ void main() {
     });
 
     test('fromJson creates a valid object from JSON string', () {
-      expect(DMZSettings.fromJson(json.encode(dmzSettingsMap)), dmzSettings);
+      expect(DMZSettingsData.fromJson(json.encode(dmzSettingsMap)), dmzSettings);
     });
 
     test('copyWith returns a new object with updated values', () {
@@ -96,19 +96,19 @@ void main() {
     });
 
     test('props are correct', () {
-      final settings1 = DMZSettings(
+      final settings1 = DMZSettingsData(
         isDMZEnabled: true,
         sourceRestriction: dmzSourceRestriction,
         destinationIPAddress: 'ip1',
         destinationMACAddress: 'mac1',
       );
-      final settings2 = DMZSettings(
+      final settings2 = DMZSettingsData(
         isDMZEnabled: true,
         sourceRestriction: dmzSourceRestriction,
         destinationIPAddress: 'ip1',
         destinationMACAddress: 'mac1',
       );
-      final settings3 = DMZSettings(
+      final settings3 = DMZSettingsData(
         isDMZEnabled: false,
         sourceRestriction: null,
         destinationIPAddress: 'ip2',

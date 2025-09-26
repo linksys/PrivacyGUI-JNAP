@@ -5,13 +5,13 @@ import 'dart:convert';
 import '../jsonable.dart';
 import 'package:jnap/src/models/types.dart';
 
-class GetRoutingSettings extends Jsonable {
+class GetRoutingSettingsData extends Jsonable {
   final bool isNATEnabled;
   final bool isDynamicRoutingEnabled;
   final int maxStaticRouteEntries;
   final List<NamedStaticRouteEntry> entries;
 
-  const GetRoutingSettings({
+  const GetRoutingSettingsData({
     required this.isNATEnabled,
     required this.isDynamicRoutingEnabled,
     required this.maxStaticRouteEntries,
@@ -19,13 +19,13 @@ class GetRoutingSettings extends Jsonable {
   });
 
   @override
-  GetRoutingSettings copyWith({
+  GetRoutingSettingsData copyWith({
     bool? isNATEnabled,
     bool? isDynamicRoutingEnabled,
     int? maxStaticRouteEntries,
     List<NamedStaticRouteEntry>? entries,
   }) {
-    return GetRoutingSettings(
+    return GetRoutingSettingsData(
       isNATEnabled: isNATEnabled ?? this.isNATEnabled,
       isDynamicRoutingEnabled:
           isDynamicRoutingEnabled ?? this.isDynamicRoutingEnabled,
@@ -45,8 +45,8 @@ class GetRoutingSettings extends Jsonable {
     };
   }
 
-  factory GetRoutingSettings.fromMap(Map<String, dynamic> map) {
-    return GetRoutingSettings(
+  factory GetRoutingSettingsData.fromMap(Map<String, dynamic> map) {
+    return GetRoutingSettingsData(
       isNATEnabled: map['isNATEnabled'] as bool,
       isDynamicRoutingEnabled: map['isDynamicRoutingEnabled'] as bool,
       maxStaticRouteEntries: map['maxStaticRouteEntries'] as int,
@@ -58,8 +58,8 @@ class GetRoutingSettings extends Jsonable {
     );
   }
 
-  factory GetRoutingSettings.fromJson(String source) =>
-      GetRoutingSettings.fromMap(jsonDecode(source));
+  factory GetRoutingSettingsData.fromJson(String source) =>
+      GetRoutingSettingsData.fromMap(jsonDecode(source));
 
   @override
   List<Object> get props => [

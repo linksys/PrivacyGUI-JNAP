@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import '../jsonable.dart';
 
-class WirelessConnection extends Jsonable {
+class WirelessConnectionData extends Jsonable {
   final String bssid;
   final bool isGuest;
   final String? radioID;
@@ -12,7 +12,7 @@ class WirelessConnection extends Jsonable {
   final int? rxRate;
   final bool? isMLOCapable;
 
-  const WirelessConnection({
+  const WirelessConnectionData({
     required this.bssid,
     required this.isGuest,
     this.radioID,
@@ -24,7 +24,7 @@ class WirelessConnection extends Jsonable {
   });
 
   @override
-  WirelessConnection copyWith({
+  WirelessConnectionData copyWith({
     String? bssid,
     bool? isGuest,
     String? radioID,
@@ -34,7 +34,7 @@ class WirelessConnection extends Jsonable {
     int? rxRate,
     bool? isMLOCapable,
   }) {
-    return WirelessConnection(
+    return WirelessConnectionData(
       bssid: bssid ?? this.bssid,
       isGuest: isGuest ?? this.isGuest,
       radioID: radioID ?? this.radioID,
@@ -60,8 +60,8 @@ class WirelessConnection extends Jsonable {
     }..removeWhere((key, value) => value == null);
   }
 
-  factory WirelessConnection.fromMap(Map<String, dynamic> map) {
-    return WirelessConnection(
+  factory WirelessConnectionData.fromMap(Map<String, dynamic> map) {
+    return WirelessConnectionData(
       bssid: map['bssid'] as String,
       isGuest: map['isGuest'] as bool,
       radioID: map['radioID'] != null ? map['radioID'] as String : null,
@@ -74,8 +74,8 @@ class WirelessConnection extends Jsonable {
     );
   }
 
-  factory WirelessConnection.fromJson(String source) =>
-      WirelessConnection.fromMap(jsonDecode(source));
+  factory WirelessConnectionData.fromJson(String source) =>
+      WirelessConnectionData.fromMap(jsonDecode(source));
 
   @override
   List<Object?> get props {

@@ -5,8 +5,8 @@ import 'package:jnap/src/models/jnap_data/layer2_connection.dart';
 import 'package:jnap/src/models/jnap_data/wirless_connection.dart';
 
 void main() {
-  group('NodeWirelessConnections', () {
-    const wirelessConnection = WirelessConnection(
+  group('NodeWirelessConnectionsData', () {
+    const wirelessConnection = WirelessConnectionData(
       bssid: '00:11:22:33:44:55',
       isGuest: false,
       radioID: 'radio1',
@@ -17,14 +17,14 @@ void main() {
       isMLOCapable: true,
     );
 
-    const nodeWirelessLayer2Connections = NodeWirelessLayer2Connections(
+    const nodeWirelessLayer2Connections = NodeWirelessLayer2ConnectionsData(
       macAddress: 'AA:BB:CC:DD:EE:FF',
       negotiatedMbps: 1000,
       timestamp: '2023-01-01T12:00:00Z',
       wireless: wirelessConnection,
     );
 
-    const nodeWirelessConnections = NodeWirelessConnections(
+    const nodeWirelessConnections = NodeWirelessConnectionsData(
       deviceID: 'device123',
       connections: [nodeWirelessLayer2Connections],
     );
@@ -39,7 +39,7 @@ void main() {
     });
 
     test('fromMap creates a valid object', () {
-      expect(NodeWirelessConnections.fromMap(nodeWirelessConnectionsMap), nodeWirelessConnections);
+      expect(NodeWirelessConnectionsData.fromMap(nodeWirelessConnectionsMap), nodeWirelessConnections);
     });
 
     test('toJson returns a valid JSON string', () {
@@ -47,7 +47,7 @@ void main() {
     });
 
     test('fromJson creates a valid object from JSON string', () {
-      expect(NodeWirelessConnections.fromJson(json.encode(nodeWirelessConnectionsMap)), nodeWirelessConnections);
+      expect(NodeWirelessConnectionsData.fromJson(json.encode(nodeWirelessConnectionsMap)), nodeWirelessConnections);
     });
 
     test('copyWith returns a new object with updated values', () {
@@ -59,9 +59,9 @@ void main() {
     });
 
     test('props are correct', () {
-      final connections1 = NodeWirelessConnections(deviceID: 'd1', connections: [nodeWirelessLayer2Connections]);
-      final connections2 = NodeWirelessConnections(deviceID: 'd1', connections: [nodeWirelessLayer2Connections]);
-      final connections3 = NodeWirelessConnections(deviceID: 'd2', connections: []);
+      final connections1 = NodeWirelessConnectionsData(deviceID: 'd1', connections: [nodeWirelessLayer2Connections]);
+      final connections2 = NodeWirelessConnectionsData(deviceID: 'd1', connections: [nodeWirelessLayer2Connections]);
+      final connections3 = NodeWirelessConnectionsData(deviceID: 'd2', connections: []);
       expect(connections1, connections2);
       expect(connections1.props, connections2.props);
       expect(connections1 == connections3, false);

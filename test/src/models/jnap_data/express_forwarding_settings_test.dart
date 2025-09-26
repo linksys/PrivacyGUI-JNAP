@@ -3,8 +3,8 @@ import 'package:test/test.dart';
 import 'package:jnap/src/models/jnap_data/express_forwarding_settings.dart';
 
 void main() {
-  group('ExpressForwardingSettings', () {
-    const expressForwardingSettings = ExpressForwardingSettings(
+  group('ExpressForwardingSettingsData', () {
+    const expressForwardingSettings = ExpressForwardingSettingsData(
       isExpressForwardingSupported: true,
       isExpressForwardingEnabled: true,
     );
@@ -19,7 +19,7 @@ void main() {
     });
 
     test('fromMap creates a valid object', () {
-      expect(ExpressForwardingSettings.fromMap(expressForwardingSettingsMap), expressForwardingSettings);
+      expect(ExpressForwardingSettingsData.fromMap(expressForwardingSettingsMap), expressForwardingSettings);
     });
 
     test('toJson returns a valid JSON string', () {
@@ -27,7 +27,7 @@ void main() {
     });
 
     test('fromJson creates a valid object from JSON string', () {
-      expect(ExpressForwardingSettings.fromJson(json.encode(expressForwardingSettingsMap)), expressForwardingSettings);
+      expect(ExpressForwardingSettingsData.fromJson(json.encode(expressForwardingSettingsMap)), expressForwardingSettings);
     });
 
     test('copyWith returns a new object with updated values', () {
@@ -43,9 +43,9 @@ void main() {
     });
 
     test('props are correct', () {
-      final settings1 = ExpressForwardingSettings(isExpressForwardingSupported: true, isExpressForwardingEnabled: true);
-      final settings2 = ExpressForwardingSettings(isExpressForwardingSupported: true, isExpressForwardingEnabled: true);
-      final settings3 = ExpressForwardingSettings(isExpressForwardingSupported: false, isExpressForwardingEnabled: false);
+      final settings1 = ExpressForwardingSettingsData(isExpressForwardingSupported: true, isExpressForwardingEnabled: true);
+      final settings2 = ExpressForwardingSettingsData(isExpressForwardingSupported: true, isExpressForwardingEnabled: true);
+      final settings3 = ExpressForwardingSettingsData(isExpressForwardingSupported: false, isExpressForwardingEnabled: false);
 
       expect(settings1, settings2);
       expect(settings1.props, settings2.props);

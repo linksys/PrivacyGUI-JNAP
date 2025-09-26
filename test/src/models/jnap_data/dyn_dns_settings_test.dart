@@ -3,8 +3,8 @@ import 'package:test/test.dart';
 import 'package:jnap/src/models/jnap_data/dyn_dns_settings.dart';
 
 void main() {
-  group('DynDNSMailExchangeSettings', () {
-    const mailExchangeSettings = DynDNSMailExchangeSettings(
+  group('DynDNSMailExchangeSettingsData', () {
+    const mailExchangeSettings = DynDNSMailExchangeSettingsData(
       hostName: 'mail.example.com',
       isBackup: true,
     );
@@ -19,7 +19,7 @@ void main() {
     });
 
     test('fromMap creates a valid object', () {
-      expect(DynDNSMailExchangeSettings.fromMap(mailExchangeSettingsMap), mailExchangeSettings);
+      expect(DynDNSMailExchangeSettingsData.fromMap(mailExchangeSettingsMap), mailExchangeSettings);
     });
 
     test('toJson returns a valid JSON string', () {
@@ -27,7 +27,7 @@ void main() {
     });
 
     test('fromJson creates a valid object from JSON string', () {
-      expect(DynDNSMailExchangeSettings.fromJson(json.encode(mailExchangeSettingsMap)), mailExchangeSettings);
+      expect(DynDNSMailExchangeSettingsData.fromJson(json.encode(mailExchangeSettingsMap)), mailExchangeSettings);
     });
 
     test('copyWith returns a new object with updated values', () {
@@ -39,9 +39,9 @@ void main() {
     });
 
     test('props are correct', () {
-      final settings1 = DynDNSMailExchangeSettings(hostName: 'host1', isBackup: true);
-      final settings2 = DynDNSMailExchangeSettings(hostName: 'host1', isBackup: true);
-      final settings3 = DynDNSMailExchangeSettings(hostName: 'host2', isBackup: false);
+      final settings1 = DynDNSMailExchangeSettingsData(hostName: 'host1', isBackup: true);
+      final settings2 = DynDNSMailExchangeSettingsData(hostName: 'host1', isBackup: true);
+      final settings3 = DynDNSMailExchangeSettingsData(hostName: 'host2', isBackup: false);
       expect(settings1, settings2);
       expect(settings1.props, settings2.props);
       expect(settings1 == settings3, false);
@@ -49,13 +49,13 @@ void main() {
     });
   });
 
-  group('DynDNSSettings', () {
-    const mailExchangeSettings = DynDNSMailExchangeSettings(
+  group('DynDNSSettingsData', () {
+    const mailExchangeSettings = DynDNSMailExchangeSettingsData(
       hostName: 'mail.example.com',
       isBackup: true,
     );
 
-    const dynDNSSettings = DynDNSSettings(
+    const dynDNSSettings = DynDNSSettingsData(
       username: 'user123',
       password: 'pass123',
       hostName: 'myhost.dyndns.org',
@@ -80,7 +80,7 @@ void main() {
     });
 
     test('fromMap creates a valid object', () {
-      expect(DynDNSSettings.fromMap(dynDNSSettingsMap), dynDNSSettings);
+      expect(DynDNSSettingsData.fromMap(dynDNSSettingsMap), dynDNSSettings);
     });
 
     test('toJson returns a valid JSON string', () {
@@ -88,7 +88,7 @@ void main() {
     });
 
     test('fromJson creates a valid object from JSON string', () {
-      expect(DynDNSSettings.fromJson(json.encode(dynDNSSettingsMap)), dynDNSSettings);
+      expect(DynDNSSettingsData.fromJson(json.encode(dynDNSSettingsMap)), dynDNSSettings);
     });
 
     test('copyWith returns a new object with updated values', () {
@@ -104,7 +104,7 @@ void main() {
     });
 
     test('props are correct', () {
-      final settings1 = DynDNSSettings(
+      final settings1 = DynDNSSettingsData(
         username: 'user1',
         password: 'pass1',
         hostName: 'host1',
@@ -113,7 +113,7 @@ void main() {
         isMailExchangeEnabled: true,
         mailExchangeSettings: mailExchangeSettings,
       );
-      final settings2 = DynDNSSettings(
+      final settings2 = DynDNSSettingsData(
         username: 'user1',
         password: 'pass1',
         hostName: 'host1',
@@ -122,7 +122,7 @@ void main() {
         isMailExchangeEnabled: true,
         mailExchangeSettings: mailExchangeSettings,
       );
-      final settings3 = DynDNSSettings(
+      final settings3 = DynDNSSettingsData(
         username: 'user2',
         password: 'pass2',
         hostName: 'host2',

@@ -51,12 +51,12 @@ class PortRange extends Jsonable {
       PortRange.fromMap(jsonDecode(source));
 }
 
-class IPv6FirewallRule extends Jsonable {
+class IPv6FirewallRuleData extends Jsonable {
   final String description;
   final String ipv6Address;
   final bool isEnabled;
   final List<PortRange> portRanges;
-  const IPv6FirewallRule({
+  const IPv6FirewallRuleData({
     required this.description,
     required this.ipv6Address,
     required this.isEnabled,
@@ -64,13 +64,13 @@ class IPv6FirewallRule extends Jsonable {
   });
 
   @override
-  IPv6FirewallRule copyWith({
+  IPv6FirewallRuleData copyWith({
     String? description,
     String? ipv6Address,
     bool? isEnabled,
     List<PortRange>? portRanges,
   }) {
-    return IPv6FirewallRule(
+    return IPv6FirewallRuleData(
       description: description ?? this.description,
       ipv6Address: ipv6Address ?? this.ipv6Address,
       isEnabled: isEnabled ?? this.isEnabled,
@@ -88,8 +88,8 @@ class IPv6FirewallRule extends Jsonable {
     };
   }
 
-  factory IPv6FirewallRule.fromMap(Map<String, dynamic> map) {
-    return IPv6FirewallRule(
+  factory IPv6FirewallRuleData.fromMap(Map<String, dynamic> map) {
+    return IPv6FirewallRuleData(
       description: map['description'] as String,
       ipv6Address: map['ipv6Address'] as String,
       isEnabled: map['isEnabled'] as bool,
@@ -104,6 +104,6 @@ class IPv6FirewallRule extends Jsonable {
   @override
   List<Object> get props => [description, ipv6Address, isEnabled, portRanges];
 
-  factory IPv6FirewallRule.fromJson(String source) =>
-      IPv6FirewallRule.fromMap(jsonDecode(source));
+  factory IPv6FirewallRuleData.fromJson(String source) =>
+      IPv6FirewallRuleData.fromMap(jsonDecode(source));
 }

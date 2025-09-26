@@ -4,7 +4,7 @@ import 'package:jnap/src/models/jnap_data/firmware_update_status.dart';
 import 'package:jnap/src/models/jnap_data/firmware_update_status_nodes.dart';
 
 void main() {
-  group('NodesFirmwareUpdateStatus', () {
+  group('NodesFirmwareUpdateStatusData', () {
     const firmwareUpdateData = FirmwareUpdateData(
       firmwareVersion: '1.0.0',
       firmwareDate: '2023-01-01',
@@ -16,7 +16,7 @@ void main() {
       progressPercent: 50,
     );
 
-    const nodesFirmwareUpdateStatus = NodesFirmwareUpdateStatus(
+    const nodesFirmwareUpdateStatus = NodesFirmwareUpdateStatusData(
       deviceUUID: 'node123',
       lastSuccessfulCheckTime: '2023-01-01T10:00:00Z',
       availableUpdate: firmwareUpdateData,
@@ -37,7 +37,7 @@ void main() {
     });
 
     test('fromMap creates a valid object', () {
-      expect(NodesFirmwareUpdateStatus.fromMap(nodesFirmwareUpdateStatusMap), nodesFirmwareUpdateStatus);
+      expect(NodesFirmwareUpdateStatusData.fromMap(nodesFirmwareUpdateStatusMap), nodesFirmwareUpdateStatus);
     });
 
     test('toJson returns a valid JSON string', () {
@@ -45,7 +45,7 @@ void main() {
     });
 
     test('fromJson creates a valid object from JSON string', () {
-      expect(NodesFirmwareUpdateStatus.fromJson(json.encode(nodesFirmwareUpdateStatusMap)), nodesFirmwareUpdateStatus);
+      expect(NodesFirmwareUpdateStatusData.fromJson(json.encode(nodesFirmwareUpdateStatusMap)), nodesFirmwareUpdateStatus);
     });
 
     test('copyWith returns a new object with updated values', () {
@@ -59,15 +59,15 @@ void main() {
     });
 
     test('props are correct', () {
-      final status1 = NodesFirmwareUpdateStatus(
+      final status1 = NodesFirmwareUpdateStatusData(
         deviceUUID: 'node1',
         lastSuccessfulCheckTime: 'time1',
       );
-      final status2 = NodesFirmwareUpdateStatus(
+      final status2 = NodesFirmwareUpdateStatusData(
         deviceUUID: 'node1',
         lastSuccessfulCheckTime: 'time1',
       );
-      final status3 = NodesFirmwareUpdateStatus(
+      final status3 = NodesFirmwareUpdateStatusData(
         deviceUUID: 'node2',
         lastSuccessfulCheckTime: 'time2',
       );

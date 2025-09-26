@@ -1,3 +1,22 @@
+## [1.0.13] - 2025-09-12
+
+### Changed
+- **JNAP Data Models**: Refactored all JNAP data model classes to include a `Data` suffix (e.g., `WirelessConnection` is now `WirelessConnectionData`). This improves clarity and consistency by explicitly identifying these classes as data containers.
+
+## [1.0.12] - 2025-09-12
+
+### Added
+- **Device Manager**: Introduced a new module for network device management, including `DeviceManagerNotifier` and `DeviceManagerState` to build and maintain the state of all network devices based on polling results.
+- **Device Manager Tests**: Added unit tests for the new `DeviceManager` services (`BackhaulInfoService`, `DevicesService`, `NetworkConnectionsService`, `RadioInfoService`, `WANStatusService`) to ensure data is correctly fetched and parsed from the cache.
+
+### Changed
+- **Device Manager**: Refactored the initial `DeviceManagerService` into five smaller, more focused services to improve modularity and separation of concerns. Introduced a `BaseService` to provide common cache-fetching functionality.
+
+## [1.0.11] - 2025-09-05
+
+### Added
+- Internet Connection: Introduced `InternetConnectionService` and `InternetConnectionNotifier` provider with `isInternetConnected` state and `check()` to schedule connectivity checks.
+- Tests: Added unit tests for `InternetConnectionService` and `InternetConnectionProvider` to validate stream handling, parameter forwarding, and state updates on success/error.
 
 ## [1.0.10] - 2025-09-05
 

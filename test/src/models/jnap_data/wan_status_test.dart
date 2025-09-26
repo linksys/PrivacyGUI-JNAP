@@ -234,7 +234,7 @@ void main() {
       wanIPv6Type: 'Automatic',
     );
 
-    const routerWANStatus = RouterWANStatus(
+    const routerWANStatus = RouterWANStatusData(
       macAddress: '00:11:22:33:44:55',
       detectedWANType: 'DHCP',
       wanStatus: 'Connected',
@@ -263,7 +263,7 @@ void main() {
     });
 
     test('fromMap creates a valid object', () {
-      expect(RouterWANStatus.fromMap(routerWANStatusMap), routerWANStatus);
+      expect(RouterWANStatusData.fromMap(routerWANStatusMap), routerWANStatus);
     });
 
     test('toJson returns a valid JSON string', () {
@@ -271,7 +271,7 @@ void main() {
     });
 
     test('fromJson creates a valid object from JSON string', () {
-      expect(RouterWANStatus.fromJson(json.encode(routerWANStatusMap)), routerWANStatus);
+      expect(RouterWANStatusData.fromJson(json.encode(routerWANStatusMap)), routerWANStatus);
     });
 
     test('copyWith returns a new object with updated values', () {
@@ -283,7 +283,7 @@ void main() {
     });
 
     test('props are correct', () {
-      final rws1 = RouterWANStatus(
+      final rws1 = RouterWANStatusData(
         macAddress: 'm1',
         detectedWANType: 'd1',
         wanStatus: 's1',
@@ -292,7 +292,7 @@ void main() {
         supportedIPv6WANTypes: ['it1'],
         supportedWANCombinations: [supportedWANCombination],
       );
-      final rws2 = RouterWANStatus(
+      final rws2 = RouterWANStatusData(
         macAddress: 'm1',
         detectedWANType: 'd1',
         wanStatus: 's1',
@@ -301,7 +301,7 @@ void main() {
         supportedIPv6WANTypes: ['it1'],
         supportedWANCombinations: [supportedWANCombination],
       );
-      final rws3 = RouterWANStatus(
+      final rws3 = RouterWANStatusData(
         macAddress: 'm2',
         detectedWANType: 'd2',
         wanStatus: 's2',

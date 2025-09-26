@@ -21,7 +21,7 @@ class PollingService {
         _pollingTransactions = pollingTransactions;
 
   Map<JNAPAction, JNAPSuccess>? fetchCacheData() {
-    final cache = _ref.read(cacheManagerProvider).fetchCacheData();
+    final cache = _ref.read(pollingCacheManagerProvider).fetchCacheData();
     final commands = pollingTransactions;
     final checkCacheDataList =
         commands.where((command) => cache.keys.contains(command.key.command));
@@ -39,7 +39,7 @@ class PollingService {
   Future<JNAPTransactionSuccessWrap> doPolling({bool force = false}) async {
     return await _jnap.transaction(
       transactionBuilder:
-          JNAPTransactionBuilder(commands: pollingTransactions, auth: true),
+          JNAPTransactionBuilder(commands: pollingTransactions),
       overrides: JNAPConfigOverrides(forceRemote: force),
     );
   }

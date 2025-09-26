@@ -141,8 +141,6 @@ class Jnap {
     int maxRetry = 10,
     int firstDelayInMilliSec = 3000,
     bool Function(JNAPResult)? condition,
-    int? requestTimeoutOverride,
-    bool auth = false,
     void Function(JNAPResult? result, Object? error)? onComplete,
     HttpClient? httpClient,
   }) {

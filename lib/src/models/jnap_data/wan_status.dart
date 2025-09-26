@@ -4,7 +4,7 @@ import 'dart:convert';
 
 import '../jsonable.dart';
 
-class RouterWANStatus extends Jsonable {
+class RouterWANStatusData extends Jsonable {
   final String macAddress;
   final String detectedWANType;
   final String wanStatus;
@@ -15,7 +15,7 @@ class RouterWANStatus extends Jsonable {
   final List<String> supportedIPv6WANTypes;
   final List<SupportedWANCombination> supportedWANCombinations;
 
-  const RouterWANStatus({
+  const RouterWANStatusData({
     required this.macAddress,
     required this.detectedWANType,
     required this.wanStatus,
@@ -28,7 +28,7 @@ class RouterWANStatus extends Jsonable {
   });
 
   @override
-  RouterWANStatus copyWith({
+  RouterWANStatusData copyWith({
     String? macAddress,
     String? detectedWANType,
     String? wanStatus,
@@ -39,7 +39,7 @@ class RouterWANStatus extends Jsonable {
     List<String>? supportedIPv6WANTypes,
     List<SupportedWANCombination>? supportedWANCombinations,
   }) {
-    return RouterWANStatus(
+    return RouterWANStatusData(
       macAddress: macAddress ?? this.macAddress,
       detectedWANType: detectedWANType ?? this.detectedWANType,
       wanStatus: wanStatus ?? this.wanStatus,
@@ -70,8 +70,8 @@ class RouterWANStatus extends Jsonable {
     }..removeWhere((key, value) => value == null);
   }
 
-  factory RouterWANStatus.fromMap(Map<String, dynamic> json) {
-    return RouterWANStatus(
+  factory RouterWANStatusData.fromMap(Map<String, dynamic> json) {
+    return RouterWANStatusData(
       macAddress: json['macAddress'],
       detectedWANType: json['detectedWANType'],
       wanStatus: json['wanStatus'],
@@ -107,8 +107,8 @@ class RouterWANStatus extends Jsonable {
         supportedWANCombinations,
       ];
 
-  factory RouterWANStatus.fromJson(String source) =>
-      RouterWANStatus.fromMap(jsonDecode(source));
+  factory RouterWANStatusData.fromJson(String source) =>
+      RouterWANStatusData.fromMap(jsonDecode(source));
 }
 
 class WANConnectionInfo extends Jsonable {

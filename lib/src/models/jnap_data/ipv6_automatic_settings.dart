@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import 'package:jnap/src/models/jsonable.dart';
 
-class IPv6AutomaticSettings extends Jsonable {
+class IPv6AutomaticSettingsData extends Jsonable {
   final bool isIPv6AutomaticEnabled;
   final String? ipv6rdTunnelMode;
   final IPv6rdTunnelSettings? ipv6rdTunnelSettings;
@@ -14,18 +14,18 @@ class IPv6AutomaticSettings extends Jsonable {
         ipv6rdTunnelSettings,
       ];
 
-  const IPv6AutomaticSettings({
+  const IPv6AutomaticSettingsData({
     required this.isIPv6AutomaticEnabled,
     this.ipv6rdTunnelMode,
     this.ipv6rdTunnelSettings,
   });
 
-  IPv6AutomaticSettings copyWith({
+  IPv6AutomaticSettingsData copyWith({
     bool? isIPv6AutomaticEnabled,
     String? ipv6rdTunnelMode,
     IPv6rdTunnelSettings? ipv6rdTunnelSettings,
   }) {
-    return IPv6AutomaticSettings(
+    return IPv6AutomaticSettingsData(
       isIPv6AutomaticEnabled:
           isIPv6AutomaticEnabled ?? this.isIPv6AutomaticEnabled,
       ipv6rdTunnelMode: ipv6rdTunnelMode ?? this.ipv6rdTunnelMode,
@@ -42,8 +42,8 @@ class IPv6AutomaticSettings extends Jsonable {
     }..removeWhere((key, value) => value == null);
   }
 
-  factory IPv6AutomaticSettings.fromMap(Map<String, dynamic> map) {
-    return IPv6AutomaticSettings(
+  factory IPv6AutomaticSettingsData.fromMap(Map<String, dynamic> map) {
+    return IPv6AutomaticSettingsData(
       isIPv6AutomaticEnabled: map['isIPv6AutomaticEnabled'] as bool,
       ipv6rdTunnelMode: map['ipv6rdTunnelMode'] as String?,
       ipv6rdTunnelSettings: map['ipv6rdTunnelSettings'] == null
@@ -54,8 +54,8 @@ class IPv6AutomaticSettings extends Jsonable {
     );
   }
 
-  factory IPv6AutomaticSettings.fromJson(String json) =>
-      IPv6AutomaticSettings.fromMap(jsonDecode(json) as Map<String, dynamic>);
+  factory IPv6AutomaticSettingsData.fromJson(String json) =>
+      IPv6AutomaticSettingsData.fromMap(jsonDecode(json) as Map<String, dynamic>);
 }
 
 class IPv6rdTunnelSettings extends Jsonable {

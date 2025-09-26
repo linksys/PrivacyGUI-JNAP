@@ -2,8 +2,8 @@ import 'dart:convert';
 
 import 'package:jnap/src/models/jsonable.dart';
 
-class NodeDeviceInfo extends Jsonable {
-  const NodeDeviceInfo({
+class NodeDeviceInfoData extends Jsonable {
+  const NodeDeviceInfoData({
     required this.modelNumber,
     required this.firmwareVersion,
     required this.description,
@@ -14,8 +14,8 @@ class NodeDeviceInfo extends Jsonable {
     required this.services,
   });
 
-  factory NodeDeviceInfo.fromMap(Map<String, dynamic> map) {
-    return NodeDeviceInfo(
+  factory NodeDeviceInfoData.fromMap(Map<String, dynamic> map) {
+    return NodeDeviceInfoData(
       modelNumber: map['modelNumber'],
       firmwareVersion: map['firmwareVersion'],
       description: map['description'],
@@ -27,8 +27,8 @@ class NodeDeviceInfo extends Jsonable {
     );
   }
 
-  factory NodeDeviceInfo.fromJson(String source) =>
-      NodeDeviceInfo.fromMap(jsonDecode(source));
+  factory NodeDeviceInfoData.fromJson(String source) =>
+      NodeDeviceInfoData.fromMap(jsonDecode(source));
 
   final String modelNumber;
   final String firmwareVersion;
@@ -54,7 +54,7 @@ class NodeDeviceInfo extends Jsonable {
   }
 
   @override
-  NodeDeviceInfo copyWith({
+  NodeDeviceInfoData copyWith({
     String? modelNumber,
     String? firmwareVersion,
     String? description,
@@ -64,7 +64,7 @@ class NodeDeviceInfo extends Jsonable {
     String? hardwareVersion,
     List<String>? services,
   }) {
-    return NodeDeviceInfo(
+    return NodeDeviceInfoData(
       modelNumber: modelNumber ?? this.modelNumber,
       firmwareVersion: firmwareVersion ?? this.firmwareVersion,
       description: description ?? this.description,

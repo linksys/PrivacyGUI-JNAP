@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import '../jsonable.dart';
 
-class HealthCheckResult extends Jsonable {
+class HealthCheckResultData extends Jsonable {
   final int resultID;
   final String timestamp;
   final List<String> healthCheckModulesRequested;
@@ -11,7 +11,7 @@ class HealthCheckResult extends Jsonable {
   // final ErResult? channelAnalyzerResult;
   // final ErResult? deviceScannerResult;
 
-  const HealthCheckResult({
+  const HealthCheckResultData({
     required this.resultID,
     required this.timestamp,
     required this.healthCheckModulesRequested,
@@ -27,13 +27,13 @@ class HealthCheckResult extends Jsonable {
       ];
 
   @override
-  HealthCheckResult copyWith({
+  HealthCheckResultData copyWith({
     int? resultID,
     String? timestamp,
     List<String>? healthCheckModulesRequested,
     SpeedTestResult? speedTestResult,
   }) {
-    return HealthCheckResult(
+    return HealthCheckResultData(
       resultID: resultID ?? this.resultID,
       timestamp: timestamp ?? this.timestamp,
       healthCheckModulesRequested:
@@ -52,8 +52,8 @@ class HealthCheckResult extends Jsonable {
     }..removeWhere((key, value) => value == null);
   }
 
-  factory HealthCheckResult.fromMap(Map<String, dynamic> map) {
-    return HealthCheckResult(
+  factory HealthCheckResultData.fromMap(Map<String, dynamic> map) {
+    return HealthCheckResultData(
       resultID: map['resultID'],
       timestamp: map['timestamp'],
       healthCheckModulesRequested:
@@ -64,8 +64,8 @@ class HealthCheckResult extends Jsonable {
     );
   }
 
-  factory HealthCheckResult.fromJson(String source) =>
-      HealthCheckResult.fromMap(jsonDecode(source));
+  factory HealthCheckResultData.fromJson(String source) =>
+      HealthCheckResultData.fromMap(jsonDecode(source));
 }
 
 class SpeedTestResult extends Jsonable {

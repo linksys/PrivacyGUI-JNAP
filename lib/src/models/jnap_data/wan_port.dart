@@ -4,17 +4,17 @@ import 'dart:convert';
 
 import '../jsonable.dart';
 
-class WANPort extends Jsonable {
+class WANPortData extends Jsonable {
   final int portId;
-  const WANPort({
+  const WANPortData({
     required this.portId,
   });
 
   @override
-  WANPort copyWith({
+  WANPortData copyWith({
     int? portId,
   }) {
-    return WANPort(
+    return WANPortData(
       portId: portId ?? this.portId,
     );
   }
@@ -26,13 +26,13 @@ class WANPort extends Jsonable {
     }..removeWhere((key, value) => value == null);
   }
 
-  factory WANPort.fromMap(Map<String, dynamic> map) {
-    return WANPort(
+  factory WANPortData.fromMap(Map<String, dynamic> map) {
+    return WANPortData(
       portId: map['portId'] as int,
     );
   }
 
-  factory WANPort.fromJson(String source) => WANPort.fromMap(jsonDecode(source));
+  factory WANPortData.fromJson(String source) => WANPortData.fromMap(jsonDecode(source));
 
   @override
   List<Object?> get props => [portId];

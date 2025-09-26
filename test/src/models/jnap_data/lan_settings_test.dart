@@ -133,7 +133,7 @@ void main() {
     });
   });
 
-  group('RouterLANSettings', () {
+  group('RouterLANSettingsData', () {
     const dhcpReservation = DHCPReservation(
       macAddress: '00:11:22:33:44:55',
       ipAddress: '192.168.1.100',
@@ -147,7 +147,7 @@ void main() {
       firstClientIPAddress: '192.168.1.10',
     );
 
-    const routerLANSettings = RouterLANSettings(
+    const routerLANSettings = RouterLANSettingsData(
       minNetworkPrefixLength: 16,
       maxNetworkPrefixLength: 30,
       minAllowedDHCPLeaseMinutes: 1,
@@ -178,7 +178,7 @@ void main() {
     });
 
     test('fromMap creates a valid object', () {
-      expect(RouterLANSettings.fromMap(routerLANSettingsMap), routerLANSettings);
+      expect(RouterLANSettingsData.fromMap(routerLANSettingsMap), routerLANSettings);
     });
 
     test('toJson returns a valid JSON string', () {
@@ -186,7 +186,7 @@ void main() {
     });
 
     test('fromJson creates a valid object from JSON string', () {
-      expect(RouterLANSettings.fromJson(json.encode(routerLANSettingsMap)), routerLANSettings);
+      expect(RouterLANSettingsData.fromJson(json.encode(routerLANSettingsMap)), routerLANSettings);
     });
 
     test('copyWith returns a new object with updated values', () {
@@ -200,7 +200,7 @@ void main() {
     });
 
     test('props are correct', () {
-      final settings1 = RouterLANSettings(
+      final settings1 = RouterLANSettingsData(
         minNetworkPrefixLength: 1,
         maxNetworkPrefixLength: 2,
         minAllowedDHCPLeaseMinutes: 3,
@@ -211,7 +211,7 @@ void main() {
         networkPrefixLength: 5,
         ipAddress: 'i1',
       );
-      final settings2 = RouterLANSettings(
+      final settings2 = RouterLANSettingsData(
         minNetworkPrefixLength: 1,
         maxNetworkPrefixLength: 2,
         minAllowedDHCPLeaseMinutes: 3,
@@ -222,7 +222,7 @@ void main() {
         networkPrefixLength: 5,
         ipAddress: 'i1',
       );
-      final settings3 = RouterLANSettings(
+      final settings3 = RouterLANSettingsData(
         minNetworkPrefixLength: 6,
         maxNetworkPrefixLength: 7,
         minAllowedDHCPLeaseMinutes: 8,

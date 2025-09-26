@@ -3,8 +3,8 @@ import 'package:test/test.dart';
 import 'package:jnap/src/models/jnap_data/ethernet_port_connections.dart';
 
 void main() {
-  group('RouterEthernetPortConnections', () {
-    const routerEthernetPortConnections = RouterEthernetPortConnections(
+  group('RouterEthernetPortConnectionsData', () {
+    const routerEthernetPortConnections = RouterEthernetPortConnectionsData(
       wanPortConnection: 'WAN_Port_1',
       lanPortConnections: ['LAN_Port_1', 'LAN_Port_2'],
     );
@@ -19,7 +19,7 @@ void main() {
     });
 
     test('fromMap creates a valid object', () {
-      expect(RouterEthernetPortConnections.fromMap(routerEthernetPortConnectionsMap), routerEthernetPortConnections);
+      expect(RouterEthernetPortConnectionsData.fromMap(routerEthernetPortConnectionsMap), routerEthernetPortConnections);
     });
 
     test('toJson returns a valid JSON string', () {
@@ -27,7 +27,7 @@ void main() {
     });
 
     test('fromJson creates a valid object from JSON string', () {
-      expect(RouterEthernetPortConnections.fromJson(json.encode(routerEthernetPortConnectionsMap)), routerEthernetPortConnections);
+      expect(RouterEthernetPortConnectionsData.fromJson(json.encode(routerEthernetPortConnectionsMap)), routerEthernetPortConnections);
     });
 
     test('copyWith returns a new object with updated values', () {
@@ -40,15 +40,15 @@ void main() {
     });
 
     test('props are correct', () {
-      final connections1 = RouterEthernetPortConnections(
+      final connections1 = RouterEthernetPortConnectionsData(
         wanPortConnection: 'wan1',
         lanPortConnections: ['lan1', 'lan2'],
       );
-      final connections2 = RouterEthernetPortConnections(
+      final connections2 = RouterEthernetPortConnectionsData(
         wanPortConnection: 'wan1',
         lanPortConnections: ['lan1', 'lan2'],
       );
-      final connections3 = RouterEthernetPortConnections(
+      final connections3 = RouterEthernetPortConnectionsData(
         wanPortConnection: 'wan2',
         lanPortConnections: ['lan3'],
       );

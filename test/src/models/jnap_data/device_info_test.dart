@@ -3,8 +3,8 @@ import 'package:test/test.dart';
 import 'package:jnap/src/models/jnap_data/device_info.dart';
 
 void main() {
-  group('NodeDeviceInfo', () {
-    const nodeDeviceInfo = NodeDeviceInfo(
+  group('NodeDeviceInfoData', () {
+    const nodeDeviceInfo = NodeDeviceInfoData(
       modelNumber: 'ModelX',
       firmwareVersion: '1.0.0',
       description: 'Test Device',
@@ -31,7 +31,7 @@ void main() {
     });
 
     test('fromMap creates a valid object', () {
-      expect(NodeDeviceInfo.fromMap(nodeDeviceInfoMap), nodeDeviceInfo);
+      expect(NodeDeviceInfoData.fromMap(nodeDeviceInfoMap), nodeDeviceInfo);
     });
 
     test('toJson returns a valid JSON string', () {
@@ -39,7 +39,7 @@ void main() {
     });
 
     test('fromJson creates a valid object from JSON string', () {
-      expect(NodeDeviceInfo.fromJson(json.encode(nodeDeviceInfoMap)), nodeDeviceInfo);
+      expect(NodeDeviceInfoData.fromJson(json.encode(nodeDeviceInfoMap)), nodeDeviceInfo);
     });
 
     test('copyWith returns a new object with updated values', () {
@@ -53,7 +53,7 @@ void main() {
     });
 
     test('props are correct', () {
-      final info1 = NodeDeviceInfo(
+      final info1 = NodeDeviceInfoData(
         modelNumber: 'ModelX',
         firmwareVersion: '1.0.0',
         description: 'Test Device',
@@ -63,7 +63,7 @@ void main() {
         hardwareVersion: 'HW1.0',
         services: ['ServiceA', 'ServiceB'],
       );
-      final info2 = NodeDeviceInfo(
+      final info2 = NodeDeviceInfoData(
         modelNumber: 'ModelX',
         firmwareVersion: '1.0.0',
         description: 'Test Device',
@@ -73,7 +73,7 @@ void main() {
         hardwareVersion: 'HW1.0',
         services: ['ServiceA', 'ServiceB'],
       );
-      final info3 = NodeDeviceInfo(
+      final info3 = NodeDeviceInfoData(
         modelNumber: 'ModelZ',
         firmwareVersion: '2.0.0',
         description: 'Another Device',

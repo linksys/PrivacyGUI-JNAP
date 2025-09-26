@@ -9,7 +9,7 @@ enum NodeLightStatus {
   off,
   night;
 
-  static NodeLightStatus getStatus(NodeLightSettings? settings) {
+  static NodeLightStatus getStatus(NodeLightSettingsData? settings) {
     if (settings == null) {
       return NodeLightStatus.off;
     }
@@ -24,43 +24,43 @@ enum NodeLightStatus {
   }
 }
 
-class NodeLightSettings extends Jsonable {
+class NodeLightSettingsData extends Jsonable {
   final bool isNightModeEnable;
   final int? startHour;
   final int? endHour;
   final bool? allDayOff;
-  const NodeLightSettings({
+  const NodeLightSettingsData({
     required this.isNightModeEnable,
     this.startHour,
     this.endHour,
     this.allDayOff,
   });
 
-  factory NodeLightSettings.fromStatus(NodeLightStatus status) =>
+  factory NodeLightSettingsData.fromStatus(NodeLightStatus status) =>
       switch (status) {
-        NodeLightStatus.on => NodeLightSettings.on(),
-        NodeLightStatus.off => NodeLightSettings.off(),
-        NodeLightStatus.night => NodeLightSettings.night(),
+        NodeLightStatus.on => NodeLightSettingsData.on(),
+        NodeLightStatus.off => NodeLightSettingsData.off(),
+        NodeLightStatus.night => NodeLightSettingsData.night(),
       };
-  factory NodeLightSettings.on() => NodeLightSettings(
+  factory NodeLightSettingsData.on() => NodeLightSettingsData(
         isNightModeEnable: false,
       );
-  factory NodeLightSettings.off() =>
-      NodeLightSettings(isNightModeEnable: true, startHour: 0, endHour: 24);
-  factory NodeLightSettings.night() =>
-      NodeLightSettings(isNightModeEnable: true, startHour: 20, endHour: 8);
+  factory NodeLightSettingsData.off() =>
+      NodeLightSettingsData(isNightModeEnable: true, startHour: 0, endHour: 24);
+  factory NodeLightSettingsData.night() =>
+      NodeLightSettingsData(isNightModeEnable: true, startHour: 20, endHour: 8);
 
   @override
   List<Object?> get props => [isNightModeEnable, startHour, endHour, allDayOff];
 
   @override
-  NodeLightSettings copyWith({
+  NodeLightSettingsData copyWith({
     bool? isNightModeEnable,
     int? startHour,
     int? endHour,
     bool? allDayOff,
   }) {
-    return NodeLightSettings(
+    return NodeLightSettingsData(
       isNightModeEnable: isNightModeEnable ?? this.isNightModeEnable,
       startHour: startHour ?? this.startHour,
       endHour: endHour ?? this.endHour,
@@ -78,8 +78,8 @@ class NodeLightSettings extends Jsonable {
     }..removeWhere((key, value) => value == null);
   }
 
-  factory NodeLightSettings.fromMap(Map<String, dynamic> map) {
-    return NodeLightSettings(
+  factory NodeLightSettingsData.fromMap(Map<String, dynamic> map) {
+    return NodeLightSettingsData(
       isNightModeEnable: map['Enable'] as bool,
       startHour:
           map['StartingTime'] != null ? map['StartingTime'] as int : null,
@@ -88,6 +88,6 @@ class NodeLightSettings extends Jsonable {
     );
   }
 
-  factory NodeLightSettings.fromJson(String source) =>
-      NodeLightSettings.fromMap(jsonDecode(source));
+  factory NodeLightSettingsData.fromJson(String source) =>
+      NodeLightSettingsData.fromMap(jsonDecode(source));
 }

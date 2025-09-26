@@ -4,23 +4,23 @@ import 'dart:convert';
 
 import 'package:jnap/src/models/jsonable.dart';
 
-class PowerTableSettings extends Jsonable {
+class PowerTableSettingsData extends Jsonable {
   final bool isPowerTableSelectable;
   final List<String> supportedCountries;
   final String? country;
-  const PowerTableSettings({
+  const PowerTableSettingsData({
     required this.isPowerTableSelectable,
     required this.supportedCountries,
     this.country,
   });
 
   @override
-  PowerTableSettings copyWith({
+  PowerTableSettingsData copyWith({
     bool? isPowerTableSelectable,
     List<String>? supportedCountries,
     String? country,
   }) {
-    return PowerTableSettings(
+    return PowerTableSettingsData(
       isPowerTableSelectable:
           isPowerTableSelectable ?? this.isPowerTableSelectable,
       supportedCountries: supportedCountries ?? this.supportedCountries,
@@ -38,8 +38,8 @@ class PowerTableSettings extends Jsonable {
   }
 
   @override
-  factory PowerTableSettings.fromMap(Map<String, dynamic> map) {
-    return PowerTableSettings(
+  factory PowerTableSettingsData.fromMap(Map<String, dynamic> map) {
+    return PowerTableSettingsData(
       isPowerTableSelectable: map['isPowerTableSelectable'] as bool,
       supportedCountries: List<String>.from(map['supportedCountries']),
       country: map['country'] != null ? map['country'] as String : null,
@@ -50,6 +50,6 @@ class PowerTableSettings extends Jsonable {
   List<Object?> get props =>
       [isPowerTableSelectable, supportedCountries, country];
 
-  factory PowerTableSettings.fromJson(String source) =>
-      PowerTableSettings.fromMap(jsonDecode(source));
+  factory PowerTableSettingsData.fromJson(String source) =>
+      PowerTableSettingsData.fromMap(jsonDecode(source));
 }

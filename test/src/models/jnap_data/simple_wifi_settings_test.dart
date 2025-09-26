@@ -3,8 +3,8 @@ import 'package:test/test.dart';
 import 'package:jnap/src/models/jnap_data/simple_wifi_settings.dart';
 
 void main() {
-  group('SimpleWiFiSettings', () {
-    const simpleWiFiSettings = SimpleWiFiSettings(
+  group('SimpleWiFiSettingsData', () {
+    const simpleWiFiSettings = SimpleWiFiSettingsData(
       band: '2.4GHz',
       ssid: 'MyWiFi',
       security: 'WPA2',
@@ -23,7 +23,7 @@ void main() {
     });
 
     test('fromMap creates a valid object', () {
-      expect(SimpleWiFiSettings.fromMap(simpleWiFiSettingsMap), simpleWiFiSettings);
+      expect(SimpleWiFiSettingsData.fromMap(simpleWiFiSettingsMap), simpleWiFiSettings);
     });
 
     test('toJson returns a valid JSON string', () {
@@ -31,7 +31,7 @@ void main() {
     });
 
     test('fromJson creates a valid object from JSON string', () {
-      expect(SimpleWiFiSettings.fromJson(json.encode(simpleWiFiSettingsMap)), simpleWiFiSettings);
+      expect(SimpleWiFiSettingsData.fromJson(json.encode(simpleWiFiSettingsMap)), simpleWiFiSettings);
     });
 
     test('copyWith returns a new object with updated values', () {
@@ -45,9 +45,9 @@ void main() {
     });
 
     test('props are correct', () {
-      final settings1 = SimpleWiFiSettings(band: 'b1', ssid: 's1', security: 'sec1', passphrase: 'p1');
-      final settings2 = SimpleWiFiSettings(band: 'b1', ssid: 's1', security: 'sec1', passphrase: 'p1');
-      final settings3 = SimpleWiFiSettings(band: 'b2', ssid: 's2', security: 'sec2', passphrase: 'p2');
+      final settings1 = SimpleWiFiSettingsData(band: 'b1', ssid: 's1', security: 'sec1', passphrase: 'p1');
+      final settings2 = SimpleWiFiSettingsData(band: 'b1', ssid: 's1', security: 'sec1', passphrase: 'p1');
+      final settings3 = SimpleWiFiSettingsData(band: 'b2', ssid: 's2', security: 'sec2', passphrase: 'p2');
       expect(settings1, settings2);
       expect(settings1.props, settings2.props);
       expect(settings1 == settings3, false);

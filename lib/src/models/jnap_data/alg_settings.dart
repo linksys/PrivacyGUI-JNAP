@@ -4,17 +4,17 @@ import 'dart:convert';
 
 import '../jsonable.dart';
 
-class ALGSettings extends Jsonable {
+class ALGSettingsData extends Jsonable {
   final bool isSIPEnabled;
-  const ALGSettings({
+  const ALGSettingsData({
     required this.isSIPEnabled,
   });
 
   @override
-  ALGSettings copyWith({
+  ALGSettingsData copyWith({
     bool? isSIPEnabled,
   }) {
-    return ALGSettings(
+    return ALGSettingsData(
       isSIPEnabled: isSIPEnabled ?? this.isSIPEnabled,
     );
   }
@@ -26,14 +26,14 @@ class ALGSettings extends Jsonable {
     };
   }
 
-  factory ALGSettings.fromMap(Map<String, dynamic> map) {
-    return ALGSettings(
+  factory ALGSettingsData.fromMap(Map<String, dynamic> map) {
+    return ALGSettingsData(
       isSIPEnabled: map['isSIPEnabled'] as bool,
     );
   }
 
-  factory ALGSettings.fromJson(String source) =>
-      ALGSettings.fromMap(jsonDecode(source));
+  factory ALGSettingsData.fromJson(String source) =>
+      ALGSettingsData.fromMap(jsonDecode(source));
 
   @override
   List<Object> get props => [isSIPEnabled];

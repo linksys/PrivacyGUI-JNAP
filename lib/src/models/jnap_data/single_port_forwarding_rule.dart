@@ -2,15 +2,8 @@ import 'dart:convert';
 
 import 'package:jnap/src/models/jsonable.dart';
 
-/// isEnabled : true
-/// externalPort : 3074
-/// protocol : "TCP"
-/// internalServerIPAddress : "192.168.1.150"
-/// internalPort : 3074
-/// description : "XBox Live (TM)"
-
-class SinglePortForwardingRule extends Jsonable {
-  const SinglePortForwardingRule({
+class SinglePortForwardingRuleData extends Jsonable {
+  const SinglePortForwardingRuleData({
     required this.isEnabled,
     required this.externalPort,
     required this.protocol,
@@ -37,7 +30,7 @@ class SinglePortForwardingRule extends Jsonable {
       ];
 
   @override
-  SinglePortForwardingRule copyWith({
+  SinglePortForwardingRuleData copyWith({
     bool? isEnabled,
     int? externalPort,
     String? protocol,
@@ -45,7 +38,7 @@ class SinglePortForwardingRule extends Jsonable {
     int? internalPort,
     String? description,
   }) {
-    return SinglePortForwardingRule(
+    return SinglePortForwardingRuleData(
       isEnabled: isEnabled ?? this.isEnabled,
       externalPort: externalPort ?? this.externalPort,
       protocol: protocol ?? this.protocol,
@@ -69,8 +62,8 @@ class SinglePortForwardingRule extends Jsonable {
   }
 
   @override
-  factory SinglePortForwardingRule.fromMap(Map<String, dynamic> json) {
-    return SinglePortForwardingRule(
+  factory SinglePortForwardingRuleData.fromMap(Map<String, dynamic> json) {
+    return SinglePortForwardingRuleData(
       isEnabled: json['isEnabled'],
       externalPort: json['externalPort'],
       protocol: json['protocol'],
@@ -80,6 +73,6 @@ class SinglePortForwardingRule extends Jsonable {
     );
   }
 
-  factory SinglePortForwardingRule.fromJson(String source) =>
-      SinglePortForwardingRule.fromMap(jsonDecode(source));
+  factory SinglePortForwardingRuleData.fromJson(String source) =>
+      SinglePortForwardingRuleData.fromMap(jsonDecode(source));
 }

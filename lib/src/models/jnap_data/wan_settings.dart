@@ -4,19 +4,7 @@ import 'dart:convert';
 
 import '../jsonable.dart';
 
-class RouterWANSettings extends Jsonable {
-  ///
-  /// DHCP	A DHCP WAN connection.
-  /// PPPoE	A DHCP PPPoE WAN connection.
-  /// PPTP	A PPTP WAN connection.
-  /// L2TP	A L2TP WAN connection.
-  /// Telstra	A Telstra WAN connection.
-  /// Static	A static IP WAN connection.
-  /// Bridge	The router is in bridge mode.
-  /// DSLite	A DS-Lite WAN connection.
-  /// WirelessBridge	A Wireless Bridge mode connection.
-  /// WirelessRepeater	A Wireless Bridge mode connection
-  ///
+class RouterWANSettingsData extends Jsonable {
   final String wanType;
   final PPPoESettings? pppoeSettings;
   final TPSettings? tpSettings;
@@ -29,7 +17,7 @@ class RouterWANSettings extends Jsonable {
   final int mtu;
   final SinglePortVLANTaggingSettings? wanTaggingSettings;
 
-  const RouterWANSettings({
+  const RouterWANSettingsData({
     required this.wanType,
     this.pppoeSettings,
     this.tpSettings,
@@ -43,20 +31,20 @@ class RouterWANSettings extends Jsonable {
     this.wanTaggingSettings,
   });
 
-  factory RouterWANSettings.dhcp(
+  factory RouterWANSettingsData.dhcp(
       {required int mtu, SinglePortVLANTaggingSettings? wanTaggingSettings}) {
-    return RouterWANSettings(
+    return RouterWANSettingsData(
       wanType: 'DHCP',
       mtu: mtu,
       wanTaggingSettings: wanTaggingSettings,
     );
   }
 
-  factory RouterWANSettings.pppoe(
+  factory RouterWANSettingsData.pppoe(
       {required int mtu,
       required PPPoESettings pppoeSettings,
       required SinglePortVLANTaggingSettings wanTaggingSettings}) {
-    return RouterWANSettings(
+    return RouterWANSettingsData(
       wanType: 'PPPoE',
       mtu: mtu,
       pppoeSettings: pppoeSettings,
@@ -64,11 +52,11 @@ class RouterWANSettings extends Jsonable {
     );
   }
 
-  factory RouterWANSettings.pptp(
+  factory RouterWANSettingsData.pptp(
       {required int mtu,
       required TPSettings tpSettings,
       required SinglePortVLANTaggingSettings wanTaggingSettings}) {
-    return RouterWANSettings(
+    return RouterWANSettingsData(
       wanType: 'PPTP',
       mtu: mtu,
       tpSettings: tpSettings,
@@ -76,11 +64,11 @@ class RouterWANSettings extends Jsonable {
     );
   }
 
-  factory RouterWANSettings.l2tp(
+  factory RouterWANSettingsData.l2tp(
       {required int mtu,
       required TPSettings tpSettings,
       SinglePortVLANTaggingSettings? wanTaggingSettings}) {
-    return RouterWANSettings(
+    return RouterWANSettingsData(
       wanType: 'L2TP',
       mtu: mtu,
       tpSettings: tpSettings,
@@ -88,11 +76,11 @@ class RouterWANSettings extends Jsonable {
     );
   }
 
-  factory RouterWANSettings.static(
+  factory RouterWANSettingsData.static(
       {required int mtu,
       required StaticSettings staticSettings,
       required SinglePortVLANTaggingSettings wanTaggingSettings}) {
-    return RouterWANSettings(
+    return RouterWANSettingsData(
       wanType: 'Static',
       mtu: mtu,
       staticSettings: staticSettings,
@@ -100,11 +88,11 @@ class RouterWANSettings extends Jsonable {
     );
   }
 
-  factory RouterWANSettings.bridge(
+  factory RouterWANSettingsData.bridge(
       {int mtu = 0,
       required BridgeSettings bridgeSettings,
       SinglePortVLANTaggingSettings? wanTaggingSettings}) {
-    return RouterWANSettings(
+    return RouterWANSettingsData(
       wanType: 'Bridge',
       mtu: mtu,
       bridgeSettings: bridgeSettings,
@@ -113,7 +101,7 @@ class RouterWANSettings extends Jsonable {
   }
 
   @override
-  RouterWANSettings copyWith({
+  RouterWANSettingsData copyWith({
     String? wanType,
     PPPoESettings? pppoeSettings,
     TPSettings? tpSettings,
@@ -126,7 +114,7 @@ class RouterWANSettings extends Jsonable {
     int? mtu,
     SinglePortVLANTaggingSettings? wanTaggingSettings,
   }) {
-    return RouterWANSettings(
+    return RouterWANSettingsData(
       wanType: wanType ?? this.wanType,
       pppoeSettings: pppoeSettings ?? this.pppoeSettings,
       tpSettings: tpSettings ?? this.tpSettings,
@@ -158,8 +146,8 @@ class RouterWANSettings extends Jsonable {
     }..removeWhere((key, value) => value == null);
   }
 
-  factory RouterWANSettings.fromMap(Map<String, dynamic> map) {
-    return RouterWANSettings(
+  factory RouterWANSettingsData.fromMap(Map<String, dynamic> map) {
+    return RouterWANSettingsData(
       wanType: map['wanType'],
       pppoeSettings: map['pppoeSettings'] == null
           ? null
@@ -190,8 +178,8 @@ class RouterWANSettings extends Jsonable {
     );
   }
 
-  factory RouterWANSettings.fromJson(String source) =>
-      RouterWANSettings.fromMap(jsonDecode(source));
+  factory RouterWANSettingsData.fromJson(String source) =>
+      RouterWANSettingsData.fromMap(jsonDecode(source));
 
   @override
   List<Object?> get props => [

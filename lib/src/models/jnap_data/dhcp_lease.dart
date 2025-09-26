@@ -4,13 +4,13 @@ import 'dart:convert';
 
 import '../jsonable.dart';
 
-class DhcpLease extends Jsonable {
+class DhcpLeaseData extends Jsonable {
   final String macAddress;
   final String ipAddress;
   final String expiration;
   final String? hostName;
   final String clientID;
-  const DhcpLease({
+  const DhcpLeaseData({
     required this.macAddress,
     required this.ipAddress,
     required this.expiration,
@@ -19,14 +19,14 @@ class DhcpLease extends Jsonable {
   });
 
   @override
-  DhcpLease copyWith({
+  DhcpLeaseData copyWith({
     String? macAddress,
     String? ipAddress,
     String? expiration,
     String? hostName,
     String? clientID,
   }) {
-    return DhcpLease(
+    return DhcpLeaseData(
       macAddress: macAddress ?? this.macAddress,
       ipAddress: ipAddress ?? this.ipAddress,
       expiration: expiration ?? this.expiration,
@@ -46,8 +46,8 @@ class DhcpLease extends Jsonable {
     };
   }
 
-  factory DhcpLease.fromMap(Map<String, dynamic> map) {
-    return DhcpLease(
+  factory DhcpLeaseData.fromMap(Map<String, dynamic> map) {
+    return DhcpLeaseData(
       macAddress: map['macAddress'] as String,
       ipAddress: map['ipAddress'] as String,
       expiration: map['expiration'] as String,
@@ -67,5 +67,5 @@ class DhcpLease extends Jsonable {
     ];
   }
 
-  factory DhcpLease.fromJson(String source) => DhcpLease.fromMap(jsonDecode(source));
+  factory DhcpLeaseData.fromJson(String source) => DhcpLeaseData.fromMap(jsonDecode(source));
 }

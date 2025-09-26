@@ -3,8 +3,8 @@ import 'package:test/test.dart';
 import 'package:jnap/src/models/jnap_data/tzo_settings.dart';
 
 void main() {
-  group('TZOSettings', () {
-    const tzoSettings = TZOSettings(
+  group('TZOSettingsData', () {
+    const tzoSettings = TZOSettingsData(
       username: 'user123',
       password: 'pass123',
       hostName: 'myhost.tzo.com',
@@ -21,7 +21,7 @@ void main() {
     });
 
     test('fromMap creates a valid object', () {
-      expect(TZOSettings.fromMap(tzoSettingsMap), tzoSettings);
+      expect(TZOSettingsData.fromMap(tzoSettingsMap), tzoSettings);
     });
 
     test('toJson returns a valid JSON string', () {
@@ -29,7 +29,7 @@ void main() {
     });
 
     test('fromJson creates a valid object from JSON string', () {
-      expect(TZOSettings.fromJson(json.encode(tzoSettingsMap)), tzoSettings);
+      expect(TZOSettingsData.fromJson(json.encode(tzoSettingsMap)), tzoSettings);
     });
 
     test('copyWith returns a new object with updated values', () {
@@ -41,9 +41,9 @@ void main() {
     });
 
     test('props are correct', () {
-      final settings1 = TZOSettings(username: 'u1', password: 'p1', hostName: 'h1');
-      final settings2 = TZOSettings(username: 'u1', password: 'p1', hostName: 'h1');
-      final settings3 = TZOSettings(username: 'u2', password: 'p2', hostName: 'h2');
+      final settings1 = TZOSettingsData(username: 'u1', password: 'p1', hostName: 'h1');
+      final settings2 = TZOSettingsData(username: 'u1', password: 'p1', hostName: 'h1');
+      final settings3 = TZOSettingsData(username: 'u2', password: 'p2', hostName: 'h2');
       expect(settings1, settings2);
       expect(settings1.props, settings2.props);
       expect(settings1 == settings3, false);

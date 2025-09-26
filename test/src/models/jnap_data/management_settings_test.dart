@@ -3,8 +3,8 @@ import 'package:test/test.dart';
 import 'package:jnap/src/models/jnap_data/management_settings.dart';
 
 void main() {
-  group('ManagementSettings', () {
-    const managementSettings = ManagementSettings(
+  group('ManagementSettingsData', () {
+    const managementSettings = ManagementSettingsData(
       canManageUsingHTTP: true,
       canManageUsingHTTPS: true,
       isManageWirelesslySupported: true,
@@ -25,7 +25,7 @@ void main() {
     });
 
     test('fromMap creates a valid object', () {
-      expect(ManagementSettings.fromMap(managementSettingsMap), managementSettings);
+      expect(ManagementSettingsData.fromMap(managementSettingsMap), managementSettings);
     });
 
     test('toJson returns a valid JSON string', () {
@@ -33,7 +33,7 @@ void main() {
     });
 
     test('fromJson creates a valid object from JSON string', () {
-      expect(ManagementSettings.fromJson(json.encode(managementSettingsMap)), managementSettings);
+      expect(ManagementSettingsData.fromJson(json.encode(managementSettingsMap)), managementSettings);
     });
 
     test('copyWith returns a new object with updated values', () {
@@ -56,19 +56,19 @@ void main() {
     });
 
     test('props are correct', () {
-      final settings1 = ManagementSettings(
+      final settings1 = ManagementSettingsData(
         canManageUsingHTTP: true,
         canManageUsingHTTPS: true,
         isManageWirelesslySupported: true,
         canManageRemotely: true,
       );
-      final settings2 = ManagementSettings(
+      final settings2 = ManagementSettingsData(
         canManageUsingHTTP: true,
         canManageUsingHTTPS: true,
         isManageWirelesslySupported: true,
         canManageRemotely: true,
       );
-      final settings3 = ManagementSettings(
+      final settings3 = ManagementSettingsData(
         canManageUsingHTTP: false,
         canManageUsingHTTPS: false,
         isManageWirelesslySupported: false,

@@ -2,9 +2,9 @@ import 'dart:async';
 
 import 'package:test/test.dart';
 import 'package:jnap/src/models/firmware_update_status.dart';
-import 'package:jnap/src/providers/firmware_update_provider.dart';
-import 'package:jnap/src/providers/firmware_update_service.dart';
-import 'package:jnap/src/providers/firmware_update_state.dart';
+import 'package:jnap/src/functions/firmware_update/firmware_update_provider.dart';
+import 'package:jnap/src/functions/firmware_update/firmware_update_service.dart';
+import 'package:jnap/src/functions/firmware_update/firmware_update_state.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:riverpod/riverpod.dart';
 import 'package:jnap/jnap.dart';
@@ -17,8 +17,6 @@ import 'dart:convert';
 class MockFirmwareUpdateService extends Mock implements FirmwareUpdateService {}
 
 class MockJnap extends Mock implements Jnap {}
-
-// class MockJNAPSuccess extends Mock implements JNAPSuccess {}
 
 class MockHttpClient extends Mock implements HttpClient {}
 

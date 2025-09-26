@@ -5,10 +5,10 @@ import 'dart:convert';
 import 'package:jnap/src/models/jnap_data/firmware_update_status.dart';
 import 'package:jnap/src/models/types.dart';
 
-class NodesFirmwareUpdateStatus extends FirmwareUpdateStatus {
+class NodesFirmwareUpdateStatusData extends FirmwareUpdateStatusData {
   final String deviceUUID;
 
-  const NodesFirmwareUpdateStatus({
+  const NodesFirmwareUpdateStatusData({
     required this.deviceUUID,
     required super.lastSuccessfulCheckTime,
     super.availableUpdate,
@@ -17,14 +17,14 @@ class NodesFirmwareUpdateStatus extends FirmwareUpdateStatus {
   });
 
   @override
-  NodesFirmwareUpdateStatus copyWith({
+  NodesFirmwareUpdateStatusData copyWith({
     String? deviceUUID,
     String? lastSuccessfulCheckTime,
     ValueGetter<FirmwareUpdateData?>? availableUpdate,
     ValueGetter<FirmwareUpdateOperationStatus?>? pendingOperation,
     ValueGetter<String?>? lastOperationFailure,
   }) {
-    return NodesFirmwareUpdateStatus(
+    return NodesFirmwareUpdateStatusData(
       deviceUUID: deviceUUID ?? this.deviceUUID,
       lastSuccessfulCheckTime:
           lastSuccessfulCheckTime ?? super.lastSuccessfulCheckTime,
@@ -44,8 +44,8 @@ class NodesFirmwareUpdateStatus extends FirmwareUpdateStatus {
     return {'deviceUUID': deviceUUID,...super.toMap()};
   }
 
-  factory NodesFirmwareUpdateStatus.fromMap(Map<String, dynamic> map) {
-    return NodesFirmwareUpdateStatus(
+  factory NodesFirmwareUpdateStatusData.fromMap(Map<String, dynamic> map) {
+    return NodesFirmwareUpdateStatusData(
       deviceUUID: map['deviceUUID'] as String,
       lastSuccessfulCheckTime: map['lastSuccessfulCheckTime'] as String,
       availableUpdate: map['availableUpdate'] != null
@@ -69,6 +69,6 @@ class NodesFirmwareUpdateStatus extends FirmwareUpdateStatus {
       ...super.props,
     ];
   }
-  factory NodesFirmwareUpdateStatus.fromJson(String source) =>
-      NodesFirmwareUpdateStatus.fromMap(jsonDecode(source));
+  factory NodesFirmwareUpdateStatusData.fromJson(String source) =>
+      NodesFirmwareUpdateStatusData.fromMap(jsonDecode(source));
 }

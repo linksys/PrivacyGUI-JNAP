@@ -4,18 +4,18 @@ import 'dart:convert';
 
 import '../jsonable.dart';
 
-class GetPortConnectionStatus extends Jsonable {
+class GetPortConnectionStatusData extends Jsonable {
   final List<PortConnectionStatus> portConnectionStatus;
 
-  const GetPortConnectionStatus({
+  const GetPortConnectionStatusData({
     required this.portConnectionStatus,
   });
 
   @override
-  GetPortConnectionStatus copyWith({
+  GetPortConnectionStatusData copyWith({
     List<PortConnectionStatus>? portConnectionStatus,
   }) {
-    return GetPortConnectionStatus(
+    return GetPortConnectionStatusData(
       portConnectionStatus: portConnectionStatus ?? this.portConnectionStatus,
     );
   }
@@ -28,8 +28,8 @@ class GetPortConnectionStatus extends Jsonable {
     }..removeWhere((key, value) => value == null);
   }
 
-  factory GetPortConnectionStatus.fromMap(Map<String, dynamic> map) {
-    return GetPortConnectionStatus(
+  factory GetPortConnectionStatusData.fromMap(Map<String, dynamic> map) {
+    return GetPortConnectionStatusData(
       portConnectionStatus: List<PortConnectionStatus>.from(
         map['portConnectionStatus'].map<PortConnectionStatus>(
           (x) => PortConnectionStatus.fromMap(x as Map<String, dynamic>),
@@ -41,8 +41,8 @@ class GetPortConnectionStatus extends Jsonable {
   @override
   List<Object?> get props => [portConnectionStatus];
 
-  factory GetPortConnectionStatus.fromJson(String source) =>
-      GetPortConnectionStatus.fromMap(jsonDecode(source));
+  factory GetPortConnectionStatusData.fromJson(String source) =>
+      GetPortConnectionStatusData.fromMap(jsonDecode(source));
 }
 
 class PortConnectionStatus extends Jsonable {

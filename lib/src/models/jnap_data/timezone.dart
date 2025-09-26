@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import '../jsonable.dart';
 
-class SupportedTimezone extends Jsonable {
+class SupportedTimezoneData extends Jsonable {
   final bool observesDST;
   final String timeZoneID;
   final String description;
@@ -16,7 +16,7 @@ class SupportedTimezone extends Jsonable {
         utcOffsetMinutes,
       ];
 
-  const SupportedTimezone({
+  const SupportedTimezoneData({
     required this.observesDST,
     required this.timeZoneID,
     required this.description,
@@ -24,13 +24,13 @@ class SupportedTimezone extends Jsonable {
   });
 
   @override
-  SupportedTimezone copyWith({
+  SupportedTimezoneData copyWith({
     bool? observesDST,
     String? timeZoneID,
     String? description,
     int? utcOffsetMinutes,
   }) {
-    return SupportedTimezone(
+    return SupportedTimezoneData(
       observesDST: observesDST ?? this.observesDST,
       timeZoneID: timeZoneID ?? this.timeZoneID,
       description: description ?? this.description,
@@ -48,14 +48,14 @@ class SupportedTimezone extends Jsonable {
     }..removeWhere((key, value) => value == null);
   }
 
-  factory SupportedTimezone.fromMap(Map<String, dynamic> json) {
-    return SupportedTimezone(
+  factory SupportedTimezoneData.fromMap(Map<String, dynamic> json) {
+    return SupportedTimezoneData(
       observesDST: json['observesDST'],
       timeZoneID: json['timeZoneID'],
       description: json['description'],
       utcOffsetMinutes: json['utcOffsetMinutes'],
     );
   }
-  factory SupportedTimezone.fromJson(String source) =>
-      SupportedTimezone.fromMap(jsonDecode(source));
+  factory SupportedTimezoneData.fromJson(String source) =>
+      SupportedTimezoneData.fromMap(jsonDecode(source));
 }

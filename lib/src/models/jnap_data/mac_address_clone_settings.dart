@@ -4,21 +4,21 @@ import 'dart:convert';
 
 import '../jsonable.dart';
 
-class MACAddressCloneSettings extends Jsonable {
+class MACAddressCloneSettingsData extends Jsonable {
   final bool isMACAddressCloneEnabled;
   final String? macAddress;
 
-  const MACAddressCloneSettings({
+  const MACAddressCloneSettingsData({
     required this.isMACAddressCloneEnabled,
     this.macAddress,
   });
 
   @override
-  MACAddressCloneSettings copyWith({
+  MACAddressCloneSettingsData copyWith({
     bool? isMACAddressCloneEnabled,
     String? macAddress,
   }) {
-    return MACAddressCloneSettings(
+    return MACAddressCloneSettingsData(
       isMACAddressCloneEnabled:
           isMACAddressCloneEnabled ?? this.isMACAddressCloneEnabled,
       macAddress: macAddress ?? this.macAddress,
@@ -36,13 +36,13 @@ class MACAddressCloneSettings extends Jsonable {
     }..removeWhere((key, value) => value == null);
   }
 
-  factory MACAddressCloneSettings.fromMap(Map<String, dynamic> map) {
-    return MACAddressCloneSettings(
+  factory MACAddressCloneSettingsData.fromMap(Map<String, dynamic> map) {
+    return MACAddressCloneSettingsData(
       isMACAddressCloneEnabled: map['isMACAddressCloneEnabled'] as bool,
       macAddress:
           map['macAddress'] != null ? map['macAddress'] as String : null,
     );
   }
-  factory MACAddressCloneSettings.fromJson(String source) =>
-      MACAddressCloneSettings.fromMap(jsonDecode(source));
+  factory MACAddressCloneSettingsData.fromJson(String source) =>
+      MACAddressCloneSettingsData.fromMap(jsonDecode(source));
 }

@@ -5,12 +5,12 @@ import 'dart:convert';
 import '../jsonable.dart';
 import 'package:jnap/src/models/jnap_data/ipv6_automatic_settings.dart';
 
-class GetIPv6Settings extends Jsonable {
+class GetIPv6SettingsData extends Jsonable {
   final String? wanType;
-  final IPv6AutomaticSettings? ipv6AutomaticSettings;
+  final IPv6AutomaticSettingsData? ipv6AutomaticSettings;
   final String duid;
 
-  const GetIPv6Settings({
+  const GetIPv6SettingsData({
     this.wanType,
     this.ipv6AutomaticSettings,
     required this.duid,
@@ -20,12 +20,12 @@ class GetIPv6Settings extends Jsonable {
   List<Object?> get props => [wanType, ipv6AutomaticSettings, duid];
 
   @override
-  GetIPv6Settings copyWith({
+  GetIPv6SettingsData copyWith({
     String? wanType,
-    IPv6AutomaticSettings? ipv6AutomaticSettings,
+    IPv6AutomaticSettingsData? ipv6AutomaticSettings,
     String? duid,
   }) {
-    return GetIPv6Settings(
+    return GetIPv6SettingsData(
       wanType: wanType ?? this.wanType,
       ipv6AutomaticSettings:
           ipv6AutomaticSettings ?? this.ipv6AutomaticSettings,
@@ -42,26 +42,26 @@ class GetIPv6Settings extends Jsonable {
     }..removeWhere((key, value) => value == null);
   }
 
-  factory GetIPv6Settings.fromMap(Map<String, dynamic> map) {
-    return GetIPv6Settings(
+  factory GetIPv6SettingsData.fromMap(Map<String, dynamic> map) {
+    return GetIPv6SettingsData(
       wanType: map['wanType'] as String?,
       ipv6AutomaticSettings: map['ipv6AutomaticSettings'] != null
-          ? IPv6AutomaticSettings.fromMap(
+          ? IPv6AutomaticSettingsData.fromMap(
               map['ipv6AutomaticSettings'] as Map<String, dynamic>)
           : null,
       duid: map['duid'] as String,
     );
   }
 
-  factory GetIPv6Settings.fromJson(String source) =>
-      GetIPv6Settings.fromMap(jsonDecode(source));
+  factory GetIPv6SettingsData.fromJson(String source) =>
+      GetIPv6SettingsData.fromMap(jsonDecode(source));
 }
 
-class SetIPv6Settings extends Jsonable {
+class SetIPv6SettingsData extends Jsonable {
   final String wanType;
-  final IPv6AutomaticSettings? ipv6AutomaticSettings;
+  final IPv6AutomaticSettingsData? ipv6AutomaticSettings;
 
-  const SetIPv6Settings({
+  const SetIPv6SettingsData({
     required this.wanType,
     this.ipv6AutomaticSettings,
   });
@@ -70,12 +70,12 @@ class SetIPv6Settings extends Jsonable {
   List<Object?> get props => [wanType, ipv6AutomaticSettings];
 
   @override
-  SetIPv6Settings copyWith({
+  SetIPv6SettingsData copyWith({
     String? wanType,
-    IPv6AutomaticSettings? ipv6AutomaticSettings,
+    IPv6AutomaticSettingsData? ipv6AutomaticSettings,
     String? duid,
   }) {
-    return SetIPv6Settings(
+    return SetIPv6SettingsData(
       wanType: wanType ?? this.wanType,
       ipv6AutomaticSettings:
           ipv6AutomaticSettings ?? this.ipv6AutomaticSettings,
@@ -90,16 +90,16 @@ class SetIPv6Settings extends Jsonable {
     }..removeWhere((key, value) => value == null);
   }
 
-  factory SetIPv6Settings.fromMap(Map<String, dynamic> map) {
-    return SetIPv6Settings(
+  factory SetIPv6SettingsData.fromMap(Map<String, dynamic> map) {
+    return SetIPv6SettingsData(
       wanType: map['wanType'] as String,
       ipv6AutomaticSettings: map['ipv6AutomaticSettings'] != null
-          ? IPv6AutomaticSettings.fromMap(
+          ? IPv6AutomaticSettingsData.fromMap(
               map['ipv6AutomaticSettings'] as Map<String, dynamic>)
           : null,
     );
   }
 
-  factory SetIPv6Settings.fromJson(String source) =>
-      SetIPv6Settings.fromMap(jsonDecode(source));
+  factory SetIPv6SettingsData.fromJson(String source) =>
+      SetIPv6SettingsData.fromMap(jsonDecode(source));
 }

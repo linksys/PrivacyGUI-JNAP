@@ -4,18 +4,18 @@ import 'dart:convert';
 
 import 'package:jnap/src/models/jsonable.dart';
 
-class SendSysinfoEmail extends Jsonable {
+class SendSysinfoEmailData extends Jsonable {
   final List<String> addressList;
 
-  const SendSysinfoEmail({
+  const SendSysinfoEmailData({
     required this.addressList,
   });
 
   @override
-  SendSysinfoEmail copyWith({
+  SendSysinfoEmailData copyWith({
     List<String>? addressList,
   }) {
-    return SendSysinfoEmail(
+    return SendSysinfoEmailData(
       addressList: addressList ?? this.addressList,
     );
   }
@@ -28,15 +28,15 @@ class SendSysinfoEmail extends Jsonable {
   }
 
   @override
-  factory SendSysinfoEmail.fromMap(Map<String, dynamic> map) {
-    return SendSysinfoEmail(
+  factory SendSysinfoEmailData.fromMap(Map<String, dynamic> map) {
+    return SendSysinfoEmailData(
         addressList: List<String>.from(
       map['addressList'],
     ));
   }
 
-  factory SendSysinfoEmail.fromJson(String source) =>
-      SendSysinfoEmail.fromMap(jsonDecode(source));
+  factory SendSysinfoEmailData.fromJson(String source) =>
+      SendSysinfoEmailData.fromMap(jsonDecode(source));
 
   @override
   List<Object?> get props => [addressList];

@@ -4,23 +4,23 @@ import 'dart:convert';
 
 import '../jsonable.dart';
 
-class MACFilterSettings extends Jsonable {
+class MACFilterSettingsData extends Jsonable {
   final String macFilterMode;
   final int maxMACAddresses;
   final List<String> macAddresses;
-  const MACFilterSettings({
+  const MACFilterSettingsData({
     required this.macFilterMode,
     required this.maxMACAddresses,
     required this.macAddresses,
   });
 
   @override
-  MACFilterSettings copyWith({
+  MACFilterSettingsData copyWith({
     String? macFilterMode,
     int? maxMACAddresses,
     List<String>? macAddresses,
   }) {
-    return MACFilterSettings(
+    return MACFilterSettingsData(
       macFilterMode: macFilterMode ?? this.macFilterMode,
       maxMACAddresses: maxMACAddresses ?? this.maxMACAddresses,
       macAddresses: macAddresses ?? this.macAddresses,
@@ -36,8 +36,8 @@ class MACFilterSettings extends Jsonable {
     };
   }
 
-  factory MACFilterSettings.fromMap(Map<String, dynamic> map) {
-    return MACFilterSettings(
+  factory MACFilterSettingsData.fromMap(Map<String, dynamic> map) {
+    return MACFilterSettingsData(
         macFilterMode: map['macFilterMode'] as String,
         maxMACAddresses: map['maxMACAddresses'] as int,
         macAddresses: List<String>.from(map['macAddresses']));
@@ -46,6 +46,6 @@ class MACFilterSettings extends Jsonable {
   @override
   List<Object> get props => [macFilterMode, maxMACAddresses, macAddresses];
 
-  factory MACFilterSettings.fromJson(String source) =>
-      MACFilterSettings.fromMap(jsonDecode(source));
+  factory MACFilterSettingsData.fromJson(String source) =>
+      MACFilterSettingsData.fromMap(jsonDecode(source));
 }

@@ -3,8 +3,8 @@ import 'package:test/test.dart';
 import 'package:jnap/src/models/jnap_data/power_table_settings.dart';
 
 void main() {
-  group('PowerTableSettings', () {
-    const powerTableSettings = PowerTableSettings(
+  group('PowerTableSettingsData', () {
+    const powerTableSettings = PowerTableSettingsData(
       isPowerTableSelectable: true,
       supportedCountries: ['US', 'CA'],
       country: 'US',
@@ -21,7 +21,7 @@ void main() {
     });
 
     test('fromMap creates a valid object', () {
-      expect(PowerTableSettings.fromMap(powerTableSettingsMap), powerTableSettings);
+      expect(PowerTableSettingsData.fromMap(powerTableSettingsMap), powerTableSettings);
     });
 
     test('toJson returns a valid JSON string', () {
@@ -29,7 +29,7 @@ void main() {
     });
 
     test('fromJson creates a valid object from JSON string', () {
-      expect(PowerTableSettings.fromJson(json.encode(powerTableSettingsMap)), powerTableSettings);
+      expect(PowerTableSettingsData.fromJson(json.encode(powerTableSettingsMap)), powerTableSettings);
     });
 
     test('copyWith returns a new object with updated values', () {
@@ -43,9 +43,9 @@ void main() {
     });
 
     test('props are correct', () {
-      final settings1 = PowerTableSettings(isPowerTableSelectable: true, supportedCountries: ['c1']);
-      final settings2 = PowerTableSettings(isPowerTableSelectable: true, supportedCountries: ['c1']);
-      final settings3 = PowerTableSettings(isPowerTableSelectable: false, supportedCountries: ['c2']);
+      final settings1 = PowerTableSettingsData(isPowerTableSelectable: true, supportedCountries: ['c1']);
+      final settings2 = PowerTableSettingsData(isPowerTableSelectable: true, supportedCountries: ['c1']);
+      final settings3 = PowerTableSettingsData(isPowerTableSelectable: false, supportedCountries: ['c2']);
       expect(settings1, settings2);
       expect(settings1.props, settings2.props);
       expect(settings1 == settings3, false);

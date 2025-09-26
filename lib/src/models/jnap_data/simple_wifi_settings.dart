@@ -4,12 +4,12 @@ import 'dart:convert';
 
 import 'package:jnap/src/models/jsonable.dart';
 
-class SimpleWiFiSettings extends Jsonable {
+class SimpleWiFiSettingsData extends Jsonable {
   final String band;
   final String ssid;
   final String security;
   final String passphrase;
-  const SimpleWiFiSettings({
+  const SimpleWiFiSettingsData({
     required this.band,
     required this.ssid,
     required this.security,
@@ -17,13 +17,13 @@ class SimpleWiFiSettings extends Jsonable {
   });
 
   @override
-  SimpleWiFiSettings copyWith({
+  SimpleWiFiSettingsData copyWith({
     String? band,
     String? ssid,
     String? security,
     String? passphrase,
   }) {
-    return SimpleWiFiSettings(
+    return SimpleWiFiSettingsData(
       band: band ?? this.band,
       ssid: ssid ?? this.ssid,
       security: security ?? this.security,
@@ -42,8 +42,8 @@ class SimpleWiFiSettings extends Jsonable {
   }
 
   @override
-  factory SimpleWiFiSettings.fromMap(Map<String, dynamic> map) {
-    return SimpleWiFiSettings(
+  factory SimpleWiFiSettingsData.fromMap(Map<String, dynamic> map) {
+    return SimpleWiFiSettingsData(
       band: map['band'] as String,
       ssid: map['ssid'] as String,
       security: map['security'] as String,
@@ -54,6 +54,6 @@ class SimpleWiFiSettings extends Jsonable {
   @override
   List<Object?> get props => [band, ssid, security, passphrase];
 
-  factory SimpleWiFiSettings.fromJson(String source) =>
-      SimpleWiFiSettings.fromMap(jsonDecode(source));
+  factory SimpleWiFiSettingsData.fromJson(String source) =>
+      SimpleWiFiSettingsData.fromMap(jsonDecode(source));
 }

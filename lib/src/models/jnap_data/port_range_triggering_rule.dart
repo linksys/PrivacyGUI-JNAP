@@ -2,15 +2,8 @@ import 'dart:convert';
 
 import 'package:jnap/src/models/jsonable.dart';
 
-/// isEnabled : true
-/// externalPort : 3074
-/// protocol : "TCP"
-/// internalServerIPAddress : "192.168.1.150"
-/// lastExternalPort : 3074
-/// description : "XBox Live (TM)"
-
-class PortRangeTriggeringRule extends Jsonable {
-  const PortRangeTriggeringRule({
+class PortRangeTriggeringRuleData extends Jsonable {
+  const PortRangeTriggeringRuleData({
     required this.isEnabled,
     required this.firstTriggerPort,
     required this.lastTriggerPort,
@@ -37,7 +30,7 @@ class PortRangeTriggeringRule extends Jsonable {
       ];
 
   @override
-  PortRangeTriggeringRule copyWith({
+  PortRangeTriggeringRuleData copyWith({
     bool? isEnabled,
     int? firstTriggerPort,
     int? lastTriggerPort,
@@ -45,7 +38,7 @@ class PortRangeTriggeringRule extends Jsonable {
     int? lastForwardedPort,
     String? description,
   }) {
-    return PortRangeTriggeringRule(
+    return PortRangeTriggeringRuleData(
       isEnabled: isEnabled ?? this.isEnabled,
       firstTriggerPort: firstTriggerPort ?? this.firstTriggerPort,
       lastTriggerPort: lastTriggerPort ?? this.lastTriggerPort,
@@ -68,8 +61,8 @@ class PortRangeTriggeringRule extends Jsonable {
   }
 
   @override
-  factory PortRangeTriggeringRule.fromMap(Map<String, dynamic> json) {
-    return PortRangeTriggeringRule(
+  factory PortRangeTriggeringRuleData.fromMap(Map<String, dynamic> json) {
+    return PortRangeTriggeringRuleData(
       isEnabled: json['isEnabled'],
       firstTriggerPort: json['firstTriggerPort'],
       lastTriggerPort: json['lastTriggerPort'],
@@ -79,6 +72,6 @@ class PortRangeTriggeringRule extends Jsonable {
     );
   }
 
-  factory PortRangeTriggeringRule.fromJson(String source) =>
-      PortRangeTriggeringRule.fromMap(jsonDecode(source));
+  factory PortRangeTriggeringRuleData.fromJson(String source) =>
+      PortRangeTriggeringRuleData.fromMap(jsonDecode(source));
 }

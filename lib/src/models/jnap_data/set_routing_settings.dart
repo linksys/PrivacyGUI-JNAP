@@ -3,24 +3,24 @@ import 'dart:convert';
 import '../jsonable.dart';
 import 'package:jnap/src/models/jnap_data/get_routing_settings.dart';
 
-class SetRoutingSettings extends Jsonable {
+class SetRoutingSettingsData extends Jsonable {
   final bool isNATEnabled;
   final bool isDynamicRoutingEnabled;
   final List<NamedStaticRouteEntry> entries;
 
-  const SetRoutingSettings({
+  const SetRoutingSettingsData({
     required this.isNATEnabled,
     required this.isDynamicRoutingEnabled,
     required this.entries,
   });
 
   @override
-  SetRoutingSettings copyWith({
+  SetRoutingSettingsData copyWith({
     bool? isNATEnabled,
     bool? isDynamicRoutingEnabled,
     List<NamedStaticRouteEntry>? entries,
   }) {
-    return SetRoutingSettings(
+    return SetRoutingSettingsData(
       isNATEnabled: isNATEnabled ?? this.isNATEnabled,
       isDynamicRoutingEnabled:
           isDynamicRoutingEnabled ?? this.isDynamicRoutingEnabled,
@@ -37,8 +37,8 @@ class SetRoutingSettings extends Jsonable {
     };
   }
 
-  factory SetRoutingSettings.fromMap(Map<String, dynamic> map) {
-    return SetRoutingSettings(
+  factory SetRoutingSettingsData.fromMap(Map<String, dynamic> map) {
+    return SetRoutingSettingsData(
       isNATEnabled: map['isNATEnabled'] as bool,
       isDynamicRoutingEnabled: map['isDynamicRoutingEnabled'] as bool,
       entries: List<NamedStaticRouteEntry>.from(
@@ -49,8 +49,8 @@ class SetRoutingSettings extends Jsonable {
     );
   }
 
-  factory SetRoutingSettings.fromJson(String source) =>
-      SetRoutingSettings.fromMap(jsonDecode(source));
+  factory SetRoutingSettingsData.fromJson(String source) =>
+      SetRoutingSettingsData.fromMap(jsonDecode(source));
 
   @override
   List<Object> get props => [

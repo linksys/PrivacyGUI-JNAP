@@ -5,34 +5,14 @@ import 'dart:convert';
 import '../jsonable.dart';
 import 'package:jnap/src/models/jnap_data/lan_settings.dart';
 
-// {
-//   "ipAddress": "192.0.2.1",
-//   "networkPrefixLength": 24,
-//   "hostName": "myrouter",
-//   "isDHCPEnabled": true,
-//   "dhcpSettings": {
-//     "leaseMinutes": 1440,
-//     "firstClientIPAddress": "192.0.2.100",
-//     "lastClientIPAddress": "192.0.2.150",
-//     "dnsServer1": "203.0.113.103",
-//     "reservations": [
-//       {
-//         "macAddress": "00:22:5F:A1:73:C1",
-//         "ipAddress": "192.0.2.99",
-//         "description": "webcam"
-//       }
-//     ]
-//   }
-// }
-
-class SetRouterLANSettings extends Jsonable {
+class SetRouterLANSettingsData extends Jsonable {
   final String ipAddress;
   final int networkPrefixLength;
   final String hostName;
   final bool isDHCPEnabled;
   final DHCPSettings? dhcpSettings;
 
-  const SetRouterLANSettings({
+  const SetRouterLANSettingsData({
     required this.ipAddress,
     required this.networkPrefixLength,
     required this.hostName,
@@ -62,8 +42,8 @@ class SetRouterLANSettings extends Jsonable {
     }..removeWhere((key, value) => value == null);
   }
 
-  factory SetRouterLANSettings.fromMap(Map<String, dynamic> map) {
-    return SetRouterLANSettings(
+  factory SetRouterLANSettingsData.fromMap(Map<String, dynamic> map) {
+    return SetRouterLANSettingsData(
       ipAddress: map['ipAddress'] as String,
       networkPrefixLength: map['networkPrefixLength'] as int,
       hostName: map['hostName'] as String,
@@ -74,18 +54,18 @@ class SetRouterLANSettings extends Jsonable {
     );
   }
 
-  factory SetRouterLANSettings.fromJson(String source) =>
-      SetRouterLANSettings.fromMap(jsonDecode(source));
+  factory SetRouterLANSettingsData.fromJson(String source) =>
+      SetRouterLANSettingsData.fromMap(jsonDecode(source));
 
   @override
-  SetRouterLANSettings copyWith({
+  SetRouterLANSettingsData copyWith({
     String? ipAddress,
     int? networkPrefixLength,
     String? hostName,
     bool? isDHCPEnabled,
     DHCPSettings? dhcpSettings,
   }) {
-    return SetRouterLANSettings(
+    return SetRouterLANSettingsData(
       ipAddress: ipAddress ?? this.ipAddress,
       networkPrefixLength: networkPrefixLength ?? this.networkPrefixLength,
       hostName: hostName ?? this.hostName,
