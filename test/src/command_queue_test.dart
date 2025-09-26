@@ -98,7 +98,7 @@ void main() {
 
       final headers = captured.first as Map<String, String>;
       expect(headers['X-JNAP-Action'], 'testAction');
-      expect(headers[HttpHeaders.authorizationHeader],
+      expect(headers['X-Jnap-Authorization'],
           'Basic YWRtaW46cGFzc3dvcmQ=');
 
       verify(() => mockHttpClient.timeoutMs = 10000).called(1);
