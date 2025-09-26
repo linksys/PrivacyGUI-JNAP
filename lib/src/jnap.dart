@@ -282,7 +282,7 @@ class JNAPCommand {
     final Map<String, String> header = {
       kJNAPAction: action,
       if (auth.isNotEmpty)
-        HttpHeaders.authorizationHeader:
+        authType == AuthType.basic ? 'X-Jnap-Authorization' : HttpHeaders.authorizationHeader:
             authType == AuthType.basic ? 'Basic $auth' : 'Bearer $auth',
       HttpHeaders.contentTypeHeader: ContentType.json.value,
     }
