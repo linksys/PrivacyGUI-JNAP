@@ -54,7 +54,6 @@ export 'src/models/jnap_data/wan_status.dart';
 export 'src/models/jnap_data/wirless_connection.dart';
 export 'src/models/error_response.dart';
 export 'src/models/jnap_result.dart';
-export 'src/models/jnap_success_js.dart';
 export 'src/models/jnap_transaction.dart';
 export 'src/models/jsonable.dart';
 export 'src/models/models.dart';
