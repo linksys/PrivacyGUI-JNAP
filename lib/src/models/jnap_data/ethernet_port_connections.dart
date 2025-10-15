@@ -35,7 +35,9 @@ class RouterEthernetPortConnectionsData extends Jsonable {
     return RouterEthernetPortConnectionsData(
       wanPortConnection: map['wanPortConnection'] as String,
       lanPortConnections: List<String>.from(
-        (map['lanPortConnections'] as List).map((x) => x as String),
+        (map['lanPortConnections'] as List)
+            .whereType<String>()
+            .where((value) => value.toLowerCase() != 'none'),
       ),
     );
   }

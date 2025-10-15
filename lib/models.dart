@@ -60,3 +60,4 @@ export 'src/models/models.dart';
 export 'src/models/types.dart';
 export 'src/functions/firmware_update/firmware_update_state.dart';
 export 'src/functions/device_manager/device_manager_state.dart';
+export 'src/functions/wifi_status/wifi_status_state.dart';

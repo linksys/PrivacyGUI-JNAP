@@ -52,7 +52,7 @@ void main() {
 
     test('check() updates state to false on not connected', () async {
       final stream = Stream.value(JNAPSuccess(result: 'OK', output: {
-        'connectionStatus': 'NoInternet',
+        'connectionStatus': 'NoInternetConnection',
       }));
       when(() => mockService.scheduleCheckInternetConnection(any(), any(), any()))
           .thenAnswer((_) => stream);
