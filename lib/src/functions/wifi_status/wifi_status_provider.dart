@@ -2,7 +2,6 @@ import 'package:collection/collection.dart';
 import 'package:jnap/src/functions/device_manager/device_manager_provider.dart';
 import 'package:jnap/src/functions/device_manager/devices_extensions.dart';
 import 'package:riverpod/riverpod.dart';
-
 import 'package:jnap/src/functions/device_manager/service/radio_info_service.dart';
 import 'package:jnap/src/functions/provider.dart';
 import 'package:jnap/src/functions/wifi_status/wifi_status_service.dart';
@@ -24,6 +23,8 @@ class WifiStatusNotifier extends Notifier<List<WifiStatusState>> {
   List<WifiStatusState> build() => const [];
 
   Future<void> fetch() async {
+    // Fetch device data first
+    await ref.read(deviceManagerProvider.notifier).fetch();
     final radioInfoService = RadioInfoService(ref);
     final wifiStatusService = ref.read(wifiStatusServiceProvider);
 
@@ -40,7 +41,7 @@ class WifiStatusNotifier extends Notifier<List<WifiStatusState>> {
     final isMoreThanOneEnabled =
         radioList.where((e) => (e.settings.isEnabled)).length > 1;
     final canBeDisabled =
-        isMoreThanOneEnabled && portConnections.lanPortConnections.isNotEmpty;
+        isMoreThanOneEnabled || portConnections.lanPortConnections.isNotEmpty;
     // Group the 'radioList' by the Wi-Fi band (e.g., 2.4GHz, 5GHz)
     // Create a map structure where the key is the band and the value is a list of all radios belonging to that band
     final wifiList = radioList
